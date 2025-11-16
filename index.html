@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SyBaga — бонусная платформа ресторана</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #6d28d9;
+      --primary-light: #8b5cf6;
+      --primary-bg: #f5f3ff;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --text-lighter: #9ca3af;
+      --bg: #f9fafb;
+      --bg-card: #ffffff;
+      --border: #e5e7eb;
+      --border-light: #f3f4f6;
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      background: var(--primary);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-card);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .view-tab {
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .view-tab.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-size: 15px;
+      transition: all 0.2s;
+      background: var(--bg-card);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+
+    /* Toast */
+    .toast {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-success {
+      background: #ecfdf5;
+      color: var(--secondary-dark);
+      border: 1px solid #a7f3d0;
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: var(--danger-dark);
+      border: 1px solid #fecaca;
+    }
+
+    /* Status badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status-primary {
+      background: var(--primary-bg);
+      color: var(--primary);
+    }
+
+    .status-success {
+      background: #ecfdf5;
+      color: var(--secondary);
+    }
+
+    .status-warning {
+      background: #fffbeb;
+      color: var(--accent);
+    }
+
+    /* Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* User info cards */
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .info-card {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--border-light);
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Gift cards */
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .gift-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: all 0.3s;
+      background: var(--bg-card);
+    }
+
+    .gift-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gift-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: var(--bg);
+    }
+
+    .gift-content {
+      padding: 16px;
+    }
+
+    .gift-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .gift-price {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+
+    /* Admin Layout */
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .admin-sidebar {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 20px 0;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      height: fit-content;
+    }
+
+    .sidebar-title {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+      padding: 0 20px;
+      font-weight: 600;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: var(--bg);
+    }
+
+    .nav-item.active {
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-right: 3px solid var(--primary);
+    }
+
+    .nav-badge {
+      background: var(--bg);
+      color: var(--text-light);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-item.active .nav-badge {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .kpi-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .kpi-icon.primary {
+      background: var(--primary-bg);
+      color: var(--primary);
+    }
+
+    .kpi-icon.success {
+      background: #ecfdf5;
+      color: var(--secondary);
+    }
+
+    .kpi-icon.warning {
+      background: #fffbeb;
+      color: var(--accent);
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: var(--bg);
+    }
+
+    /* Accordion */
+    .accordion {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      padding: 16px 20px;
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    .accordion-header:hover {
+      background: var(--border-light);
+    }
+
+    .accordion-icon {
+      transition: transform 0.3s;
+    }
+
+    .accordion.open .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-body {
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .accordion.open .accordion-body {
+      display: block;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-gift"></i>
+        </div>
+        <span>SyBaga</span>
+      </div>
+      <div class="view-tabs">
+        <div class="view-tab active" id="tab-client">
+          <i class="fas fa-user"></i>
+          <span>Клиент</span>
+        </div>
+        <div class="view-tab" id="tab-admin">
+          <i class="fas fa-cog"></i>
+          <span>Админ</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CLIENT SECTION -->
+    <section class="page active" id="page-client">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Вход в личный кабинет</h2>
+            <p class="card-subtitle">Введите номер телефона, который вы оставляли в ресторане</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Номер телефона</label>
+          <input type="text" class="form-input" id="user-phone" placeholder="+7 777 000 00 00">
+        </div>
+        <button class="btn btn-primary" id="btn-user-login">
+          <i class="fas fa-sign-in-alt"></i>
+          Войти
+        </button>
+        <div id="u-toast" class="toast"></div>
+      </div>
+
+      <div class="accordion" id="acc-status">
+        <div class="accordion-header">
+          <span>Мой статус и баланс</span>
+          <i class="fas fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="accordion-body">
+          <div id="user-info"></div>
+        </div>
+      </div>
+
+      <div class="accordion" id="acc-gifts">
+        <div class="accordion-header">
+          <span>Доступные подарки</span>
+          <i class="fas fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="accordion-body">
+          <div id="user-gifts" class="gift-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN SECTION -->
+    <section class="page" id="page-admin">
+      <div class="card" id="admin-login-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Вход в админ-панель</h2>
+            <p class="card-subtitle">Доступ только для сотрудников ресторана</p>
+          </div>
+          <div class="status-badge status-warning">
+            <i class="fas fa-lock"></i>
+            <span>Требуется авторизация</span>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Логин</label>
+            <input type="text" class="form-input" id="adm-login" value="admin">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Пароль</label>
+            <input type="password" class="form-input" id="adm-pass" value="admin123">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-adm-login">
+          <i class="fas fa-key"></i>
+          Войти в админ-панель
+        </button>
+        <div id="a-toast" class="toast"></div>
+      </div>
+
+      <div class="admin-layout" id="admin-layout" style="display:none;">
+        <aside class="admin-sidebar">
+          <div class="sidebar-title">УПРАВЛЕНИЕ</div>
+          <nav class="nav-list">
+            <div class="nav-item active" data-page="admin-dashboard">
+              <span>
+                <i class="fas fa-tachometer-alt"></i>
+                Дашборд
+              </span>
+              <span class="nav-badge">Обзор</span>
+            </div>
+            <div class="nav-item" data-page="admin-clients">
+              <span>
+                <i class="fas fa-users"></i>
+                Клиенты
+              </span>
+              <span class="nav-badge">База</span>
+            </div>
+            <div class="nav-item" data-page="admin-gifts">
+              <span>
+                <i class="fas fa-gift"></i>
+                Подарки
+              </span>
+              <span class="nav-badge">Каталог</span>
+            </div>
+            <div class="nav-item" data-page="admin-analytics">
+              <span>
+                <i class="fas fa-chart-bar"></i>
+                Аналитика
+              </span>
+              <span class="nav-badge">Статистика</span>
+            </div>
+          </nav>
+        </aside>
+
+        <div>
+          <!-- DASHBOARD -->
+          <section class="card admin-subpage" id="admin-dashboard" style="display:block;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Дашборд системы</h2>
+                <p class="card-subtitle">Обзор активности клиентов и подарков</p>
+              </div>
+              <button class="btn btn-outline" id="btn-refresh-dashboard">
+                <i class="fas fa-sync-alt"></i>
+                Обновить
+              </button>
+            </div>
+            <div class="kpi-grid" id="dash-kpis">
+              <!-- заполняется из JS -->
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button class="btn btn-primary" id="btn-go-clients">
+                <i class="fas fa-users"></i>
+                Управление клиентами
+              </button>
+              <button class="btn btn-outline" id="btn-go-gifts">
+                <i class="fas fa-gift"></i>
+                Каталог подарков
+              </button>
+              <button class="btn btn-outline" id="btn-go-analytics">
+                <i class="fas fa-chart-bar"></i>
+                Аналитика и отчеты
+              </button>
+            </div>
+          </section>
+
+          <!-- CLIENTS -->
+          <section class="card admin-subpage" id="admin-clients" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Управление клиентами</h2>
+                <p class="card-subtitle">Создание клиентов, поиск и управление чеками</p>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">Новый клиент</h3>
+                <div class="form-group">
+                  <label class="form-label">Имя</label>
+                  <input type="text" class="form-input" id="new-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Телефон</label>
+                  <input type="text" class="form-input" id="new-phone" placeholder="+7 777 000 00 00">
+                </div>
+                <button class="btn btn-primary" id="btn-add-user">
+                  <i class="fas fa-user-plus"></i>
+                  Создать клиента
+                </button>
+              </div>
+
+              <div>
+                <h3 class="section-title">Поиск клиентов</h3>
+                <div class="form-group">
+                  <label class="form-label">Имя или телефон</label>
+                  <input type="text" class="form-input" id="users-q" placeholder="например, Айжан или +7777...">
+                </div>
+                <div id="users-list" style="max-height:300px;overflow:auto;"></div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">Профиль клиента</h3>
+                <div id="client-profile"></div>
+              </div>
+              <div>
+                <h3 class="section-title">Чеки клиента</h3>
+                <div class="form-group">
+                  <label class="form-label">Добавить чек</label>
+                  <div class="grid-2" style="gap:12px;">
+                    <input type="number" class="form-input" id="bill-sum" placeholder="Сумма, тг">
+                    <button class="btn btn-primary" id="btn-add-bill">
+                      <i class="fas fa-plus"></i>
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+                <p class="card-subtitle">Телефон берется из выбранного клиента</p>
+                <div id="bills-list" style="margin-top:16px;max-height:240px;overflow:auto;"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- GIFTS -->
+          <section class="card admin-subpage" id="admin-gifts" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Каталог подарков</h2>
+                <p class="card-subtitle">Управление подарками и их выдачей</p>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">Создать подарок</h3>
+                <div class="form-group">
+                  <label class="form-label">Название</label>
+                  <input type="text" class="form-input" id="g-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Цена (минимальная сумма чека)</label>
+                  <input type="number" class="form-input" id="g-price">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Фото (URL)</label>
+                  <input type="text" class="form-input" id="g-photo" placeholder="https://...">
+                </div>
+                <button class="btn btn-primary" id="btn-g-create">
+                  <i class="fas fa-plus-circle"></i>
+                  Создать подарок
+                </button>
+              </div>
+              <div>
+                <h3 class="section-title">Выдать подарок</h3>
+                <div class="form-group">
+                  <label class="form-label">Телефон клиента</label>
+                  <input type="text" class="form-input" id="r-phone" placeholder="+7...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Название подарка</label>
+                  <input type="text" class="form-input" id="r-gift" placeholder="Тот же текст, что в названии">
+                </div>
+                <button class="btn btn-danger" id="btn-redeem-admin">
+                  <i class="fas fa-gift"></i>
+                  Выдать подарок клиенту
+                </button>
+                <p class="card-subtitle">После выдачи баланс клиента обнуляется</p>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3 class="section-title">Все подарки</h3>
+            <div id="gifts-admin" class="gift-grid"></div>
+          </section>
+
+          <!-- ANALYTICS -->
+          <section class="card admin-subpage" id="admin-analytics" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Аналитика и отчеты</h2>
+                <p class="card-subtitle">Статистика по клиентам, оборотам и подаркам</p>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+              <button class="btn btn-primary" id="btn-analytics">
+                <i class="fas fa-calculator"></i>
+                Пересчитать аналитику
+              </button>
+              <button class="btn btn-outline" id="btn-export-users">
+                <i class="fas fa-file-export"></i>
+                Экспорт клиентов
+              </button>
+              <button class="btn btn-outline" id="btn-export-bills">
+                <i class="fas fa-file-export"></i>
+                Экспорт чеков
+              </button>
+              <button class="btn btn-outline" id="btn-export-redeem">
+                <i class="fas fa-file-export"></i>
+                Экспорт выданных подарков
+              </button>
+            </div>
+
+            <div class="kpi-grid" id="kpi"></div>
+
+            <div class="divider"></div>
+
+            <h3 class="section-title">Детальная статистика по клиентам</h3>
+            <div id="analytics-table" class="table-container"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /* ========= CONFIG ========= */
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbwIJz673mQDhmUDW1wyuCCsj97qutq1CxmE4lG9saifd7nD2J8yxTr8Go3TUmobOdv-/exec';
+
+    /* ========= Helpers ========= */
+    const $ = s => document.querySelector(s);
+    const el = (t,a={},c=[])=>{
+      const n=document.createElement(t);
+      for(const k in a){
+        if(k==='class') n.className=a[k];
+        else if(k==='html') n.innerHTML=a[k];
+        else n.setAttribute(k,a[k]);
+      }
+      (Array.isArray(c)?c:[c]).filter(Boolean).forEach(x=>n.append(x));
+      return n;
+    };
+
+    function normPhone(p){
+      p = String(p || '').replace(/[^\d+]/g,'');
+      if(p.startsWith('+7')) return p;
+      if(p.startsWith('8') && p.length===11) return '+7'+p.slice(1);
+      if(p.length===10) return '+7'+p;
+      return p;
+    }
+
+    function toast(node,msg,ok=true){
+      node.className = 'toast ' + (ok?'toast-success':'toast-error');
+      node.innerHTML = ok 
+        ? `<i class="fas fa-check-circle"></i> ${msg}`
+        : `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+      setTimeout(()=>{ if(node.innerHTML.includes(msg)) node.innerHTML=''; },3000);
+    }
+
+    async function api(action, body={}, method='POST'){
+      const payload = new URLSearchParams(Object.entries({action,...body}));
+      if(method === 'GET'){
+        const r = await fetch(`${API_BASE}?${payload.toString()}`);
+        return r.json();
+      }else{
+        const r = await fetch(API_BASE,{
+          method:'POST',
+          headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+          body:payload.toString()
+        });
+        return r.json();
+      }
+    }
+
+    function download(name,text){
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));
+      a.download=name;a.click();URL.revokeObjectURL(a.href);
+    }
+
+    /* ========= Top-level tabs (client / admin) ========= */
+    function showMainPage(which){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      $('#page-'+which).classList.add('active');
+      document.querySelectorAll('.view-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.id === `tab-${which}`);
+      });
+    }
+    $('#tab-client').onclick = ()=> showMainPage('client');
+    $('#tab-admin').onclick  = ()=> showMainPage('admin');
+
+    /* ========= CLIENT: accordion ========= */
+    function toggleAcc(elWrap){
+      elWrap.classList.toggle('open');
+    }
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.onclick = () => toggleAcc(header.parentElement);
+    });
+
+    /* ========= CLIENT: login & profile ========= */
+    $('#btn-user-login').onclick = async ()=>{
+      const phone = normPhone($('#user-phone').value);
+      if(!phone) return toast($('#u-toast'),'Введите номер телефона',false);
+      try{
+        const r = await api('auth_user',{phone});
+        if(!r.ok){ toast($('#u-toast'), r.error||'Клиент не найден',false); return; }
+        toast($('#u-toast'),'Вход выполнен успешно',true);
+        $('#acc-status').classList.add('open');
+        $('#acc-gifts').classList.add('open');
+        await loadUser(phone);
+      }catch(e){
+        toast($('#u-toast'), e.message||String(e), false);
+      }
+    };
+
+    async function loadUser(phone){
+      const prof = await api('users_me',{phone});
+      if(!prof.ok){ toast($('#u-toast'), prof.error||'Ошибка загрузки данных', false); return; }
+      const u = prof.user;
+
+      // статус
+      const box = $('#user-info');
+      box.innerHTML='';
+      box.append(
+        el('div', {class: 'user-info-grid'}, [
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Имя'),
+            el('div', {class: 'info-value'}, u.name||'-')
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Телефон'),
+            el('div', {class: 'info-value'}, u.phone)
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Всего потрачено'),
+            el('div', {class: 'info-value'}, `${u.lifetime_sum} тг`)
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Текущий баланс'),
+            el('div', {class: 'info-value'}, `${u.balance} тг`)
+          ])
+        ])
+      );
+
+      // подарки
+      const gl = await api('gifts_list',{},'GET');
+      const cont = $('#user-gifts');
+      cont.innerHTML='';
+      gl.gifts.forEach(g=>{
+        const can = Number(u.balance) >= Number(g.price||0);
+        const card = el('div',{class:'gift-card'},[
+          el('img',{class:'gift-image',src:g.photo||'https://via.placeholder.com/300x160?text=Подарок',alt:g.name}),
+          el('div',{class:'gift-content'},[
+            el('div',{class:'gift-title',html:g.name}),
+            el('div',{class:'gift-price',html:`Необходимая сумма: ${g.price} тг`}),
+            el('button',{
+              class:'btn '+(can?'btn-primary':'btn-outline'),
+              style:'width:100%;margin-top:8px;',
+              disabled: (!can)
+            }, [
+              can 
+                ? [el('i',{class:'fas fa-gift'}), 'Получить подарок']
+                : [el('i',{class:'fas fa-lock'}), 'Недостаточно средств']
+            ])
+          ])
+        ]);
+
+        card.querySelector('button').onclick = async ()=>{
+          if(!can) return;
+          if(!confirm(`Получить «${g.name}» за ${g.price} тг? Баланс обнулится.`)) return;
+          const r = await api('redeem',{phone:u.phone,giftName:g.name,actor:'self'});
+          if(!r.ok) return alert(r.error||'Ошибка получения подарка');
+          await loadUser(u.phone);
+        };
+
+        cont.append(card);
+      });
+    }
+
+    /* ========= ADMIN: login & nav ========= */
+    let currentAdminPhone = null; // выбранный клиент
+
+    $('#btn-adm-login').onclick = async ()=>{
+      try{
+        await api('init',{},'POST');
+        const r = await api('auth_admin',{
+          login:$('#adm-login').value,
+          password:$('#adm-pass').value
+        });
+        if(!r.ok) throw new Error(r.error||'Неверный логин или пароль');
+        toast($('#a-toast'),'Авторизация прошла успешно',true);
+        $('#admin-login-card').style.display='none';
+        $('#admin-layout').style.display='grid';
+        await refreshDashboard();
+        await renderUsers('');
+        await refreshGiftsAdmin();
+      }catch(e){
+        toast($('#a-toast'), e.message||String(e), false);
+      }
+    };
+
+    function setAdminSubpage(id){
+      document.querySelectorAll('.admin-subpage').forEach(p=>p.style.display='none');
+      $('#'+id).style.display='block';
+      document.querySelectorAll('.nav-item').forEach(i=>{
+        i.classList.toggle('active', i.dataset.page===id);
+      });
+    }
+
+    document.querySelectorAll('.nav-item').forEach(i=>{
+      i.onclick = ()=>{
+        setAdminSubpage(i.dataset.page);
+        if(i.dataset.page==='admin-analytics') renderAnalytics();
+        if(i.dataset.page==='admin-dashboard') refreshDashboard();
+      };
+    });
+
+    $('#btn-go-clients').onclick   = ()=> setAdminSubpage('admin-clients');
+    $('#btn-go-gifts').onclick     = ()=> { setAdminSubpage('admin-gifts'); refreshGiftsAdmin(); };
+    $('#btn-go-analytics').onclick = ()=> { setAdminSubpage('admin-analytics'); renderAnalytics(); };
+    $('#btn-refresh-dashboard').onclick = ()=> refreshDashboard();
+
+    /* ========= ADMIN: clients ========= */
+    $('#btn-add-user').onclick = async ()=>{
+      const name = $('#new-name').value.trim();
+      const phone = normPhone($('#new-phone').value);
+      if(!name || !phone) return toast($('#a-toast'),'Введите имя и телефон',false);
+      const r = await api('users_create',{name,phone});
+      if(!r.ok) return toast($('#a-toast'), r.error||'Ошибка создания клиента', false);
+      $('#new-name').value=''; $('#new-phone').value='';
+      toast($('#a-toast'),'Клиент успешно создан',true);
+      renderUsers($('#users-q').value);
+      refreshDashboard();
+    };
+
+    $('#users-q').oninput = ()=> renderUsers($('#users-q').value);
+
+    async function renderUsers(q){
+      const r = await api('users_list',{query:q},'GET');
+      if(!r.ok) return;
+      const cont = $('#users-list');
+      cont.innerHTML='';
+      if(!r.users.length){
+        cont.innerHTML = '<div class="card-subtitle">Клиенты не найдены</div>';
+        return;
+      }
+      const tbl = el('table',{},[
+        el('thead',{},[el('tr',{},[
+          el('th',{html:'Имя'}), el('th',{html:'Телефон'}), el('th',{html:'Последний подарок'})
+        ])])
+      ]);
+      const tb = el('tbody');
+      r.users.forEach(u=>{
+        const tr = el('tr',{},[
+          el('td',{html:u.name}),
+          el('td',{html:u.phone}),
+          el('td',{html:u.gift || '<span class="card-subtitle">—</span>'})
+        ]);
+        tr.style.cursor='pointer';
+        tr.onclick = ()=> selectClient(u.phone);
+        tb.append(tr);
+      });
+      tbl.append(tb);
+      cont.append(tbl);
+    }
+
+    async function selectClient(phone){
+      currentAdminPhone = phone;
+      const prof = await api('users_me',{phone});
+      if(!prof.ok) return alert(prof.error||'Ошибка загрузки профиля');
+      const u = prof.user;
+
+      // профиль
+      const box = $('#client-profile');
+      box.innerHTML='';
+      box.append(
+        el('div', {class: 'user-info-grid'}, [
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Имя'),
+            el('div', {class: 'info-value'}, u.name)
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Телефон'),
+            el('div', {class: 'info-value'}, u.phone)
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Всего потрачено'),
+            el('div', {class: 'info-value'}, `${u.lifetime_sum} тг`)
+          ]),
+          el('div', {class: 'info-card'}, [
+            el('div', {class: 'info-label'}, 'Текущий баланс'),
+            el('div', {class: 'info-value'}, `${u.balance} тг`)
+          ]),
+          el('div', {class: 'info-card', style: 'grid-column: 1 / -1'}, [
+            el('div', {class: 'info-label'}, 'Полученные подарки'),
+            el('div', {class: 'info-value'}, (u.gifts_got||[]).length ? u.gifts_got.join(', ') : '—')
+          ])
+        ])
+      );
+
+      // чеки
+      const bills = await api('bills_list',{phone},'GET');
+      const cont = $('#bills-list');
+      cont.innerHTML='';
+      if(!bills.ok || !bills.bills.length){
+        cont.innerHTML='<div class="card-subtitle">Чеки пока не добавлены</div>';
+        return;
+      }
+      const tbl = el('table',{},[
+        el('thead',{},[el('tr',{},[
+          el('th',{html:'Дата'}), el('th',{html:'Телефон'}), el('th',{html:'Сумма'})
+        ])])
+      ]);
+      const tb = el('tbody');
+      bills.bills.forEach(b=>{
+        tb.append(el('tr',{},[
+          el('td',{html:b.date}),
+          el('td',{html:b.phone}),
+          el('td',{html:`${b.bill} тг`})
+        ]));
+      });
+      tbl.append(tb);
+      cont.append(tbl);
+    }
+
+    $('#btn-add-bill').onclick = async ()=>{
+      if(!currentAdminPhone) return alert('Сначала выберите клиента в таблице');
+      const bill = parseFloat($('#bill-sum').value);
+      if(isNaN(bill)) return alert('Введите корректную сумму чека');
+      const r = await api('bills_add',{phone:currentAdminPhone,bill});
+      if(!r.ok) return alert(r.error||'Ошибка добавления чека');
+      $('#bill-sum').value='';
+      await selectClient(currentAdminPhone);
+      await refreshDashboard();
+    };
+
+    /* ========= ADMIN: gifts ========= */
+    async function refreshGiftsAdmin(){
+      const r = await api('gifts_list',{},'GET');
+      if(!r.ok) return;
+      const cont = $('#gifts-admin');
+      cont.innerHTML='';
+      if(!r.gifts.length){
+        cont.innerHTML='<div class="card-subtitle">Подарков пока нет</div>';
+        return;
+      }
+      r.gifts.forEach(g=>{
+        const card = el('div',{class:'gift-card'},[
+          el('img',{class:'gift-image',src:g.photo||'https://via.placeholder.com/300x160?text=Подарок',alt:g.name}),
+          el('div',{class:'gift-content'},[
+            el('div',{class:'gift-title',html:g.name}),
+            el('div',{class:'gift-price',html:`Цена: ${g.price} тг`}),
+            el('div',{style:'display:flex;gap:8px;margin-top:12px;'},[
+              el('button',{class:'btn btn-outline btn-sm'},[
+                el('i',{class:'fas fa-edit'}), 'Изменить'
+              ]),
+              el('button',{class:'btn btn-danger btn-sm'},[
+                el('i',{class:'fas fa-trash'}), 'Удалить'
+              ])
+            ])
+          ])
+        ]);
+
+        // Изменить
+        card.querySelectorAll('button')[0].onclick = async ()=>{
+          const np = prompt('Новая цена (пусто — без изменения):', g.price);
+          const ph = prompt('URL фото (пусто — без изменения):', g.photo || '');
+          const body = {name:g.name};
+          if(np!==null && np!=='') body.price = Number(np);
+          if(ph!==null && ph!=='') body.photo = ph;
+          const r2 = await api('gifts_update',body);
+          if(!r2.ok) return alert(r2.error||'Ошибка обновления');
+          refreshGiftsAdmin();
+        };
+
+        // Удалить
+        card.querySelectorAll('button')[1].onclick = async ()=>{
+          if(!confirm(`Удалить подарок «${g.name}»?`)) return;
+          const r3 = await api('gifts_delete',{name:g.name});
+          if(!r3.ok) return alert(r3.error||'Ошибка удаления');
+          refreshGiftsAdmin();
+        };
+
+        cont.append(card);
+      });
+    }
+
+    $('#btn-g-create').onclick = async ()=>{
+      const name = $('#g-name').value.trim();
+      const price = parseInt($('#g-price').value,10);
+      const photo = $('#g-photo').value.trim();
+      if(!name) return alert('Название обязательно');
+      const r = await api('gifts_create',{name,price:isNaN(price)?0:price,photo});
+      if(!r.ok) return alert(r.error||'Ошибка создания подарка');
+      $('#g-name').value='';$('#g-price').value='';$('#g-photo').value='';
+      refreshGiftsAdmin();
+    };
+
+    $('#btn-redeem-admin').onclick = async ()=>{
+      const phone = normPhone($('#r-phone').value);
+      const giftName = $('#r-gift').value.trim();
+      if(!phone || !giftName) return alert('Телефон и название подарка обязательны');
+      if(!confirm(`Выдать подарок «${giftName}» клиенту ${phone}? Баланс обнулится.`)) return;
+      const r = await api('redeem',{phone,giftName,actor:'admin'});
+      if(!r.ok) return alert(r.error||'Ошибка выдачи подарка');
+      alert('Подарок успешно выдан');
+      if(currentAdminPhone === phone) selectClient(phone);
+      refreshGiftsAdmin();
+      refreshDashboard();
+    };
+
+    /* ========= ADMIN: analytics ========= */
+    $('#btn-analytics').onclick = async ()=>{
+      const r = await api('analytics_rebuild',{},'POST');
+      if(!r.ok) return alert(r.error||'Ошибка пересчета аналитики');
+      alert('Аналитика успешно пересчитана');
+      renderAnalytics();
+    };
+
+    async function renderAnalytics(){
+      const r = await api('users_list',{},'GET');
+      if(!r.ok) return;
+      const rows = [];
+      let total = 0;
+
+      for(const u of r.users){
+        const p = await api('users_me',{phone:u.phone});
+        if(p.ok){
+          rows.push({
+            name:u.name,
+            phone:u.phone,
+            sum:p.user.lifetime_sum,
+            got:(p.user.gifts_got||[]).join(', ')
+          });
+          total += Number(p.user.lifetime_sum||0);
+        }
+      }
+
+      // KPI
+      const kpiBox = $('#kpi');
+      kpiBox.innerHTML='';
+      kpiBox.append(
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon primary'}, el('i',{class:'fas fa-users'})),
+          el('div',{class:'kpi-label'},'Всего клиентов'),
+          el('div',{class:'kpi-value'},String(rows.length))
+        ]),
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon success'}, el('i',{class:'fas fa-money-bill-wave'})),
+          el('div',{class:'kpi-label'},'Суммарный оборот'),
+          el('div',{class:'kpi-value'},`${total.toLocaleString('ru-RU')} тг`)
+        ]),
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon warning'}, el('i',{class:'fas fa-gift'})),
+          el('div',{class:'kpi-label'},'Средний чек на клиента'),
+          el('div',{class:'kpi-value'},`${rows.length ? Math.round(total/rows.length).toLocaleString('ru-RU') : '0'} тг`)
+        ])
+      );
+
+      const cont = $('#analytics-table');
+      cont.innerHTML='';
+      if(!rows.length){
+        cont.innerHTML='<div class="card-subtitle">Пока нет данных по клиентам</div>';
+        return;
+      }
+      const tbl = el('table',{},[
+        el('thead',{},[el('tr',{},[
+          el('th',{html:'Имя'}),
+          el('th',{html:'Телефон'}),
+          el('th',{html:'Сумма чеков'}),
+          el('th',{html:'Полученные подарки'})
+        ])])
+      ]);
+      const tb = el('tbody');
+      rows.forEach(row=>{
+        tb.append(el('tr',{},[
+          el('td',{html:row.name}),
+          el('td',{html:row.phone}),
+          el('td',{html:`${row.sum} тг`}),
+          el('td',{html:row.got || '—'})
+        ]));
+      });
+      tbl.append(tb);
+      cont.append(tbl);
+    }
+
+    async function doExport(kind){
+      const r = await api('export_csv',{kind},'GET');
+      if(!r.ok) return alert(r.error||'Ошибка экспорта');
+      download(`${kind}.csv`, r.csv);
+    }
+    $('#btn-export-users').onclick  = ()=> doExport('users');
+    $('#btn-export-bills').onclick  = ()=> doExport('bills');
+    $('#btn-export-redeem').onclick = ()=> doExport('redeem_log');
+
+    /* ========= ADMIN: dashboard summary ========= */
+    async function refreshDashboard(){
+      const r = await api('users_list',{},'GET');
+      if(!r.ok) return;
+      let clients = r.users.length;
+      let total = 0;
+      let giftsCount = 0;
+
+      for(const u of r.users){
+        const p = await api('users_me',{phone:u.phone});
+        if(p.ok){
+          total += Number(p.user.lifetime_sum||0);
+          giftsCount += (p.user.gifts_got||[]).length;
+        }
+      }
+
+      const kpis = $('#dash-kpis');
+      kpis.innerHTML='';
+      kpis.append(
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon primary'}, el('i',{class:'fas fa-users'})),
+          el('div',{class:'kpi-label'},'Клиентов в базе'),
+          el('div',{class:'kpi-value'},String(clients))
+        ]),
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon success'}, el('i',{class:'fas fa-money-bill-wave'})),
+          el('div',{class:'kpi-label'},'Оборот по всем чекам'),
+          el('div',{class:'kpi-value'},`${total.toLocaleString('ru-RU')} тг`)
+        ]),
+        el('div',{class:'kpi-card'},[
+          el('div',{class:'kpi-icon warning'}, el('i',{class:'fas fa-gift'})),
+          el('div',{class:'kpi-label'},'Выдано подарков'),
+          el('div',{class:'kpi-value'},String(giftsCount))
+        ])
+      );
+    }
+
+    /* ========= Boot ========= */
+    (async function init(){
+      try{ await api('init',{},'POST'); }catch(e){}
+      showMainPage('client');
+    })();
+  </script>
+</body>
+</html>

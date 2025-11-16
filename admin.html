@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SyBaga — админ-панель</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="app app--admin" data-app="admin">
+<header class="topbar">
+  <div class="topbar__left">
+    <div class="logo">
+      <div class="logo__mark">Sy</div>
+      <div class="logo__text">
+        <div class="logo__title">SyBaga</div>
+        <div class="logo__subtitle">Бонусная платформа ресторана</div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar__right">
+    <a href="client.html" class="top-link">Кабинет гостя</a>
+  </div>
+</header>
+
+<main class="shell">
+  <!-- ЛОГИН АДМИНА -->
+  <section id="admin-login-card" class="card card--login">
+    <header class="card__header">
+      <div>
+        <h1 class="card__title">Вход в админ-панель</h1>
+        <p class="card__subtitle">Доступ только для менеджеров и владельцев ресторана.</p>
+      </div>
+      <span class="badge badge--soft">Закрытый доступ</span>
+    </header>
+    <div class="grid grid--2 gap-lg">
+      <label class="field">
+        <span class="field__label">Логин</span>
+        <input id="admin-login" class="field__input" type="text" value="admin">
+      </label>
+      <label class="field">
+        <span class="field__label">Пароль</span>
+        <input id="admin-password" class="field__input" type="password" value="admin123">
+      </label>
+    </div>
+    <div class="card__footer">
+      <button id="admin-login-btn" class="btn btn--primary">Войти</button>
+      <div id="admin-login-toast" class="toast"></div>
+    </div>
+  </section>
+
+  <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+  <section id="admin-app" class="layout hidden">
+    <!-- Сайдбар -->
+    <aside class="sidebar">
+      <div class="sidebar__section">
+        <div class="sidebar__label">Разделы</div>
+        <nav class="sidebar__nav">
+          <button class="sidebar__link sidebar__link--active" data-section="dashboard">Дашборд</button>
+          <button class="sidebar__link" data-section="clients">Клиенты</button>
+          <button class="sidebar__link" data-section="gifts">Подарки</button>
+          <button class="sidebar__link" data-section="analytics">Аналитика</button>
+        </nav>
+      </div>
+      <div class="sidebar__section sidebar__section--bottom">
+        <div class="sidebar__label">Экспорт</div>
+        <div class="sidebar__buttons">
+          <button id="export-users-btn" class="btn btn--ghost btn--sm">users.csv</button>
+          <button id="export-bills-btn" class="btn btn--ghost btn--sm">bills.csv</button>
+          <button id="export-gifts-btn" class="btn btn--ghost btn--sm">gifts.csv</button>
+          <button id="export-redeem-btn" class="btn btn--ghost btn--sm">redeem_log.csv</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Контент -->
+    <section class="layout__content">
+      <!-- Дашборд -->
+      <section class="admin-section" data-section="dashboard">
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h2 class="card__title">Общий дашборд</h2>
+              <p class="card__subtitle">Краткая сводка по базе клиентов и обороту ресторана.</p>
+            </div>
+          </header>
+          <div id="dash-stats" class="stat-grid"></div>
+        </section>
+
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h3 class="card__title card__title--sm">Быстрые действия</h3>
+              <p class="card__subtitle">Частые операции для администратора.</p>
+            </div>
+          </header>
+          <div class="quick-actions">
+            <button class="btn btn--primary" data-jump="clients">Перейти в «Клиенты»</button>
+            <button class="btn btn--ghost" data-jump="gifts">Открыть «Подарки»</button>
+            <button class="btn btn--ghost" data-jump="analytics">Посмотреть аналитику</button>
+          </div>
+        </section>
+      </section>
+
+      <!-- Клиенты -->
+      <section class="admin-section hidden" data-section="clients">
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h2 class="card__title">Клиенты</h2>
+              <p class="card__subtitle">Создание клиентов, поиск и подробный профиль с чеками.</p>
+            </div>
+          </header>
+
+          <div class="grid grid--2 gap-xl">
+            <!-- Создание клиента -->
+            <div>
+              <h3 class="section-title">Новый клиент</h3>
+              <div class="section-subtitle">Добавьте гостя по имени и номеру телефона.</div>
+              <div class="form">
+                <label class="field">
+                  <span class="field__label">Имя</span>
+                  <input id="client-create-name" class="field__input" type="text" placeholder="Например: Айжан К.">
+                </label>
+                <label class="field">
+                  <span class="field__label">Телефон</span>
+                  <input id="client-create-phone" class="field__input" type="tel" placeholder="+7 777 000 00 00">
+                </label>
+                <button id="client-create-btn" class="btn btn--primary">Создать клиента</button>
+              </div>
+            </div>
+
+            <!-- Поиск клиентов -->
+            <div>
+              <h3 class="section-title">Поиск по базе</h3>
+              <div class="section-subtitle">Быстро найдите гостя по имени или номеру.</div>
+              <label class="field">
+                <span class="field__label">Поиск</span>
+                <input id="client-search" class="field__input" type="text" placeholder="Имя или телефон">
+              </label>
+              <div id="client-list" class="list-box"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Профиль клиента -->
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h3 class="card__title card__title--sm">Профиль клиента</h3>
+              <p class="card__subtitle">Оборот, текущий баланс и подарки.</p>
+            </div>
+            <span id="client-current-phone" class="badge badge--outline">Клиент не выбран</span>
+          </header>
+          <div id="client-detail-summary" class="stat-grid"></div>
+        </section>
+
+        <!-- Чеки клиента -->
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h3 class="card__title card__title--sm">Чеки клиента</h3>
+              <p class="card__subtitle">Добавляйте новые чеки и смотрите историю.</p>
+            </div>
+          </header>
+          <div class="grid grid--2 gap-lg">
+            <div>
+              <h4 class="section-title">Добавить чек</h4>
+              <div class="section-subtitle">Телефон берётся из выбранного клиента.</div>
+              <div class="form-inline">
+                <label class="field field--inline">
+                  <span class="field__label">Сумма, тг</span>
+                  <input id="client-bill-amount" class="field__input" type="number" min="0" step="1" placeholder="15000">
+                </label>
+                <button id="client-bill-add-btn" class="btn btn--primary btn--inline">Добавить</button>
+              </div>
+            </div>
+            <div>
+              <h4 class="section-title">История чеков</h4>
+              <div class="table-wrap table-wrap--compact">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Дата</th>
+                    <th>Сумма, тг</th>
+                  </tr>
+                  </thead>
+                  <tbody id="client-detail-bills"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Подарки -->
+      <section class="admin-section hidden" data-section="gifts">
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h2 class="card__title">Подарки</h2>
+              <p class="card__subtitle">Каталог подарков и ручная выдача гостям.</p>
+            </div>
+          </header>
+          <div class="grid grid--2 gap-xl">
+            <!-- Новый подарок -->
+            <div>
+              <h3 class="section-title">Новый подарок</h3>
+              <div class="section-subtitle">Укажите название, минимальную сумму и картинку.</div>
+              <div class="form">
+                <label class="field">
+                  <span class="field__label">Название</span>
+                  <input id="gift-name" class="field__input" type="text" placeholder="Например: Десерт">
+                </label>
+                <label class="field">
+                  <span class="field__label">Минимальная сумма чеков, тг</span>
+                  <input id="gift-price" class="field__input" type="number" min="0" step="1">
+                </label>
+                <label class="field">
+                  <span class="field__label">Фото (URL)</span>
+                  <input id="gift-photo" class="field__input" type="url" placeholder="https://...">
+                </label>
+                <button id="gift-create-btn" class="btn btn--primary">Создать подарок</button>
+              </div>
+            </div>
+
+            <!-- Ручная выдача -->
+            <div>
+              <h3 class="section-title">Выдать подарок вручную</h3>
+              <div class="section-subtitle">Используйте, если клиент уже накопил сумму.</div>
+              <div class="form">
+                <label class="field">
+                  <span class="field__label">Телефон клиента</span>
+                  <input id="redeem-phone" class="field__input" type="tel" placeholder="+7...">
+                </label>
+                <label class="field">
+                  <span class="field__label">Название подарка</span>
+                  <input id="redeem-gift-name" class="field__input" type="text" placeholder="Точное название из списка">
+                </label>
+                <button id="redeem-gift-btn" class="btn btn--danger">Выдать подарок</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Список подарков -->
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h3 class="card__title card__title--sm">Текущий каталог подарков</h3>
+              <p class="card__subtitle">Редактируйте или удаляйте существующие подарки.</p>
+            </div>
+          </header>
+          <div id="gift-list-admin" class="gift-grid"></div>
+        </section>
+      </section>
+
+      <!-- Аналитика -->
+      <section class="admin-section hidden" data-section="analytics">
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h2 class="card__title">Аналитика</h2>
+              <p class="card__subtitle">Сводка по клиентам, обороту и подаркам.</p>
+            </div>
+          </header>
+          <div class="analytics-actions">
+            <button id="analytics-rebuild-btn" class="btn btn--primary">Пересчитать лист analytics</button>
+          </div>
+          <div id="analytics-stats" class="stat-grid"></div>
+        </section>
+
+        <section class="card">
+          <header class="card__header">
+            <div>
+              <h3 class="card__title card__title--sm">Клиенты и суммы</h3>
+              <p class="card__subtitle">Подробный список по каждому клиенту.</p>
+            </div>
+          </header>
+          <div id="analytics-table-container" class="table-wrap table-wrap--tall"></div>
+        </section>
+      </section>
+    </section>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

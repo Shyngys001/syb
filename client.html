@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SyBaga — кабинет гостя</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="app app--client" data-app="client">
+<header class="topbar">
+  <div class="topbar__left">
+    <div class="logo">
+      <div class="logo__mark">Sy</div>
+      <div class="logo__text">
+        <div class="logo__title">SyBaga</div>
+        <div class="logo__subtitle">Бонусная программа ресторана</div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar__right">
+    <a href="admin.html" class="top-link">Вход для менеджеров</a>
+  </div>
+</header>
+
+<main class="shell shell--narrow">
+  <!-- Вход -->
+  <section class="card">
+    <header class="card__header">
+      <div>
+        <h1 class="card__title">Кабинет гостя</h1>
+        <p class="card__subtitle">
+          Введите номер телефона, который вы оставляли в ресторане.
+        </p>
+      </div>
+      <span class="badge badge--soft">Только просмотр</span>
+    </header>
+
+    <div class="form">
+      <label class="field">
+        <span class="field__label">Номер телефона</span>
+        <input id="client-phone" type="tel" class="field__input" placeholder="+7 777 000 00 00">
+      </label>
+      <button id="client-login-btn" class="btn btn--primary">
+        Войти в кабинет
+      </button>
+      <div id="client-login-toast" class="toast"></div>
+    </div>
+  </section>
+
+  <!-- Основной контент после входа -->
+  <section id="client-main" class="grid grid--2 gap-xl hidden">
+    <!-- Статус гостя -->
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title">Мой статус</h2>
+          <p class="card__subtitle">Общий оборот, текущий бонус и полученные подарки.</p>
+        </div>
+      </header>
+      <div id="client-summary" class="stat-grid"></div>
+    </section>
+
+    <!-- Прогресс по подаркам -->
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title">Путь к следующему подарку</h2>
+          <p class="card__subtitle">Сколько осталось накопить до ближайшего подарка.</p>
+        </div>
+      </header>
+      <div id="client-progress" class="progress-box">
+        <!-- заполняется из JS -->
+      </div>
+    </section>
+
+    <!-- История чеков -->
+    <section class="card card--full">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title">История чеков</h2>
+          <p class="card__subtitle">Все чеки, которые вы оставляли в ресторане.</p>
+        </div>
+      </header>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Дата</th>
+            <th>Сумма, тг</th>
+          </tr>
+          </thead>
+          <tbody id="client-bills-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Доступные подарки -->
+    <section class="card card--full">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title">Доступные подарки</h2>
+          <p class="card__subtitle">Вы можете получить подарок сразу в ресторане, показав этот экран.</p>
+        </div>
+      </header>
+      <div id="client-gifts-grid" class="gift-grid"></div>
+    </section>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
