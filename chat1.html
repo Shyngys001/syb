@@ -47,6 +47,7 @@
       line-height: 1.5;
     }
 
+    /* Layout */
     .app-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -117,6 +118,7 @@
       display: block;
     }
 
+    /* Cards */
     .card {
       background: var(--bg-card);
       border-radius: var(--radius-lg);
@@ -145,6 +147,7 @@
       margin-top: 4px;
     }
 
+    /* Forms */
     .form-group {
       margin-bottom: 16px;
     }
@@ -173,6 +176,7 @@
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
     }
 
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -187,17 +191,12 @@
       gap: 8px;
     }
 
-    .btn[disabled] {
-      opacity: .6;
-      cursor: default;
-    }
-
     .btn-primary {
       background: var(--primary);
       color: white;
     }
 
-    .btn-primary:hover:not([disabled]) {
+    .btn-primary:hover {
       background: var(--primary-dark);
     }
 
@@ -206,7 +205,7 @@
       color: white;
     }
 
-    .btn-secondary:hover:not([disabled]) {
+    .btn-secondary:hover {
       background: var(--secondary-dark);
     }
 
@@ -216,7 +215,7 @@
       border: 1px solid var(--border);
     }
 
-    .btn-outline:hover:not([disabled]) {
+    .btn-outline:hover {
       background: var(--bg);
     }
 
@@ -225,7 +224,7 @@
       color: white;
     }
 
-    .btn-danger:hover:not([disabled]) {
+    .btn-danger:hover {
       background: var(--danger-dark);
     }
 
@@ -234,6 +233,7 @@
       font-size: 13px;
     }
 
+    /* Toast */
     .toast {
       margin-top: 12px;
       padding: 10px 14px;
@@ -256,6 +256,7 @@
       border: 1px solid #fecaca;
     }
 
+    /* Status badges */
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -281,6 +282,7 @@
       color: var(--accent);
     }
 
+    /* Grid */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -305,6 +307,7 @@
       }
     }
 
+    /* User info cards */
     .user-info-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -330,6 +333,7 @@
       color: var(--text);
     }
 
+    /* Gift cards */
     .gift-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -342,7 +346,6 @@
       overflow: hidden;
       transition: all 0.3s;
       background: var(--bg-card);
-      position: relative;
     }
 
     .gift-card:hover {
@@ -370,27 +373,10 @@
     .gift-price {
       font-size: 14px;
       color: var(--text-light);
-      margin-bottom: 4px;
-    }
-
-    .gift-left {
-      font-size: 12px;
-      color: var(--text-lighter);
       margin-bottom: 12px;
     }
 
-    .gift-out {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #fee2e2;
-      color: #b91c1c;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
+    /* Admin Layout */
     .admin-layout {
       display: grid;
       grid-template-columns: 240px 1fr;
@@ -459,6 +445,7 @@
       color: white;
     }
 
+    /* KPI Cards */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -510,6 +497,7 @@
       color: var(--text);
     }
 
+    /* Tables */
     .table-container {
       overflow-x: auto;
       border-radius: var(--radius);
@@ -543,6 +531,7 @@
       background: var(--bg);
     }
 
+    /* Accordion */
     .accordion {
       border-radius: var(--radius);
       border: 1px solid var(--border);
@@ -582,12 +571,14 @@
       display: block;
     }
 
+    /* Divider */
     .divider {
       height: 1px;
       background: var(--border);
       margin: 24px 0;
     }
 
+    /* Section title */
     .section-title {
       font-size: 18px;
       font-weight: 600;
@@ -646,7 +637,7 @@
       </div>
     </header>
 
-    <!-- CLIENT -->
+    <!-- CLIENT SECTION -->
     <section class="page active" id="page-client">
       <div class="card">
         <div class="card-header">
@@ -687,7 +678,7 @@
       </div>
     </section>
 
-    <!-- ADMIN -->
+    <!-- ADMIN SECTION -->
     <section class="page" id="page-admin">
       <div class="card" id="admin-login-card">
         <div class="card-header">
@@ -765,7 +756,9 @@
                 Обновить
               </button>
             </div>
-            <div class="kpi-grid" id="dash-kpis"></div>
+            <div class="kpi-grid" id="dash-kpis">
+              <!-- заполняется из JS -->
+            </div>
             <div class="divider"></div>
             <div style="display:flex;gap:12px;flex-wrap:wrap;">
               <button class="btn btn-primary" id="btn-go-clients">
@@ -868,16 +861,11 @@
                   <label class="form-label">Фото (URL или data URI)</label>
                   <input type="text" class="form-input" id="g-photo" placeholder="https://... или data:image/...">
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Количество (left)</label>
-                  <input type="number" class="form-input" id="g-left" placeholder="Например, 10">
-                </div>
                 <button class="btn btn-primary" id="btn-g-create">
                   <i class="fas fa-plus-circle"></i>
                   Сохранить подарок
                 </button>
               </div>
-
               <div>
                 <h3 class="section-title">Выдать подарок</h3>
                 <div class="form-group">
@@ -886,18 +874,13 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">Название подарка</label>
-                  <select class="form-input" id="r-gift-select">
-                    <option value="">Сначала введите телефон клиента</option>
-                  </select>
+                  <input type="text" class="form-input" id="r-gift" placeholder="Тот же текст, что в названии">
                 </div>
                 <button class="btn btn-danger" id="btn-redeem-admin">
                   <i class="fas fa-gift"></i>
                   Выдать подарок клиенту
                 </button>
-                <p class="card-subtitle">
-                  В списке появляются только те подарки, у которых есть остаток и баланс клиента
-                  не меньше цены подарка.
-                </p>
+                <p class="card-subtitle">Бонусы списываются по цене подарка</p>
               </div>
             </div>
 
@@ -948,9 +931,11 @@
   </div>
 
   <script>
-    /* CONFIG: замените URL на свой Apps Script */
-    const API_BASE = 'https://script.google.com/macros/s/AKfycbwNK9IogeeAinu3ZfF4N0GytcOsR9L_iUSnKB0P7nQwyi42VWOf-OqFUsLg5qRJG7Gi/exec';
+    /* ========= CONFIG ========= */
+    // ЗАМЕНИ на свой deployed Apps Script URL
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbx-20T9Op_Q5gSyD3ZluDikE5Xg62aLZnTmdsVHTEj-nzXXrl7EY1yA62nAf60IS6Wl/exec';
 
+    /* ========= Helpers ========= */
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
 
@@ -1019,10 +1004,12 @@
       URL.revokeObjectURL(url);
     }
 
+    /* ========= GLOBAL STATE ========= */
     let CURRENT_USER_PHONE = null;
     let ADMIN_LOGGED = false;
     let ADMIN_CURRENT_PHONE = null;
 
+    /* ========= UI: tabs & accordion ========= */
     function initTabs(){
       const tabClient = $('#tab-client');
       const tabAdmin = $('#tab-admin');
@@ -1083,7 +1070,7 @@
       });
     }
 
-    /* CLIENT */
+    /* ========= CLIENT LOGIC ========= */
     async function loadUserProfile(phone){
       const res = await api('users_me',{phone});
       const u = res.user;
@@ -1128,16 +1115,8 @@
       }
 
       gifts.forEach(g=>{
-        const left = Number(g.left || 0);
-        const canByBalance = prof.balance >= Number(g.price||0);
-        const outOfStock = left <= 0;
-        const can = canByBalance && !outOfStock;
-
+        const can = prof.balance >= Number(g.price||0);
         const card = el('div',{class:'gift-card'});
-        if(outOfStock){
-          card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
-        }
-
         const img = el('img',{
           class:'gift-image',
           src: g.photo || 'https://via.placeholder.com/400x300?text=Gift'
@@ -1156,7 +1135,7 @@
         }
 
         btn.addEventListener('click', async ()=>{
-          if(!CURRENT_USER_PHONE || !can) return;
+          if(!CURRENT_USER_PHONE) return;
           try{
             await api('redeem',{phone:CURRENT_USER_PHONE,giftName:g.name,actor:'self'});
             toast($('#u-toast'),'Подарок выдан, баланс обновлен',true);
@@ -1170,7 +1149,6 @@
         const content = el('div',{class:'gift-content'},[
           el('div',{class:'gift-title',html:g.name}),
           el('div',{class:'gift-price',html:`Минимальный чек: ${formatMoney(g.price)}`}),
-          el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
           el('div',{class:'card-subtitle',html:`Уже получили: ${g.user_got ? g.user_got.split(',').filter(Boolean).length : 0}`}),
           el('div',{style:'margin-top:12px;'},[btn])
         ]);
@@ -1189,6 +1167,7 @@
           return;
         }
         try{
+          // Проверим, что клиент есть и сразу вытянем профиль
           await api('auth_user',{phone});
           CURRENT_USER_PHONE = phone;
           await loadUserProfile(phone);
@@ -1200,7 +1179,7 @@
       });
     }
 
-    /* ADMIN AUTH */
+    /* ========= ADMIN: AUTH ========= */
     function initAdminAuth(){
       $('#btn-adm-login').addEventListener('click', async ()=>{
         const login = $('#adm-login').value.trim();
@@ -1218,7 +1197,7 @@
       });
     }
 
-    /* DASHBOARD + ANALYTICS */
+    /* ========= ADMIN: DASHBOARD / ANALYTICS ========= */
     function parseAnalyticsCSV(csv){
       const lines = csv.split(/\r?\n/).filter(l=>l.trim().length>0);
       if(lines.length<=1) return [];
@@ -1239,7 +1218,8 @@
 
     async function loadDashboard(){
       try{
-        await api('analytics_rebuild',{});
+        const rebuild = await api('analytics_rebuild',{});
+        // analytics sheet already built
         const a = await api('export_csv',{kind:'analytics'});
         const rows = parseAnalyticsCSV(a.csv);
         const totalClients = rows.length;
@@ -1395,7 +1375,7 @@
       $('#btn-refresh-dashboard').addEventListener('click', loadDashboard);
     }
 
-    /* ADMIN CLIENTS */
+    /* ========= ADMIN: CLIENTS ========= */
     async function loadUsersList(query){
       try{
         const res = await api('users_list',{query:query || ''});
@@ -1543,7 +1523,7 @@
       });
     }
 
-    /* ADMIN GIFTS */
+    /* ========= ADMIN: GIFTS ========= */
     async function loadGiftsAdmin(){
       try{
         const res = await api('gifts_list',{});
@@ -1555,11 +1535,7 @@
           return;
         }
         gifts.forEach(g=>{
-          const left = Number(g.left || 0);
           const card = el('div',{class:'gift-card'});
-          if(left<=0){
-            card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
-          }
           const img = el('img',{
             class:'gift-image',
             src: g.photo || 'https://via.placeholder.com/400x300?text=Gift'
@@ -1578,7 +1554,6 @@
             $('#g-name').value = g.name;
             $('#g-price').value = g.price || '';
             $('#g-photo').value = g.photo || '';
-            $('#g-left').value = left || '';
           });
 
           btnDel.addEventListener('click', async ()=>{
@@ -1595,7 +1570,6 @@
           const content = el('div',{class:'gift-content'},[
             el('div',{class:'gift-title',html:g.name}),
             el('div',{class:'gift-price',html:`Цена: ${formatMoney(g.price)}`}),
-            el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
             el('div',{class:'card-subtitle',html:`Выдано: ${gotCount} клиентам`}),
             el('div',{style:'display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;'},[
               btnEdit,
@@ -1616,17 +1590,17 @@
         const name = $('#g-name').value.trim();
         const price = Number($('#g-price').value || 0);
         const photo = $('#g-photo').value.trim();
-        const left = Number($('#g-left').value || 0);
         if(!name){
           toast($('#a-toast'),'Введите название подарка',false);
           return;
         }
         try{
+          // Пытаемся обновить, если нет — создаём
           try{
-            await api('gifts_update',{name,price,photo,left});
+            await api('gifts_update',{name,price,photo});
           }catch(err){
-            if(String(err.message||'').includes('Сыйлық табылмады') || String(err.message||'').includes('не найден')){
-              await api('gifts_create',{name,price,photo,left});
+            if(String(err.message||'').includes('Сыйлық табылмады')){
+              await api('gifts_create',{name,price,photo});
             }else{
               throw err;
             }
@@ -1640,7 +1614,7 @@
 
       $('#btn-redeem-admin').addEventListener('click', async ()=>{
         const phone = normPhone($('#r-phone').value.trim());
-        const giftName = $('#r-gift-select').value;
+        const giftName = $('#r-gift').value.trim();
         if(!phone || !giftName){
           toast($('#a-toast'),'Телефон и подарок обязательны',false);
           return;
@@ -1649,7 +1623,7 @@
           await api('redeem',{phone,giftName,actor:'admin'});
           toast($('#a-toast'),'Подарок выдан клиенту',true);
           $('#r-phone').value='';
-          $('#r-gift-select').innerHTML = '<option value="">Сначала введите телефон клиента</option>';
+          $('#r-gift').value='';
           await loadDashboard();
         }catch(err){
           toast($('#a-toast'),err.message || 'Ошибка выдачи подарка',false);
@@ -1657,49 +1631,7 @@
       });
     }
 
-    async function refreshAdminRedeemOptions(){
-      const phoneRaw = $('#r-phone').value.trim();
-      const phone = normPhone(phoneRaw);
-      const select = $('#r-gift-select');
-      select.innerHTML = '';
-      select.disabled = true;
-
-      if(!phone){
-        select.innerHTML = '<option value="">Сначала введите телефон клиента</option>';
-        return;
-      }
-
-      try{
-        const uRes = await api('users_me',{phone});
-        const user = uRes.user;
-        const gRes = await api('gifts_list',{});
-        const gifts = gRes.gifts || [];
-
-        const available = gifts.filter(g=>{
-          const left = Number(g.left || 0);
-          const price = Number(g.price || 0);
-          return left > 0 && user.balance >= price;
-        });
-
-        if(!available.length){
-          select.innerHTML = '<option value="">Нет подарков, подходящих по остатку и балансу</option>';
-          return;
-        }
-
-        available.forEach(g=>{
-          const opt = document.createElement('option');
-          opt.value = g.name;
-          opt.textContent = `${g.name} — ${formatMoney(g.price)} · осталось ${g.left}`;
-          select.appendChild(opt);
-        });
-        select.disabled = false;
-      }catch(err){
-        select.innerHTML = '<option value="">Ошибка загрузки подарков</option>';
-        toast($('#a-toast'),err.message || 'Ошибка загрузки подарков для выдачи',false);
-      }
-    }
-
-    /* INIT */
+    /* ========= INIT ========= */
     document.addEventListener('DOMContentLoaded', ()=>{
       initTabs();
       initAccordions();
@@ -1709,10 +1641,6 @@
       initAnalyticsButtons();
       initClientsAdmin();
       initGiftsAdmin();
-
-      $('#r-phone').addEventListener('change', refreshAdminRedeemOptions);
-      $('#r-phone').addEventListener('blur', refreshAdminRedeemOptions);
-      $('#r-gift-select').addEventListener('focus', refreshAdminRedeemOptions);
     });
   </script>
 </body>

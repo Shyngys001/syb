@@ -6,286 +6,1231 @@
   <title>SyBaga — админ-панель</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary:#7c3aed;
+      --primary-dark:#6d28d9;
+      --primary-bg:#f5f3ff;
+      --secondary:#10b981;
+      --secondary-dark:#059669;
+      --accent:#f59e0b;
+      --danger:#ef4444;
+      --danger-dark:#dc2626;
+      --text:#1f2937;
+      --text-light:#6b7280;
+      --text-lighter:#9ca3af;
+      --bg:#f9fafb;
+      --bg-card:#ffffff;
+      --border:#e5e7eb;
+      --border-light:#f3f4f6;
+      --shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.06);
+      --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+      --radius:12px;
+      --radius-lg:16px;
+      --radius-xl:20px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+
+    body{
+      min-height:100vh;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .app-container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:0 16px 40px;
+    }
+
+    .app-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:20px 0;
+      margin-bottom:16px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      font-size:24px;
+      color:var(--primary);
+    }
+    .logo-icon{
+      background:var(--primary);
+      color:white;
+      width:40px;height:40px;
+      border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .link-client{
+      font-size:13px;
+      color:var(--text-light);
+    }
+    .link-client a{color:var(--text-light);text-decoration:underline;}
+
+    .card{
+      background:var(--bg-card);
+      border-radius:var(--radius-lg);
+      padding:24px;
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+      margin-bottom:20px;
+    }
+    .card-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:20px;
+    }
+    .card-title{font-size:20px;font-weight:700;}
+    .card-subtitle{font-size:14px;color:var(--text-light);margin-top:4px;}
+
+    .form-group{margin-bottom:16px;}
+    .form-label{display:block;font-size:14px;font-weight:500;margin-bottom:6px;}
+    .form-input{
+      width:100%;padding:12px 16px;
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      font-size:15px;
+      transition:all .2s;
+    }
+    .form-input:focus{
+      outline:none;
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(124,58,237,.1);
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 18px;
+      border-radius:var(--radius);
+      font-size:14px;font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+      border:none;
+      gap:8px;
+    }
+    .btn[disabled]{opacity:.6;cursor:default;}
+    .btn-primary{background:var(--primary);color:white;}
+    .btn-primary:hover:not([disabled]){background:var(--primary-dark);}
+    .btn-secondary{background:var(--secondary);color:white;}
+    .btn-secondary:hover:not([disabled]){background:var(--secondary-dark);}
+    .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}
+    .btn-outline:hover:not([disabled]){background:var(--bg);}
+    .btn-danger{background:var(--danger);color:white;}
+    .btn-danger:hover:not([disabled]){background:var(--danger-dark);}
+    .btn-sm{padding:8px 12px;font-size:13px;}
+
+    .toast{
+      margin-top:12px;
+      padding:10px 14px;
+      border-radius:var(--radius);
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .toast-success{
+      background:#ecfdf5;
+      color:var(--secondary-dark);
+      border:1px solid #a7f3d0;
+    }
+    .toast-error{
+      background:#fef2f2;
+      color:#b91c1c;
+      border:1px solid #fecaca;
+    }
+
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:13px;
+      font-weight:500;
+    }
+    .status-warning{background:#fffbeb;color:var(--accent);}
+
+    .admin-layout{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      gap:24px;
+    }
+    @media(max-width:900px){
+      .admin-layout{grid-template-columns:1fr;}
+    }
+
+    .admin-sidebar{
+      background:var(--bg-card);
+      border-radius:var(--radius-lg);
+      padding:16px 0;
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+      height:fit-content;
+    }
+    .sidebar-section-title{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--text-lighter);
+      margin-bottom:8px;
+      padding:0 20px;
+      font-weight:600;
+    }
+    .nav-list{display:flex;flex-direction:column;}
+    .nav-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 20px;
+      font-size:14px;
+      cursor:pointer;
+      transition:all .2s;
+    }
+    .nav-item span i{margin-right:6px;}
+    .nav-item:hover{background:var(--bg);}
+    .nav-item.active{
+      background:var(--primary-bg);
+      color:var(--primary);
+      border-left:3px solid var(--primary);
+    }
+    .nav-badge{
+      background:var(--bg);
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:11px;
+      color:var(--text-light);
+    }
+    .nav-item.active .nav-badge{background:var(--primary);color:white;}
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:16px;
+    }
+    .kpi-card{
+      background:var(--bg-card);
+      border-radius:var(--radius);
+      padding:18px;
+      border:1px solid var(--border);
+    }
+    .kpi-icon{
+      width:36px;height:36px;
+      border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;
+      margin-bottom:10px;
+    }
+    .kpi-icon.primary{background:var(--primary-bg);color:var(--primary);}
+    .kpi-icon.success{background:#ecfdf5;color:var(--secondary);}
+    .kpi-icon.warning{background:#fffbeb;color:var(--accent);}
+    .kpi-label{font-size:13px;color:var(--text-light);}
+    .kpi-value{font-size:22px;font-weight:700;}
+
+    .section-title{font-size:16px;font-weight:600;margin-bottom:8px;}
+    .section-desc{font-size:13px;color:var(--text-light);margin-bottom:12px;}
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+    @media(max-width:900px){
+      .grid-2{grid-template-columns:1fr;}
+    }
+
+    .divider{height:1px;background:var(--border);margin:20px 0;}
+
+    .table-container{
+      overflow-x:auto;
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+    }
+    table{width:100%;border-collapse:collapse;font-size:14px;}
+    th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+    th{background:var(--bg);font-weight:600;font-size:13px;color:var(--text-light);}
+    tr:last-child td{border-bottom:none;}
+    tr:hover{background:var(--bg);}
+
+    .clickable-row{
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      margin-bottom:6px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .clickable-row:hover{background:var(--bg);}
+    .clickable-row.active{
+      border-color:var(--primary);
+      background:var(--primary-bg);
+      color:var(--primary);
+    }
+    .pill{
+      display:inline-flex;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      background:var(--bg);
+      color:var(--text-light);
+    }
+
+    .gift-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:16px;
+    }
+    .gift-card{
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      overflow:hidden;
+      background:var(--bg-card);
+      position:relative;
+      transition:all .3s;
+    }
+    .gift-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+    .gift-image{
+      width:100%;height:160px;
+      object-fit:cover;
+      background:#e5e7eb;
+    }
+    .gift-content{padding:16px;}
+    .gift-title{font-size:16px;font-weight:600;margin-bottom:6px;}
+    .gift-price{font-size:14px;color:var(--text-light);margin-bottom:4px;}
+    .gift-left{font-size:12px;color:var(--text-lighter);margin-bottom:8px;}
+    .gift-out{
+      position:absolute;
+      top:10px;right:10px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#fee2e2;
+      color:#b91c1c;
+      font-size:11px;
+      font-weight:600;
+    }
+  </style>
 </head>
-<body class="app app--admin" data-app="admin">
-<header class="topbar">
-  <div class="topbar__left">
-    <div class="logo">
-      <div class="logo__mark">Sy</div>
-      <div class="logo__text">
-        <div class="logo__title">SyBaga</div>
-        <div class="logo__subtitle">Бонусная платформа ресторана</div>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-gift"></i></div>
+        <span>SyBaga · Админ-панель</span>
       </div>
-    </div>
-  </div>
-  <div class="topbar__right">
-    <a href="client.html" class="top-link">Кабинет гостя</a>
-  </div>
-</header>
-
-<main class="shell">
-  <!-- ЛОГИН АДМИНА -->
-  <section id="admin-login-card" class="card card--login">
-    <header class="card__header">
-      <div>
-        <h1 class="card__title">Вход в админ-панель</h1>
-        <p class="card__subtitle">Доступ только для менеджеров и владельцев ресторана.</p>
+      <div class="link-client">
+        <a href="cl.html">Перейти в кабинет гостя</a>
       </div>
-      <span class="badge badge--soft">Закрытый доступ</span>
     </header>
-    <div class="grid grid--2 gap-lg">
-      <label class="field">
-        <span class="field__label">Логин</span>
-        <input id="admin-login" class="field__input" type="text" value="admin">
-      </label>
-      <label class="field">
-        <span class="field__label">Пароль</span>
-        <input id="admin-password" class="field__input" type="password" value="admin123">
-      </label>
-    </div>
-    <div class="card__footer">
-      <button id="admin-login-btn" class="btn btn--primary">Войти</button>
-      <div id="admin-login-toast" class="toast"></div>
-    </div>
-  </section>
 
-  <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
-  <section id="admin-app" class="layout hidden">
-    <!-- Сайдбар -->
-    <aside class="sidebar">
-      <div class="sidebar__section">
-        <div class="sidebar__label">Разделы</div>
-        <nav class="sidebar__nav">
-          <button class="sidebar__link sidebar__link--active" data-section="dashboard">Дашборд</button>
-          <button class="sidebar__link" data-section="clients">Клиенты</button>
-          <button class="sidebar__link" data-section="gifts">Подарки</button>
-          <button class="sidebar__link" data-section="analytics">Аналитика</button>
-        </nav>
-      </div>
-      <div class="sidebar__section sidebar__section--bottom">
-        <div class="sidebar__label">Экспорт</div>
-        <div class="sidebar__buttons">
-          <button id="export-users-btn" class="btn btn--ghost btn--sm">users.csv</button>
-          <button id="export-bills-btn" class="btn btn--ghost btn--sm">bills.csv</button>
-          <button id="export-gifts-btn" class="btn btn--ghost btn--sm">gifts.csv</button>
-          <button id="export-redeem-btn" class="btn btn--ghost btn--sm">redeem_log.csv</button>
+    <!-- Блок авторизации администратора -->
+    <section class="card" id="admin-login-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Вход для сотрудников</h2>
+          <p class="card-subtitle">Используйте служебный логин и пароль.</p>
+        </div>
+        <div class="status-badge status-warning">
+          <i class="fas fa-lock"></i> Доступ закрыт
         </div>
       </div>
-    </aside>
-
-    <!-- Контент -->
-    <section class="layout__content">
-      <!-- Дашборд -->
-      <section class="admin-section" data-section="dashboard">
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h2 class="card__title">Общий дашборд</h2>
-              <p class="card__subtitle">Краткая сводка по базе клиентов и обороту ресторана.</p>
-            </div>
-          </header>
-          <div id="dash-stats" class="stat-grid"></div>
-        </section>
-
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h3 class="card__title card__title--sm">Быстрые действия</h3>
-              <p class="card__subtitle">Частые операции для администратора.</p>
-            </div>
-          </header>
-          <div class="quick-actions">
-            <button class="btn btn--primary" data-jump="clients">Перейти в «Клиенты»</button>
-            <button class="btn btn--ghost" data-jump="gifts">Открыть «Подарки»</button>
-            <button class="btn btn--ghost" data-jump="analytics">Посмотреть аналитику</button>
-          </div>
-        </section>
-      </section>
-
-      <!-- Клиенты -->
-      <section class="admin-section hidden" data-section="clients">
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h2 class="card__title">Клиенты</h2>
-              <p class="card__subtitle">Создание клиентов, поиск и подробный профиль с чеками.</p>
-            </div>
-          </header>
-
-          <div class="grid grid--2 gap-xl">
-            <!-- Создание клиента -->
-            <div>
-              <h3 class="section-title">Новый клиент</h3>
-              <div class="section-subtitle">Добавьте гостя по имени и номеру телефона.</div>
-              <div class="form">
-                <label class="field">
-                  <span class="field__label">Имя</span>
-                  <input id="client-create-name" class="field__input" type="text" placeholder="Например: Айжан К.">
-                </label>
-                <label class="field">
-                  <span class="field__label">Телефон</span>
-                  <input id="client-create-phone" class="field__input" type="tel" placeholder="+7 777 000 00 00">
-                </label>
-                <button id="client-create-btn" class="btn btn--primary">Создать клиента</button>
-              </div>
-            </div>
-
-            <!-- Поиск клиентов -->
-            <div>
-              <h3 class="section-title">Поиск по базе</h3>
-              <div class="section-subtitle">Быстро найдите гостя по имени или номеру.</div>
-              <label class="field">
-                <span class="field__label">Поиск</span>
-                <input id="client-search" class="field__input" type="text" placeholder="Имя или телефон">
-              </label>
-              <div id="client-list" class="list-box"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Профиль клиента -->
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h3 class="card__title card__title--sm">Профиль клиента</h3>
-              <p class="card__subtitle">Оборот, текущий баланс и подарки.</p>
-            </div>
-            <span id="client-current-phone" class="badge badge--outline">Клиент не выбран</span>
-          </header>
-          <div id="client-detail-summary" class="stat-grid"></div>
-        </section>
-
-        <!-- Чеки клиента -->
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h3 class="card__title card__title--sm">Чеки клиента</h3>
-              <p class="card__subtitle">Добавляйте новые чеки и смотрите историю.</p>
-            </div>
-          </header>
-          <div class="grid grid--2 gap-lg">
-            <div>
-              <h4 class="section-title">Добавить чек</h4>
-              <div class="section-subtitle">Телефон берётся из выбранного клиента.</div>
-              <div class="form-inline">
-                <label class="field field--inline">
-                  <span class="field__label">Сумма, тг</span>
-                  <input id="client-bill-amount" class="field__input" type="number" min="0" step="1" placeholder="15000">
-                </label>
-                <button id="client-bill-add-btn" class="btn btn--primary btn--inline">Добавить</button>
-              </div>
-            </div>
-            <div>
-              <h4 class="section-title">История чеков</h4>
-              <div class="table-wrap table-wrap--compact">
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th>Дата</th>
-                    <th>Сумма, тг</th>
-                  </tr>
-                  </thead>
-                  <tbody id="client-detail-bills"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <!-- Подарки -->
-      <section class="admin-section hidden" data-section="gifts">
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h2 class="card__title">Подарки</h2>
-              <p class="card__subtitle">Каталог подарков и ручная выдача гостям.</p>
-            </div>
-          </header>
-          <div class="grid grid--2 gap-xl">
-            <!-- Новый подарок -->
-            <div>
-              <h3 class="section-title">Новый подарок</h3>
-              <div class="section-subtitle">Укажите название, минимальную сумму и картинку.</div>
-              <div class="form">
-                <label class="field">
-                  <span class="field__label">Название</span>
-                  <input id="gift-name" class="field__input" type="text" placeholder="Например: Десерт">
-                </label>
-                <label class="field">
-                  <span class="field__label">Минимальная сумма чеков, тг</span>
-                  <input id="gift-price" class="field__input" type="number" min="0" step="1">
-                </label>
-                <label class="field">
-                  <span class="field__label">Фото (URL)</span>
-                  <input id="gift-photo" class="field__input" type="url" placeholder="https://...">
-                </label>
-                <button id="gift-create-btn" class="btn btn--primary">Создать подарок</button>
-              </div>
-            </div>
-
-            <!-- Ручная выдача -->
-            <div>
-              <h3 class="section-title">Выдать подарок вручную</h3>
-              <div class="section-subtitle">Используйте, если клиент уже накопил сумму.</div>
-              <div class="form">
-                <label class="field">
-                  <span class="field__label">Телефон клиента</span>
-                  <input id="redeem-phone" class="field__input" type="tel" placeholder="+7...">
-                </label>
-                <label class="field">
-                  <span class="field__label">Название подарка</span>
-                  <input id="redeem-gift-name" class="field__input" type="text" placeholder="Точное название из списка">
-                </label>
-                <button id="redeem-gift-btn" class="btn btn--danger">Выдать подарок</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Список подарков -->
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h3 class="card__title card__title--sm">Текущий каталог подарков</h3>
-              <p class="card__subtitle">Редактируйте или удаляйте существующие подарки.</p>
-            </div>
-          </header>
-          <div id="gift-list-admin" class="gift-grid"></div>
-        </section>
-      </section>
-
-      <!-- Аналитика -->
-      <section class="admin-section hidden" data-section="analytics">
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h2 class="card__title">Аналитика</h2>
-              <p class="card__subtitle">Сводка по клиентам, обороту и подаркам.</p>
-            </div>
-          </header>
-          <div class="analytics-actions">
-            <button id="analytics-rebuild-btn" class="btn btn--primary">Пересчитать лист analytics</button>
-          </div>
-          <div id="analytics-stats" class="stat-grid"></div>
-        </section>
-
-        <section class="card">
-          <header class="card__header">
-            <div>
-              <h3 class="card__title card__title--sm">Клиенты и суммы</h3>
-              <p class="card__subtitle">Подробный список по каждому клиенту.</p>
-            </div>
-          </header>
-          <div id="analytics-table-container" class="table-wrap table-wrap--tall"></div>
-        </section>
-      </section>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Логин</label>
+          <input type="text" class="form-input" id="adm-login" value="admin">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" class="form-input" id="adm-pass" value="admin123">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-adm-login">
+        <i class="fas fa-key"></i> Войти в админ-панель
+      </button>
+      <div id="a-toast" class="toast"></div>
     </section>
-  </section>
-</main>
 
-<script src="app.js"></script>
+    <!-- Основная структура админки -->
+    <section id="admin-layout" style="display:none;">
+      <div class="admin-layout">
+        <!-- Сайдбар -->
+        <aside class="admin-sidebar">
+          <div class="sidebar-section-title">Навигация</div>
+          <nav class="nav-list">
+            <div class="nav-item active" data-page="admin-dashboard">
+              <span><i class="fas fa-gauge"></i>Дашборд</span>
+              <span class="nav-badge">Обзор</span>
+            </div>
+            <div class="nav-item" data-page="admin-clients">
+              <span><i class="fas fa-users"></i>Клиенты</span>
+              <span class="nav-badge">База</span>
+            </div>
+            <div class="nav-item" data-page="admin-gifts">
+              <span><i class="fas fa-gift"></i>Подарки</span>
+              <span class="nav-badge">Каталог</span>
+            </div>
+            <div class="nav-item" data-page="admin-analytics">
+              <span><i class="fas fa-chart-bar"></i>Аналитика</span>
+              <span class="nav-badge">Отчёты</span>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- Контент -->
+        <main>
+          <!-- 1. Дашборд -->
+          <section class="card admin-subpage" id="admin-dashboard" style="display:block;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Дашборд</h2>
+                <p class="card-subtitle">Краткий обзор программы лояльности.</p>
+              </div>
+              <button class="btn btn-outline" id="btn-refresh-dashboard">
+                <i class="fas fa-rotate-right"></i> Обновить дашборд
+              </button>
+            </div>
+
+            <div class="kpi-grid" id="dash-kpis"></div>
+
+            <div class="divider"></div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">Работа с клиентами</h3>
+                <p class="section-desc">Добавление новых гостей и регистрация чеков.</p>
+                <button class="btn btn-primary" id="btn-go-clients">
+                  <i class="fas fa-users"></i> Перейти в раздел «Клиенты»
+                </button>
+              </div>
+              <div>
+                <h3 class="section-title">Подарки и аналитика</h3>
+                <p class="section-desc">Настройка каталога подарков и просмотр статистики.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                  <button class="btn btn-outline" id="btn-go-gifts">
+                    <i class="fas fa-gift"></i> Раздел «Подарки»
+                  </button>
+                  <button class="btn btn-outline" id="btn-go-analytics">
+                    <i class="fas fa-chart-bar"></i> Раздел «Аналитика»
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Клиенты -->
+          <section class="card admin-subpage" id="admin-clients" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Клиенты</h2>
+                <p class="card-subtitle">Создание клиентов, поиск и работа с чеками.</p>
+              </div>
+            </div>
+
+            <!-- Блок 1: Создание клиента / Поиск -->
+            <div class="grid-2">
+              <!-- 1.1 Новый клиент -->
+              <div>
+                <h3 class="section-title">1. Новый клиент</h3>
+                <p class="section-desc">Заполните данные гостя, чтобы начать копить бонусы.</p>
+                <div class="form-group">
+                  <label class="form-label">Имя гостя</label>
+                  <input type="text" class="form-input" id="new-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Телефон</label>
+                  <input type="text" class="form-input" id="new-phone" placeholder="+7 777 000 00 00">
+                </div>
+                <button class="btn btn-primary" id="btn-add-user">
+                  <i class="fas fa-user-plus"></i> Создать клиента
+                </button>
+              </div>
+
+              <!-- 1.2 Поиск клиента -->
+              <div>
+                <h3 class="section-title">2. Поиск клиента</h3>
+                <p class="section-desc">Введите имя или номер телефона и выберите клиента из списка.</p>
+                <div class="form-group">
+                  <label class="form-label">Имя или телефон</label>
+                  <input type="text" class="form-input" id="users-q" placeholder="например, Айжан или +7777...">
+                </div>
+                <div id="users-list" style="max-height:280px;overflow:auto;"></div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Блок 2: Карточка клиента / чеки -->
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">3. Карточка клиента</h3>
+                <p class="section-desc">Информация по балансу и полученным подаркам.</p>
+                <div id="client-profile"></div>
+              </div>
+              <div>
+                <h3 class="section-title">4. Чеки клиента</h3>
+                <p class="section-desc">Добавьте сумму чека — бонусы начислятся автоматически.</p>
+                <div class="form-group">
+                  <label class="form-label">Сумма нового чека, ₸</label>
+                  <div class="grid-2" style="gap:10px;">
+                    <input type="number" class="form-input" id="bill-sum" placeholder="Например, 15000">
+                    <button class="btn btn-primary" id="btn-add-bill">
+                      <i class="fas fa-plus"></i> Добавить чек
+                    </button>
+                  </div>
+                  <p class="card-subtitle" style="margin-top:4px;">
+                    Телефон берётся из выбранного клиента в блоке «Поиск клиента».
+                  </p>
+                </div>
+                <div id="bills-list" style="margin-top:12px;max-height:260px;overflow:auto;"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. Подарки -->
+          <section class="card admin-subpage" id="admin-gifts" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Подарки</h2>
+                <p class="card-subtitle">Настройка каталога и выдача подарков гостям.</p>
+              </div>
+            </div>
+
+            <!-- Блок 1: Настройки подарка -->
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">1. Создание / редактирование подарка</h3>
+                <p class="section-desc">Заполните данные подарка и сохраните его в каталоге.</p>
+                <div class="form-group">
+                  <label class="form-label">Название подарка</label>
+                  <input type="text" class="form-input" id="g-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Цена (минимальная сумма чеков для подарка)</label>
+                  <input type="number" class="form-input" id="g-price" placeholder="Например, 3000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Фото (URL или data:image)</label>
+                  <input type="text" class="form-input" id="g-photo" placeholder="https://... или data:image/...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Количество на складе</label>
+                  <input type="number" class="form-input" id="g-left" placeholder="Например, 10">
+                </div>
+                <button class="btn btn-primary" id="btn-g-create">
+                  <i class="fas fa-floppy-disk"></i> Сохранить подарок
+                </button>
+              </div>
+
+              <!-- Блок 2: Выдача подарка -->
+              <div>
+                <h3 class="section-title">2. Выдача подарка клиенту</h3>
+                <p class="section-desc">
+                  В список попадают только подарки, у которых есть остаток и у клиента хватает баланса.
+                </p>
+                <div class="form-group">
+                  <label class="form-label">Телефон клиента</label>
+                  <input type="text" class="form-input" id="r-phone" placeholder="+7 777 000 00 00">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Доступные подарки</label>
+                  <select class="form-input" id="r-gift-select">
+                    <option value="">Сначала введите телефон клиента</option>
+                  </select>
+                </div>
+                <button class="btn btn-danger" id="btn-redeem-admin">
+                  <i class="fas fa-gift"></i> Выдать подарок
+                </button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Блок 3: Список всех подарков -->
+            <h3 class="section-title">3. Каталог подарков</h3>
+            <p class="section-desc">Список всех активных и неактивных подарков SyBaga.</p>
+            <div id="gifts-admin" class="gift-grid"></div>
+          </section>
+
+          <!-- 4. Аналитика -->
+          <section class="card admin-subpage" id="admin-analytics" style="display:none;">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Аналитика и отчёты</h2>
+                <p class="card-subtitle">Статистика по сумме чеков и активности клиентов.</p>
+              </div>
+            </div>
+
+            <!-- Блок 1: Кнопки -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+              <button class="btn btn-primary" id="btn-analytics">
+                <i class="fas fa-calculator"></i> Пересчитать аналитику
+              </button>
+              <button class="btn btn-outline" id="btn-export-users">
+                <i class="fas fa-file-export"></i> Экспорт клиентов
+              </button>
+              <button class="btn btn-outline" id="btn-export-bills">
+                <i class="fas fa-file-export"></i> Экспорт чеков
+              </button>
+              <button class="btn btn-outline" id="btn-export-redeem">
+                <i class="fas fa-file-export"></i> Экспорт выданных подарков
+              </button>
+            </div>
+
+            <!-- Блок 2: KPI -->
+            <div class="kpi-grid" id="kpi"></div>
+
+            <div class="divider"></div>
+
+            <!-- Блок 3: Таблица по клиентам -->
+            <h3 class="section-title">Детальная статистика по клиентам</h3>
+            <p class="section-desc">Список гостей с суммой чеков и полученными подарками.</p>
+            <div id="analytics-table" class="table-container"></div>
+          </section>
+        </main>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /* URL Apps Script */
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbxh2qPIPYbGPFpwlB0XptQNe-tCSgboq4FuIddURtn3dQ4XH0Yn5bcPIkmoAHkI2fM/exec';
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    const el = (t,a={},c=[])=>{
+      const n=document.createElement(t);
+      for(const k in a){
+        if(k==='class') n.className=a[k];
+        else if(k==='html') n.innerHTML=a[k];
+        else n.setAttribute(k,a[k]);
+      }
+      (Array.isArray(c)?c:[c]).filter(Boolean).forEach(x=>n.append(x));
+      return n;
+    };
+
+    function normPhone(p){
+      p = String(p || '').replace(/[^\d+]/g,'');
+      if(p.startsWith('+7')) return p;
+      if(p.startsWith('8') && p.length===11) return '+7'+p.slice(1);
+      if(p.length===10) return '+7'+p;
+      if(p.length===11 && p[0]==='7') return '+'+p;
+      return p;
+    }
+
+    function toast(node,msg,ok=true){
+      if(!node) return;
+      node.className = 'toast ' + (ok?'toast-success':'toast-error');
+      node.innerHTML = ok
+        ? `<i class="fas fa-check-circle"></i> ${msg}`
+        : `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+      setTimeout(()=>{ if(node.innerHTML.includes(msg)) node.innerHTML=''; },3000);
+    }
+
+    async function api(action, body={}, method='POST'){
+      const params = new URLSearchParams({action, ...body});
+      let res;
+      if(method === 'GET'){
+        res = await fetch(`${API_BASE}?${params.toString()}`, {method:'GET'});
+      }else{
+        res = await fetch(API_BASE, {
+          method:'POST',
+          headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+          body: params.toString()
+        });
+      }
+      const data = await res.json().catch(()=>({ok:false,error:'JSON parse error'}));
+      if(!data.ok) throw new Error(data.error || 'Ошибка запроса');
+      return data;
+    }
+
+    function formatMoney(x){
+      x = Number(x||0);
+      return x.toLocaleString('ru-RU') + ' ₸';
+    }
+
+    function downloadCSV(filename, csv){
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    let ADMIN_LOGGED = false;
+    let ADMIN_CURRENT_PHONE = null;
+
+    /* Навигация между блоками админки */
+    function switchAdminSubpage(id){
+      $$('.admin-subpage').forEach(p=>p.style.display='none');
+      const page = document.getElementById(id);
+      if(page) page.style.display='block';
+
+      $$('.nav-item').forEach(i=>i.classList.remove('active'));
+      $(`.nav-item[data-page="${id}"]`)?.classList.add('active');
+    }
+
+    function initAdminNav(){
+      $$('.nav-item').forEach(item=>{
+        item.addEventListener('click', ()=>{
+          const pageId = item.getAttribute('data-page');
+          switchAdminSubpage(pageId);
+          if(pageId==='admin-dashboard') loadDashboard();
+          if(pageId==='admin-gifts') loadGiftsAdmin();
+          if(pageId==='admin-analytics') loadAnalyticsPage();
+        });
+      });
+
+      $('#btn-go-clients').addEventListener('click', ()=>switchAdminSubpage('admin-clients'));
+      $('#btn-go-gifts').addEventListener('click', ()=>{
+        switchAdminSubpage('admin-gifts');
+        loadGiftsAdmin();
+      });
+      $('#btn-go-analytics').addEventListener('click', ()=>{
+        switchAdminSubpage('admin-analytics');
+        loadAnalyticsPage();
+      });
+    }
+
+    /* Авторизация */
+    function initAdminAuth(){
+      $('#btn-adm-login').addEventListener('click', async ()=>{
+        const login = $('#adm-login').value.trim();
+        const pass = $('#adm-pass').value.trim();
+        try{
+          await api('auth_admin',{login,password:pass});
+          ADMIN_LOGGED = true;
+          $('#admin-login-card').style.display='none';
+          $('#admin-layout').style.display='block';
+          toast($('#a-toast'),'Вход выполнен',true);
+          loadDashboard();
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка авторизации',false);
+        }
+      });
+    }
+
+    /* Дашборд */
+    function parseAnalyticsCSV(csv){
+      const lines = csv.split(/\r?\n/).filter(l=>l.trim().length>0);
+      if(lines.length<=1) return [];
+      const rows=[];
+      for(let i=1;i<lines.length;i++){
+        const parts = lines[i].split(',');
+        if(parts.length<3) continue;
+        const name = parts[0];
+        const phone = parts[1];
+        const sum = Number(parts[2] || 0);
+        const gifts = parts.slice(3).join(',').trim();
+        rows.push({name,phone,sum_bill:sum,gifts});
+      }
+      return rows;
+    }
+
+    async function loadDashboard(){
+      try{
+        await api('analytics_rebuild',{});
+        const a = await api('export_csv',{kind:'analytics'});
+        const rows = parseAnalyticsCSV(a.csv);
+        const totalClients = rows.length;
+        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill)||0),0);
+        let totalGifts = 0;
+        let topClient=null;
+
+        rows.forEach(r=>{
+          if(r.gifts){
+            totalGifts += r.gifts.split(',').map(x=>x.trim()).filter(Boolean).length;
+          }
+          if(!topClient || (Number(r.sum_bill)||0) > (Number(topClient.sum_bill)||0)){
+            topClient = r;
+          }
+        });
+
+        const box = $('#dash-kpis');
+        box.innerHTML='';
+        box.append(
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-money-bill-wave'})]),
+            el('div',{class:'kpi-label',html:'Общий оборот чеков'}),
+            el('div',{class:'kpi-value',html:formatMoney(totalSum)})
+          ]),
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon success'},[el('i',{class:'fas fa-users'})]),
+            el('div',{class:'kpi-label',html:'Всего клиентов'}),
+            el('div',{class:'kpi-value',html:String(totalClients)})
+          ]),
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon warning'},[el('i',{class:'fas fa-gift'})]),
+            el('div',{class:'kpi-label',html:'Выдано подарков'}),
+            el('div',{class:'kpi-value',html:String(totalGifts)})
+          ])
+        );
+
+        if(topClient){
+          box.append(
+            el('div',{class:'kpi-card'},[
+              el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-crown'})]),
+              el('div',{class:'kpi-label',html:'Топ-клиент'}),
+              el('div',{class:'kpi-value',html:topClient.name || '-'}),
+              el('div',{class:'card-subtitle',html:`${topClient.phone} · ${formatMoney(topClient.sum_bill)}`})
+            ])
+          );
+        }
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка дашборда',false);
+      }
+    }
+
+    async function loadAnalyticsPage(){
+      try{
+        const res = await api('export_csv',{kind:'analytics'});
+        const rows = parseAnalyticsCSV(res.csv);
+
+        const totalClients = rows.length;
+        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill)||0),0);
+        let withGifts=0;
+        rows.forEach(r=>{
+          if(r.gifts && r.gifts.trim().length>0) withGifts++;
+        });
+
+        const kpiBox = $('#kpi');
+        kpiBox.innerHTML='';
+        kpiBox.append(
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-users'})]),
+            el('div',{class:'kpi-label',html:'Клиенты'}),
+            el('div',{class:'kpi-value',html:String(totalClients)})
+          ]),
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon success'},[el('i',{class:'fas fa-coins'})]),
+            el('div',{class:'kpi-label',html:'Сумма чеков'}),
+            el('div',{class:'kpi-value',html:formatMoney(totalSum)})
+          ]),
+          el('div',{class:'kpi-card'},[
+            el('div',{class:'kpi-icon warning'},[el('i',{class:'fas fa-gift'})]),
+            el('div',{class:'kpi-label',html:'Клиенты с подарками'}),
+            el('div',{class:'kpi-value',html:String(withGifts)})
+          ])
+        );
+
+        const tableWrap = $('#analytics-table');
+        if(!rows.length){
+          tableWrap.innerHTML='<p class="card-subtitle">Пока нет данных аналитики.</p>';
+          return;
+        }
+        const table = el('table');
+        const thead = el('thead',{},[
+          el('tr',{},[
+            el('th',{html:'Имя'}),
+            el('th',{html:'Телефон'}),
+            el('th',{html:'Сумма чеков'}),
+            el('th',{html:'Подарки'})
+          ])
+        ]);
+        const tbody = el('tbody');
+        rows.forEach(r=>{
+          tbody.append(
+            el('tr',{},[
+              el('td',{html:r.name}),
+              el('td',{html:r.phone}),
+              el('td',{html:formatMoney(r.sum_bill)}),
+              el('td',{html:r.gifts || '—'})
+            ])
+          );
+        });
+        table.append(thead,tbody);
+        tableWrap.innerHTML='';
+        tableWrap.append(table);
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка аналитики',false);
+      }
+    }
+
+    function initAnalyticsButtons(){
+      $('#btn-analytics').addEventListener('click', async ()=>{
+        try{
+          await api('analytics_rebuild',{});
+          toast($('#a-toast'),'Аналитика пересчитана',true);
+          await loadAnalyticsPage();
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка пересчёта аналитики',false);
+        }
+      });
+
+      $('#btn-export-users').addEventListener('click', async ()=>{
+        try{
+          const res = await api('export_csv',{kind:'users'});
+          downloadCSV('users.csv',res.csv);
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка экспорта',false);
+        }
+      });
+      $('#btn-export-bills').addEventListener('click', async ()=>{
+        try{
+          const res = await api('export_csv',{kind:'bills'});
+          downloadCSV('bills.csv',res.csv);
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка экспорта',false);
+        }
+      });
+      $('#btn-export-redeem').addEventListener('click', async ()=>{
+        try{
+          const res = await api('export_csv',{kind:'redeem_log'});
+          downloadCSV('redeem_log.csv',res.csv);
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка экспорта',false);
+        }
+      });
+
+      $('#btn-refresh-dashboard').addEventListener('click', loadDashboard);
+    }
+
+    /* Клиенты */
+    async function loadUsersList(query){
+      try{
+        const res = await api('users_list',{query:query || ''});
+        const list = res.users || [];
+        const box = $('#users-list');
+        box.innerHTML='';
+        if(!list.length){
+          box.innerHTML='<p class="card-subtitle">Клиенты не найдены.</p>';
+          return;
+        }
+        list.forEach(u=>{
+          const row = el('div',{class:'clickable-row'},[
+            el('div',{html:`<strong>${u.name || '-'}</strong><br><span style="font-size:12px;color:var(--text-light);">${u.phone}</span>`}),
+            el('div',{class:'pill',html:u.gift ? 'последний подарок: '+u.gift : 'без подарка'})
+          ]);
+          row.addEventListener('click', ()=>{
+            ADMIN_CURRENT_PHONE = u.phone;
+            $$('#users-list .clickable-row').forEach(r=>r.classList.remove('active'));
+            row.classList.add('active');
+            loadClientProfileAdmin(u.phone);
+            loadClientBillsAdmin(u.phone);
+          });
+          box.append(row);
+        });
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка загрузки клиентов',false);
+      }
+    }
+
+    async function loadClientProfileAdmin(phone){
+      try{
+        const res = await api('users_me',{phone});
+        const u = res.user;
+        const box = $('#client-profile');
+        box.innerHTML='';
+        const grid = el('div',{class:'user-info-grid'},[
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Имя'}),
+            el('div',{class:'info-value',html:u.name}),
+            el('div',{class:'card-subtitle',html:u.phone})
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Накоплено'}),
+            el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)})
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Баланс'}),
+            el('div',{class:'info-value',html:formatMoney(u.balance)})
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Подарки'}),
+            el('div',{class:'info-value',html:u.gifts_got && u.gifts_got.length ? u.gifts_got.join(', ') : '—'})
+          ])
+        ]);
+        box.append(grid);
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка профиля',false);
+      }
+    }
+
+    async function loadClientBillsAdmin(phone){
+      try{
+        const res = await api('bills_list',{phone});
+        const bills = res.bills || [];
+        const box = $('#bills-list');
+        box.innerHTML='';
+        if(!bills.length){
+          box.innerHTML='<p class="card-subtitle">Пока нет чеков.</p>';
+          return;
+        }
+        const table = el('table');
+        const thead = el('thead',{},[
+          el('tr',{},[
+            el('th',{html:'Дата'}),
+            el('th',{html:'Телефон'}),
+            el('th',{html:'Сумма'})
+          ])
+        ]);
+        const tbody = el('tbody');
+        bills.sort((a,b)=>new Date(b.date)-new Date(a.date));
+        bills.forEach(b=>{
+          tbody.append(
+            el('tr',{},[
+              el('td',{html:String(b.date)}),
+              el('td',{html:b.phone}),
+              el('td',{html:formatMoney(b.bill)})
+            ])
+          );
+        });
+        table.append(thead,tbody);
+        box.append(table);
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка чеков',false);
+      }
+    }
+
+    function initClientsAdmin(){
+      $('#btn-add-user').addEventListener('click', async ()=>{
+        const name = $('#new-name').value.trim();
+        const phone = normPhone($('#new-phone').value.trim());
+        if(!name || !phone){
+          toast($('#a-toast'),'Имя и телефон обязательны',false);
+          return;
+        }
+        try{
+          await api('users_create',{name,phone});
+          toast($('#a-toast'),'Клиент создан',true);
+          $('#new-name').value='';
+          $('#new-phone').value='';
+          await loadUsersList($('#users-q').value.trim());
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка создания клиента',false);
+        }
+      });
+
+      let usersSearchTimeout=null;
+      $('#users-q').addEventListener('input', ()=>{
+        clearTimeout(usersSearchTimeout);
+        usersSearchTimeout=setTimeout(()=>{
+          loadUsersList($('#users-q').value.trim());
+        },300);
+      });
+
+      $('#btn-add-bill').addEventListener('click', async ()=>{
+        if(!ADMIN_CURRENT_PHONE){
+          toast($('#a-toast'),'Сначала выберите клиента',false);
+          return;
+        }
+        const sum = Number($('#bill-sum').value);
+        if(!(sum>0)){
+          toast($('#a-toast'),'Введите сумму чека',false);
+          return;
+        }
+        try{
+          await api('bills_add',{phone:ADMIN_CURRENT_PHONE,bill:sum});
+          $('#bill-sum').value='';
+          toast($('#a-toast'),'Чек добавлен',true);
+          await loadClientBillsAdmin(ADMIN_CURRENT_PHONE);
+          await loadClientProfileAdmin(ADMIN_CURRENT_PHONE);
+          await loadDashboard();
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка добавления чека',false);
+        }
+      });
+    }
+
+    /* Подарки */
+    async function loadGiftsAdmin(){
+      try{
+        const res = await api('gifts_list',{});
+        const gifts = res.gifts || [];
+        const box = $('#gifts-admin');
+        box.innerHTML='';
+        if(!gifts.length){
+          box.innerHTML='<p class="card-subtitle">Каталог подарков пуст.</p>';
+          return;
+        }
+        gifts.forEach(g=>{
+          const left = Number(g.left || 0);
+          const card = el('div',{class:'gift-card'});
+          if(left<=0){
+            card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
+          }
+          const img = el('img',{
+            class:'gift-image',
+            src:g.photo || 'https://via.placeholder.com/400x300?text=Gift'
+          });
+          const gotCount = g.user_got ? g.user_got.split(',').filter(v=>v.trim().length>0).length : 0;
+
+          const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
+            el('i',{class:'fas fa-pen'}),
+            document.createTextNode('Редактировать')
+          ]);
+          const btnDel = el('button',{class:'btn btn-danger btn-sm'},[
+            el('i',{class:'fas fa-trash'}),
+            document.createTextNode('Удалить')
+          ]);
+
+          btnEdit.addEventListener('click', ()=>{
+            $('#g-name').value = g.name;
+            $('#g-price').value = g.price || '';
+            $('#g-photo').value = g.photo || '';
+            $('#g-left').value = left || '';
+          });
+
+          btnDel.addEventListener('click', async ()=>{
+            if(!confirm(`Удалить подарок «${g.name}»?`)) return;
+            try{
+              await api('gifts_delete',{name:g.name});
+              toast($('#a-toast'),'Подарок удалён',true);
+              await loadGiftsAdmin();
+            }catch(err){
+              toast($('#a-toast'),err.message || 'Ошибка удаления подарка',false);
+            }
+          });
+
+          const content = el('div',{class:'gift-content'},[
+            el('div',{class:'gift-title',html:g.name}),
+            el('div',{class:'gift-price',html:`Цена: ${formatMoney(g.price)}`}),
+            el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
+            el('div',{class:'card-subtitle',html:`Выдано: ${gotCount} клиентам`}),
+            el('div',{style:'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;'},[
+              btnEdit,
+              btnDel
+            ])
+          ]);
+
+          card.append(img,content);
+          box.append(card);
+        });
+      }catch(err){
+        toast($('#a-toast'),err.message || 'Ошибка загрузки подарков',false);
+      }
+    }
+
+    function initGiftsAdmin(){
+      $('#btn-g-create').addEventListener('click', async ()=>{
+        const name = $('#g-name').value.trim();
+        const price = Number($('#g-price').value || 0);
+        const photo = $('#g-photo').value.trim();
+        const left = Number($('#g-left').value || 0);
+        if(!name){
+          toast($('#a-toast'),'Введите название подарка',false);
+          return;
+        }
+        try{
+          try{
+            await api('gifts_update',{name,price,photo,left});
+          }catch(err){
+            if(String(err.message||'').includes('Сыйлық табылмады') || String(err.message||'').includes('не найден')){
+              await api('gifts_create',{name,price,photo,left});
+            }else{
+              throw err;
+            }
+          }
+          toast($('#a-toast'),'Подарок сохранён',true);
+          await loadGiftsAdmin();
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка сохранения подарка',false);
+        }
+      });
+
+      $('#btn-redeem-admin').addEventListener('click', async ()=>{
+        const phone = normPhone($('#r-phone').value.trim());
+        const giftName = $('#r-gift-select').value;
+        if(!phone || !giftName){
+          toast($('#a-toast'),'Телефон и подарок обязательны',false);
+          return;
+        }
+        try{
+          await api('redeem',{phone,giftName,actor:'admin'});
+          toast($('#a-toast'),'Подарок выдан',true);
+          $('#r-phone').value='';
+          $('#r-gift-select').innerHTML='<option value="">Сначала введите телефон клиента</option>';
+          await loadDashboard();
+        }catch(err){
+          toast($('#a-toast'),err.message || 'Ошибка выдачи подарка',false);
+        }
+      });
+    }
+
+    async function refreshAdminRedeemOptions() {
+  const phoneRaw = $('#r-phone').value.trim();
+  const phone = normPhone(phoneRaw);
+  const select = $('#r-gift-select');
+
+  select.innerHTML = '';
+  select.disabled = true;
+
+  if (!phone) {
+    select.innerHTML = '<option value="">Сначала введите телефон клиента</option>';
+    return;
+  }
+
+  try {
+    const uRes = await api('users_me', { phone });
+    const user = uRes.user;
+    const gRes = await api('gifts_list', {});
+    const gifts = (gRes.gifts || []);
+
+    // берём все подарки, у которых есть остаток
+    const withStock = gifts.filter(g => Number(g.left || 0) > 0);
+
+    if (!withStock.length) {
+      select.innerHTML = '<option value="">Нет подарков с остатком</option>';
+      return;
+    }
+
+    withStock.forEach(g => {
+      const left  = Number(g.left || 0);
+      const price = Number(g.price || 0);
+      const enough = user.balance >= price;
+
+      const opt = document.createElement('option');
+      opt.value = g.name;
+
+      // текст опции
+      opt.textContent =
+        `${g.name} — ${formatMoney(price)} · осталось ${left}` +
+        (enough ? '' : ' · бонусов не хватает');
+
+      // админ видит всё, но выдать нельзя, если бонусов нет
+      if (!enough) {
+        opt.disabled = true;
+      }
+
+      select.appendChild(opt);
+    });
+
+    // если все подарки оказались disabled, всё равно показываем список
+    select.disabled = false;
+  } catch (err) {
+    select.innerHTML = '<option value="">Ошибка загрузки подарков</option>';
+    toast($('#a-toast'), err.message || 'Ошибка загрузки подарков для выдачи', false);
+  }
+}
+    document.addEventListener('DOMContentLoaded', ()=>{
+      initAdminAuth();
+      initAdminNav();
+      initAnalyticsButtons();
+      initClientsAdmin();
+      initGiftsAdmin();
+
+      $('#r-phone').addEventListener('change', refreshAdminRedeemOptions);
+      $('#r-phone').addEventListener('blur', refreshAdminRedeemOptions);
+      $('#r-gift-select').addEventListener('focus', refreshAdminRedeemOptions);
+    });
+  </script>
 </body>
 </html>
