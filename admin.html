@@ -292,7 +292,7 @@
 
     .gift-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
       gap:16px;
     }
     .gift-card{
@@ -305,14 +305,14 @@
     }
     .gift-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
     .gift-image{
-      width:100%;height:160px;
+      width:100%;height:150px;
       object-fit:cover;
       background:#e5e7eb;
     }
-    .gift-content{padding:16px;}
-    .gift-title{font-size:16px;font-weight:600;margin-bottom:6px;}
-    .gift-price{font-size:14px;color:var(--text-light);margin-bottom:4px;}
-    .gift-left{font-size:12px;color:var(--text-lighter);margin-bottom:8px;}
+    .gift-content{padding:14px;}
+    .gift-title{font-size:15px;font-weight:600;margin-bottom:4px;}
+    .gift-price{font-size:14px;color:var(--text-light);margin-bottom:2px;}
+    .gift-left{font-size:12px;color:var(--text-lighter);margin-bottom:6px;}
     .gift-out{
       position:absolute;
       top:10px;right:10px;
@@ -322,6 +322,89 @@
       color:#b91c1c;
       font-size:11px;
       font-weight:600;
+    }
+
+    /* Карточки клиента (админ) */
+    .user-info-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:16px;
+    }
+    .info-card {
+      background:var(--bg);
+      border-radius:var(--radius);
+      padding:16px;
+      border:1px solid var(--border-light);
+    }
+    .info-label {
+      font-size:13px;
+      color:var(--text-light);
+      margin-bottom:4px;
+    }
+    .info-value {
+      font-size:18px;
+      font-weight:700;
+    }
+
+    /* Доступные подарки (в разделе выдачи) */
+    .redeem-gifts-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+    .redeem-gift-card{
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:var(--bg-card);
+      padding:12px 14px;
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:10px;
+      align-items:center;
+      box-shadow:var(--shadow);
+      font-size:13px;
+    }
+    .redeem-gift-card img{
+      width:100%;
+      height:110px;
+      border-radius:14px;
+      object-fit:cover;
+      background:#e5e7eb;
+    }
+    .redeem-gift-main{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .redeem-gift-title{
+      font-size:15px;
+      font-weight:600;
+    }
+    .redeem-gift-price{
+      font-size:13px;
+      color:var(--text-light);
+    }
+    .redeem-gift-balance{
+      font-size:12px;
+      color:var(--text-light);
+    }
+    .redeem-gift-note{
+      font-size:12px;
+      margin-top:2px;
+    }
+    .redeem-gift-card.available{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+    }
+    .redeem-gift-card.locked{
+      opacity:.8;
+    }
+    .redeem-gift-note-ok{color:#16a34a;}
+    .redeem-gift-note-bad{color:#b91c1c;}
+    .redeem-gift-btn{
+      margin-top:6px;
+      align-self:flex-start;
     }
   </style>
 </head>
@@ -351,11 +434,11 @@
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">Логин</label>
-          <input type="text" class="form-input" id="adm-login" value="admin">
+          <input type="text" class="form-input" id="adm-login">
         </div>
         <div class="form-group">
           <label class="form-label">Пароль</label>
-          <input type="password" class="form-input" id="adm-pass" value="admin123">
+          <input type="password" class="form-input" id="adm-pass">
         </div>
       </div>
       <button class="btn btn-primary" id="btn-adm-login">
@@ -483,6 +566,18 @@
               <div>
                 <h3 class="section-title">4. Чеки клиента</h3>
                 <p class="section-desc">Добавьте сумму чека — бонусы начислятся автоматически.</p>
+
+                <div class="form-group">
+                  <label class="form-label">Тип чека</label>
+                  <select class="form-input" id="bill-type">
+                    <option value="normal">Обычный чек</option>
+                    <option value="banquet">Банкет</option>
+                  </select>
+                  <p class="card-subtitle" style="margin-top:4px;">
+                    Баллы за банкеты копятся отдельно и тратятся только на «банкетные» подарки.
+                  </p>
+                </div>
+
                 <div class="form-group">
                   <label class="form-label">Сумма нового чека, ₸</label>
                   <div class="grid-2" style="gap:10px;">
@@ -519,7 +614,7 @@
                   <input type="text" class="form-input" id="g-name">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Цена (минимальная сумма чеков для подарка)</label>
+                  <label class="form-label">Цена (кол-во бонусов)</label>
                   <input type="number" class="form-input" id="g-price" placeholder="Например, 3000">
                 </div>
                 <div class="form-group">
@@ -530,6 +625,13 @@
                   <label class="form-label">Количество на складе</label>
                   <input type="number" class="form-input" id="g-left" placeholder="Например, 10">
                 </div>
+                <div class="form-group">
+                  <label class="form-label">Тип бонусов</label>
+                  <select class="form-input" id="g-bonus-type">
+                    <option value="normal">Обычные баллы</option>
+                    <option value="banquet">Баллы за банкеты</option>
+                  </select>
+                </div>
                 <button class="btn btn-primary" id="btn-g-create">
                   <i class="fas fa-floppy-disk"></i> Сохранить подарок
                 </button>
@@ -539,21 +641,17 @@
               <div>
                 <h3 class="section-title">2. Выдача подарка клиенту</h3>
                 <p class="section-desc">
-                  В список попадают только подарки, у которых есть остаток и у клиента хватает баланса.
+                  После ввода телефона ниже появится список подарков, отсортированный: сначала те, которые можно выдать.
                 </p>
                 <div class="form-group">
                   <label class="form-label">Телефон клиента</label>
                   <input type="text" class="form-input" id="r-phone" placeholder="+7 777 000 00 00">
+                  <p class="card-subtitle" style="margin-top:4px;">
+                    У каждого подарка своя кнопка «Выдать этот подарок».
+                  </p>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Доступные подарки</label>
-                  <select class="form-input" id="r-gift-select">
-                    <option value="">Сначала введите телефон клиента</option>
-                  </select>
-                </div>
-                <button class="btn btn-danger" id="btn-redeem-admin">
-                  <i class="fas fa-gift"></i> Выдать подарок
-                </button>
+                <h4 class="section-title" style="margin-top:4px;">Доступные подарки</h4>
+                <div id="redeem-gifts-list" class="redeem-gifts-list"></div>
               </div>
             </div>
 
@@ -597,7 +695,7 @@
 
             <!-- Блок 3: Таблица по клиентам -->
             <h3 class="section-title">Детальная статистика по клиентам</h3>
-            <p class="section-desc">Список гостей с суммой чеков и полученными подарками.</p>
+            <p class="section-desc">Список гостей с суммой чеков, балансами и статусом (Diamond / Gold / Silver / Bronze).</p>
             <div id="analytics-table" class="table-container"></div>
           </section>
         </main>
@@ -607,7 +705,7 @@
 
   <script>
     /* URL Apps Script */
-    const API_BASE = 'https://script.google.com/macros/s/AKfycbxh2qPIPYbGPFpwlB0XptQNe-tCSgboq4FuIddURtn3dQ4XH0Yn5bcPIkmoAHkI2fM/exec';
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbzhYp3Nhm-XNWZNSsyeTADAtww2NJeu85nlbci8AHGBVfmQBMQI97MoEXgYllHkOQfj/exec';
 
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
@@ -676,6 +774,9 @@
     }
 
     let ADMIN_LOGGED = false;
+    let ADMIN_LOGIN = null;
+    let ADMIN_NAME = null;
+    let ADMIN_ROLE = null;
     let ADMIN_CURRENT_PHONE = null;
 
     /* Навигация между блоками админки */
@@ -716,8 +817,12 @@
         const login = $('#adm-login').value.trim();
         const pass = $('#adm-pass').value.trim();
         try{
-          await api('auth_admin',{login,password:pass});
+          const res = await api('auth_admin',{login,password:pass});
           ADMIN_LOGGED = true;
+          ADMIN_LOGIN = res.login;
+          ADMIN_NAME = res.name;
+          ADMIN_ROLE = res.role;
+
           $('#admin-login-card').style.display='none';
           $('#admin-layout').style.display='block';
           toast($('#a-toast'),'Вход выполнен',true);
@@ -728,44 +833,74 @@
       });
     }
 
-    /* Дашборд */
+    /* Парсер analytics.csv под новую структуру */
     function parseAnalyticsCSV(csv){
       const lines = csv.split(/\r?\n/).filter(l=>l.trim().length>0);
       if(lines.length<=1) return [];
+
+      const unq = s=>{
+        s = s.trim();
+        if(s.startsWith('"') && s.endsWith('"')){
+          s = s.slice(1,-1).replace(/""/g,'"');
+        }
+        return s;
+      };
+
       const rows=[];
       for(let i=1;i<lines.length;i++){
         const parts = lines[i].split(',');
-        if(parts.length<3) continue;
-        const name = parts[0];
-        const phone = parts[1];
-        const sum = Number(parts[2] || 0);
-        const gifts = parts.slice(3).join(',').trim();
-        rows.push({name,phone,sum_bill:sum,gifts});
+        if(parts.length < 3) continue;
+
+        const name  = unq(parts[0] || '');
+        const phone = unq(parts[1] || '');
+        const sumTotal   = Number(parts[2] || 0);
+        const sumNormal  = Number(parts[3] || 0);
+        const sumBanquet = Number(parts[4] || 0);
+
+        let gifts = '';
+        let tier  = '';
+        if(parts.length >= 6){
+          if(parts.length === 6){
+            gifts = unq(parts[5] || '');
+          }else{
+            tier  = unq(parts[parts.length-1] || '');
+            gifts = unq(parts.slice(5, parts.length-1).join(','));
+          }
+        }
+
+        rows.push({
+          name,
+          phone,
+          sum_bill_total: sumTotal,
+          sum_bill_normal: sumNormal,
+          sum_bill_banquet: sumBanquet,
+          sum_bill: sumTotal, // алиас для старого кода
+          gifts,
+          tier
+        });
       }
       return rows;
     }
 
+    /* Дашборд */
     async function loadDashboard(){
       try{
         await api('analytics_rebuild',{});
         const a = await api('export_csv',{kind:'analytics'});
         const rows = parseAnalyticsCSV(a.csv);
         const totalClients = rows.length;
-        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill)||0),0);
+        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill_total)||0),0);
         let totalGifts = 0;
-        let topClient=null;
 
         rows.forEach(r=>{
           if(r.gifts){
             totalGifts += r.gifts.split(',').map(x=>x.trim()).filter(Boolean).length;
           }
-          if(!topClient || (Number(r.sum_bill)||0) > (Number(topClient.sum_bill)||0)){
-            topClient = r;
-          }
         });
 
         const box = $('#dash-kpis');
         box.innerHTML='';
+
         box.append(
           el('div',{class:'kpi-card'},[
             el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-money-bill-wave'})]),
@@ -784,13 +919,27 @@
           ])
         );
 
-        if(topClient){
+        // Топ-4 гостей (Diamond / Gold / Silver / Bronze)
+        const topRows = rows.filter(r=>r.tier).slice(0,4);
+        if(topRows.length){
+          const list = el('div',{style:'margin-top:6px;font-size:13px;'});
+          topRows.forEach(r=>{
+            const tierIcon =
+              r.tier === 'Diamond' ? 'fa-gem' :
+              r.tier === 'Gold'    ? 'fa-crown' :
+              r.tier === 'Silver'  ? 'fa-medal' :
+              'fa-award';
+            const rowEl = el('div',{html:
+              `<i class="fas ${tierIcon}" style="margin-right:6px;"></i><strong>${r.tier}</strong> — ${r.name} (${formatMoney(r.sum_bill_total)})`
+            });
+            list.append(rowEl);
+          });
+
           box.append(
             el('div',{class:'kpi-card'},[
-              el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-crown'})]),
-              el('div',{class:'kpi-label',html:'Топ-клиент'}),
-              el('div',{class:'kpi-value',html:topClient.name || '-'}),
-              el('div',{class:'card-subtitle',html:`${topClient.phone} · ${formatMoney(topClient.sum_bill)}`})
+              el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-ranking-star'})]),
+              el('div',{class:'kpi-label',html:'Топ-4 гостя'}),
+              list
             ])
           );
         }
@@ -805,7 +954,7 @@
         const rows = parseAnalyticsCSV(res.csv);
 
         const totalClients = rows.length;
-        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill)||0),0);
+        const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill_total)||0),0);
         let withGifts=0;
         rows.forEach(r=>{
           if(r.gifts && r.gifts.trim().length>0) withGifts++;
@@ -841,7 +990,10 @@
           el('tr',{},[
             el('th',{html:'Имя'}),
             el('th',{html:'Телефон'}),
-            el('th',{html:'Сумма чеков'}),
+            el('th',{html:'Сумма всего'}),
+            el('th',{html:'Обычные'}),
+            el('th',{html:'Банкеты'}),
+            el('th',{html:'Статус'}),
             el('th',{html:'Подарки'})
           ])
         ]);
@@ -851,7 +1003,10 @@
             el('tr',{},[
               el('td',{html:r.name}),
               el('td',{html:r.phone}),
-              el('td',{html:formatMoney(r.sum_bill)}),
+              el('td',{html:formatMoney(r.sum_bill_total)}),
+              el('td',{html:formatMoney(r.sum_bill_normal)}),
+              el('td',{html:formatMoney(r.sum_bill_banquet)}),
+              el('td',{html:r.tier || '—'}),
               el('td',{html:r.gifts || '—'})
             ])
           );
@@ -946,12 +1101,18 @@
             el('div',{class:'card-subtitle',html:u.phone})
           ]),
           el('div',{class:'info-card'},[
-            el('div',{class:'info-label',html:'Накоплено'}),
-            el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)})
+            el('div',{class:'info-label',html:'Сумма чеков'}),
+            el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)}),
+            el('div',{class:'card-subtitle',html:
+              `Обычные: ${formatMoney(u.sum_normal)}<br>Банкеты: ${formatMoney(u.sum_banquet)}`
+            })
           ]),
           el('div',{class:'info-card'},[
-            el('div',{class:'info-label',html:'Баланс'}),
-            el('div',{class:'info-value',html:formatMoney(u.balance)})
+            el('div',{class:'info-label',html:'Бонусный баланс'}),
+            el('div',{class:'info-value',html:formatMoney(u.balance_normal + u.balance_banquet)}),
+            el('div',{class:'card-subtitle',html:
+              `Обычные баллы: ${formatMoney(u.balance_normal)}<br>Баллы за банкеты: ${formatMoney(u.balance_banquet)}`
+            })
           ]),
           el('div',{class:'info-card'},[
             el('div',{class:'info-label',html:'Подарки'}),
@@ -979,16 +1140,19 @@
           el('tr',{},[
             el('th',{html:'Дата'}),
             el('th',{html:'Телефон'}),
+            el('th',{html:'Тип'}),
             el('th',{html:'Сумма'})
           ])
         ]);
         const tbody = el('tbody');
         bills.sort((a,b)=>new Date(b.date)-new Date(a.date));
         bills.forEach(b=>{
+          const tLabel = b.bill_type === 'banquet' ? 'Банкет' : 'Обычный';
           tbody.append(
             el('tr',{},[
               el('td',{html:String(b.date)}),
               el('td',{html:b.phone}),
+              el('td',{html:tLabel}),
               el('td',{html:formatMoney(b.bill)})
             ])
           );
@@ -1009,7 +1173,7 @@
           return;
         }
         try{
-          await api('users_create',{name,phone});
+          await api('users_create',{name,phone,admin_login:ADMIN_LOGIN || ''});
           toast($('#a-toast'),'Клиент создан',true);
           $('#new-name').value='';
           $('#new-phone').value='';
@@ -1033,12 +1197,18 @@
           return;
         }
         const sum = Number($('#bill-sum').value);
+        const billType = $('#bill-type').value || 'normal';
         if(!(sum>0)){
           toast($('#a-toast'),'Введите сумму чека',false);
           return;
         }
         try{
-          await api('bills_add',{phone:ADMIN_CURRENT_PHONE,bill:sum});
+          await api('bills_add',{
+            phone:ADMIN_CURRENT_PHONE,
+            bill:sum,
+            bill_type:billType,
+            admin_login:ADMIN_LOGIN || ''
+          });
           $('#bill-sum').value='';
           toast($('#a-toast'),'Чек добавлен',true);
           await loadClientBillsAdmin(ADMIN_CURRENT_PHONE);
@@ -1073,6 +1243,10 @@
           });
           const gotCount = g.user_got ? g.user_got.split(',').filter(v=>v.trim().length>0).length : 0;
 
+          const typeLabel = (g.bonus_type === 'banquet')
+            ? 'Баллы за банкеты'
+            : 'Обычные баллы';
+
           const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
             el('i',{class:'fas fa-pen'}),
             document.createTextNode('Редактировать')
@@ -1087,6 +1261,7 @@
             $('#g-price').value = g.price || '';
             $('#g-photo').value = g.photo || '';
             $('#g-left').value = left || '';
+            $('#g-bonus-type').value = g.bonus_type || 'normal';
           });
 
           btnDel.addEventListener('click', async ()=>{
@@ -1104,6 +1279,7 @@
             el('div',{class:'gift-title',html:g.name}),
             el('div',{class:'gift-price',html:`Цена: ${formatMoney(g.price)}`}),
             el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
+            el('div',{class:'card-subtitle',html:`Тип бонусов: ${typeLabel}`}),
             el('div',{class:'card-subtitle',html:`Выдано: ${gotCount} клиентам`}),
             el('div',{style:'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;'},[
               btnEdit,
@@ -1125,16 +1301,17 @@
         const price = Number($('#g-price').value || 0);
         const photo = $('#g-photo').value.trim();
         const left = Number($('#g-left').value || 0);
+        const bonusType = $('#g-bonus-type').value || 'normal';
         if(!name){
           toast($('#a-toast'),'Введите название подарка',false);
           return;
         }
         try{
           try{
-            await api('gifts_update',{name,price,photo,left});
+            await api('gifts_update',{name,price,photo,left,bonus_type:bonusType});
           }catch(err){
             if(String(err.message||'').includes('Сыйлық табылмады') || String(err.message||'').includes('не найден')){
-              await api('gifts_create',{name,price,photo,left});
+              await api('gifts_create',{name,price,photo,left,bonus_type:bonusType});
             }else{
               throw err;
             }
@@ -1145,81 +1322,106 @@
           toast($('#a-toast'),err.message || 'Ошибка сохранения подарка',false);
         }
       });
-
-      $('#btn-redeem-admin').addEventListener('click', async ()=>{
-        const phone = normPhone($('#r-phone').value.trim());
-        const giftName = $('#r-gift-select').value;
-        if(!phone || !giftName){
-          toast($('#a-toast'),'Телефон и подарок обязательны',false);
-          return;
-        }
-        try{
-          await api('redeem',{phone,giftName,actor:'admin'});
-          toast($('#a-toast'),'Подарок выдан',true);
-          $('#r-phone').value='';
-          $('#r-gift-select').innerHTML='<option value="">Сначала введите телефон клиента</option>';
-          await loadDashboard();
-        }catch(err){
-          toast($('#a-toast'),err.message || 'Ошибка выдачи подарка',false);
-        }
-      });
     }
 
-    async function refreshAdminRedeemOptions() {
-  const phoneRaw = $('#r-phone').value.trim();
-  const phone = normPhone(phoneRaw);
-  const select = $('#r-gift-select');
+    /* Доступные подарки для выдачи */
+    async function refreshAdminRedeemCards(){
+      const phoneRaw = $('#r-phone').value.trim();
+      const phone = normPhone(phoneRaw);
+      const listBox = $('#redeem-gifts-list');
 
-  select.innerHTML = '';
-  select.disabled = true;
+      listBox.innerHTML = '';
 
-  if (!phone) {
-    select.innerHTML = '<option value="">Сначала введите телефон клиента</option>';
-    return;
-  }
-
-  try {
-    const uRes = await api('users_me', { phone });
-    const user = uRes.user;
-    const gRes = await api('gifts_list', {});
-    const gifts = (gRes.gifts || []);
-
-    // берём все подарки, у которых есть остаток
-    const withStock = gifts.filter(g => Number(g.left || 0) > 0);
-
-    if (!withStock.length) {
-      select.innerHTML = '<option value="">Нет подарков с остатком</option>';
-      return;
-    }
-
-    withStock.forEach(g => {
-      const left  = Number(g.left || 0);
-      const price = Number(g.price || 0);
-      const enough = user.balance >= price;
-
-      const opt = document.createElement('option');
-      opt.value = g.name;
-
-      // текст опции
-      opt.textContent =
-        `${g.name} — ${formatMoney(price)} · осталось ${left}` +
-        (enough ? '' : ' · бонусов не хватает');
-
-      // админ видит всё, но выдать нельзя, если бонусов нет
-      if (!enough) {
-        opt.disabled = true;
+      if(!phone){
+        listBox.innerHTML = '<p class="card-subtitle">Введите телефон клиента, чтобы увидеть подарки.</p>';
+        return;
       }
 
-      select.appendChild(opt);
-    });
+      try{
+        const uRes = await api('users_me',{phone});
+        const user = uRes.user;
 
-    // если все подарки оказались disabled, всё равно показываем список
-    select.disabled = false;
-  } catch (err) {
-    select.innerHTML = '<option value="">Ошибка загрузки подарков</option>';
-    toast($('#a-toast'), err.message || 'Ошибка загрузки подарков для выдачи', false);
-  }
-}
+        const gRes = await api('gifts_list',{});
+        const gifts = gRes.gifts || [];
+
+        if(!gifts.length){
+          listBox.innerHTML = '<p class="card-subtitle">Каталог подарков пуст.</p>';
+          return;
+        }
+
+        const entries = gifts.map(g=>{
+          const left = Number(g.left || 0);
+          const price = Number(g.price || 0);
+          const type = g.bonus_type === 'banquet' ? 'banquet' : 'normal';
+          const balance = type === 'banquet'
+            ? user.balance_banquet
+            : user.balance_normal;
+          const canGive = left > 0 && balance >= price;
+          return {gift:g,left,price,type,balance,canGive};
+        });
+
+        // сначала доступные, потом недоступные — без дублей
+        entries.sort((a,b)=>Number(b.canGive)-Number(a.canGive));
+
+        entries.forEach(entry=>{
+          const {gift,left,price,type,balance,canGive} = entry;
+          const typeLabel = type === 'banquet'
+            ? 'банкетные баллы'
+            : 'обычные баллы';
+
+          const card = el('div',{class:'redeem-gift-card '+(canGive?'available':'locked')});
+          const img = el('img',{
+            src: gift.photo || 'https://via.placeholder.com/200x150?text=Gift'
+          });
+
+          const main = el('div',{class:'redeem-gift-main'});
+          main.append(
+            el('div',{class:'redeem-gift-title',html:gift.name}),
+            el('div',{class:'redeem-gift-price',html:`Цена: ${formatMoney(price)} (${typeLabel})`}),
+            el('div',{class:'redeem-gift-balance',html:`Остаток: ${left} шт.`}),
+            el('div',{class:'redeem-gift-balance',html:`Баланс клиента по этому типу: ${formatMoney(balance)}`})
+          );
+
+          if(canGive){
+            main.append(
+              el('div',{class:'redeem-gift-note redeem-gift-note-ok',html:'Можно выдать 🎁'})
+            );
+            const btn = el('button',{class:'btn btn-primary btn-sm redeem-gift-btn'},[
+              el('i',{class:'fas fa-gift'}),
+              document.createTextNode('Выдать этот подарок')
+            ]);
+            btn.addEventListener('click', async ()=>{
+              try{
+                await api('redeem',{phone,giftName:gift.name,actor:ADMIN_LOGIN || 'admin'});
+                toast($('#a-toast'),'Подарок выдан',true);
+                await loadDashboard();
+                await refreshAdminRedeemCards();
+              }catch(err){
+                toast($('#a-toast'),err.message || 'Ошибка выдачи подарка',false);
+              }
+            });
+            main.append(btn);
+          }else{
+            let reason = '';
+            if(left <= 0){
+              reason = 'Подарок закончился.';
+            }else if(balance < price){
+              reason = 'Бонусов не хватает.';
+            }
+            main.append(
+              el('div',{class:'redeem-gift-note redeem-gift-note-bad',html:reason || 'Сейчас выдать нельзя.'})
+            );
+          }
+
+          card.append(img,main);
+          listBox.append(card);
+        });
+      }catch(err){
+        listBox.innerHTML = '<p class="card-subtitle">Ошибка загрузки подарков.</p>';
+        toast($('#a-toast'),err.message || 'Ошибка загрузки подарков для выдачи',false);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', ()=>{
       initAdminAuth();
       initAdminNav();
@@ -1227,9 +1429,11 @@
       initClientsAdmin();
       initGiftsAdmin();
 
-      $('#r-phone').addEventListener('change', refreshAdminRedeemOptions);
-      $('#r-phone').addEventListener('blur', refreshAdminRedeemOptions);
-      $('#r-gift-select').addEventListener('focus', refreshAdminRedeemOptions);
+      let redeemTimer=null;
+      $('#r-phone').addEventListener('input', ()=>{
+        clearTimeout(redeemTimer);
+        redeemTimer = setTimeout(refreshAdminRedeemCards,400);
+      });
     });
   </script>
 </body>

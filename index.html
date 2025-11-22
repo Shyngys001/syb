@@ -300,6 +300,9 @@
         <i class="fas fa-chevron-down accordion-icon"></i>
       </div>
       <div class="accordion-body">
+        <p class="card-subtitle" style="margin-bottom:10px;">
+          Обычные баллы и баллы за банкеты считаются отдельно. Подарок может требовать один из двух типов баллов.
+        </p>
         <div id="user-gifts" class="gift-grid"></div>
       </div>
     </section>
@@ -307,7 +310,7 @@
 
   <script>
     /* URL Apps Script */
-    const API_BASE = 'https://script.google.com/macros/s/AKfycbxh2qPIPYbGPFpwlB0XptQNe-tCSgboq4FuIddURtn3dQ4XH0Yn5bcPIkmoAHkI2fM/exec';
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbzhYp3Nhm-XNWZNSsyeTADAtww2NJeu85nlbci8AHGBVfmQBMQI97MoEXgYllHkOQfj/exec';
 
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
@@ -379,6 +382,7 @@
       const box = $('#user-info');
       box.innerHTML = '';
       const grid = el('div',{class:'user-info-grid'});
+
       grid.append(
         el('div',{class:'info-card'},[
           el('div',{class:'info-label',html:'Имя'}),
@@ -386,64 +390,85 @@
           el('div',{class:'card-subtitle',html:u.phone})
         ]),
         el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Накоплено всего'}),
-          el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)})
+          el('div',{class:'info-label',html:'Сумма чеков'}),
+          el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)}),
+          el('div',{class:'card-subtitle',html:
+            `Обычные: ${formatMoney(u.sum_normal)}<br>Банкеты: ${formatMoney(u.sum_banquet)}`
+          })
         ]),
         el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Доступный баланс'}),
-          el('div',{class:'info-value',html:formatMoney(u.balance)})
+          el('div',{class:'info-label',html:'Бонусный баланс'}),
+          el('div',{class:'info-value',html:formatMoney(u.balance_normal + u.balance_banquet)}),
+          el('div',{class:'card-subtitle',html:
+            `Обычные баллы: ${formatMoney(u.balance_normal)}<br>Баллы за банкеты: ${formatMoney(u.balance_banquet)}`
+          })
         ]),
         el('div',{class:'info-card'},[
           el('div',{class:'info-label',html:'Полученные подарки'}),
           el('div',{class:'info-value',html:u.gifts_got && u.gifts_got.length ? u.gifts_got.join(', ') : '—'})
         ])
       );
+
       box.append(grid);
       return u;
     }
 
-    async function loadGiftsForUser(phone){
-  const prof = (await api('users_me',{phone})).user;
-  const res = await api('gifts_list',{});
-  const gifts = res.gifts || [];
-  const container = $('#user-gifts');
-  container.innerHTML = '';
+    async function loadGiftsForUser(phone, cachedUser){
+      const prof = cachedUser || (await api('users_me',{phone})).user;
+      const res = await api('gifts_list',{});
+      const gifts = res.gifts || [];
+      const container = $('#user-gifts');
+      container.innerHTML = '';
 
-  if(!gifts.length){
-    container.innerHTML = '<p class="card-subtitle">Пока нет доступных подарков.</p>';
-    return;
-  }
+      if(!gifts.length){
+        container.innerHTML = '<p class="card-subtitle">Пока нет доступных подарков.</p>';
+        return;
+      }
 
-  gifts.forEach(g=>{
-    const left = Number(g.left || 0);
-    const outOfStock = left <= 0;
-    const enoughBonus = prof.bonus_balance >= Number(g.price || 0);
+      gifts.forEach(g=>{
+        const left = Number(g.left || 0);
+        const outOfStock = left <= 0;
 
-    const card = el('div',{class:'gift-card'});
-    if(outOfStock){
-      card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
+        const type = g.bonus_type === 'banquet' ? 'banquet' : 'normal';
+        const typeLabel = type === 'banquet' ? 'Баллы за банкеты' : 'Обычные баллы';
+        const userBalance = type === 'banquet'
+          ? prof.balance_banquet
+          : prof.balance_normal;
+
+        const price = Number(g.price || 0);
+        const enoughBonus = userBalance >= price;
+
+        const card = el('div',{class:'gift-card'});
+        if(outOfStock){
+          card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
+        }
+
+        const img = el('img',{
+          class:'gift-image',
+          src: g.photo || 'https://via.placeholder.com/400x300?text=Gift'
+        });
+
+        let statusText;
+        if(outOfStock){
+          statusText = 'Подарок временно недоступен.';
+        }else if(enoughBonus){
+          statusText = `Доступен за ваши ${typeLabel.toLowerCase()}. Обратитесь к администратору ресторана.`;
+        }else{
+          statusText = `Недостаточно ${typeLabel.toLowerCase()}.`;
+        }
+
+        const content = el('div',{class:'gift-content'},[
+          el('div',{class:'gift-title',html:g.name}),
+          el('div',{class:'gift-price',html:`Цена: ${formatMoney(price)}`}),
+          el('div',{class:'gift-left',html:`Тип бонусов: ${typeLabel}`}),
+          el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
+          el('div',{class:'card-subtitle',html:statusText})
+        ]);
+
+        card.append(img, content);
+        container.append(card);
+      });
     }
-
-    const img = el('img',{
-      class:'gift-image',
-      src: g.photo || 'https://via.placeholder.com/400x300?text=Gift'
-    });
-
-    const statusText = outOfStock
-      ? 'Подарок временно недоступен'
-      : (enoughBonus ? 'Доступен — обратитесь к администратору' : 'Недостаточно бонусов');
-
-    const content = el('div',{class:'gift-content'},[
-      el('div',{class:'gift-title',html:g.name}),
-      el('div',{class:'gift-price',html:`Цена подарка: ${formatMoney(g.price)}`}),
-      el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
-      el('div',{class:'card-subtitle',html:statusText})
-    ]);
-
-    card.append(img, content);
-    container.append(card);
-  });
-}
 
     function initClient(){
       $('#btn-user-login').addEventListener('click', async ()=>{
@@ -456,10 +481,9 @@
         try{
           await api('auth_user',{phone});
           CURRENT_USER_PHONE = phone;
-          await loadUserProfile(phone);
-          await loadGiftsForUser(phone);
+          const u = await loadUserProfile(phone);
+          await loadGiftsForUser(phone, u);
           toast($('#u-toast'),'Вы успешно вошли',true);
-          // автоматически открываем аккордеоны
           $('#acc-status').classList.add('open');
           $('#acc-gifts').classList.add('open');
         }catch(err){
