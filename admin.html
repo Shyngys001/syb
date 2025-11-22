@@ -226,6 +226,99 @@
       padding:18px;
       border:1px solid var(--border);
     }
+        /* Top-4 guests card */
+        .top4-card {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .top4-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:4px;
+    }
+    .top4-title {
+      font-size:14px;
+      font-weight:600;
+    }
+    .top4-sub {
+      font-size:12px;
+      color:var(--text-light);
+    }
+    .top4-list {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:4px;
+    }
+    .top4-item {
+      display:grid;
+      grid-template-columns:32px minmax(0,1fr) auto;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:10px;
+      background:var(--bg);
+    }
+    .top4-rank {
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      font-weight:600;
+      background:var(--primary-bg);
+      color:var(--primary);
+    }
+    .top4-main {
+      min-width:0;
+    }
+    .top4-name {
+      font-size:13px;
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .top4-phone {
+      font-size:12px;
+      color:var(--text-light);
+    }
+    .top4-right {
+      text-align:right;
+      font-size:12px;
+    }
+    .top4-sum {
+      font-weight:600;
+    }
+    .top4-tier-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      margin-top:2px;
+    }
+    .top4-tier-diamond {
+      background:#ecfeff;
+      color:#0e7490;
+    }
+    .top4-tier-gold {
+      background:#fef3c7;
+      color:#b45309;
+    }
+    .top4-tier-silver {
+      background:#e5e7eb;
+      color:#374151;
+    }
+    .top4-tier-bronze {
+      background:#fef2f2;
+      color:#b91c1c;
+    }
     .kpi-icon{
       width:36px;height:36px;
       border-radius:10px;
@@ -606,7 +699,7 @@
 
             <!-- Блок 1: Настройки подарка -->
             <div class="grid-2">
-              <div>
+              <div  style="display: none;">
                 <h3 class="section-title">1. Создание / редактирование подарка</h3>
                 <p class="section-desc">Заполните данные подарка и сохраните его в каталоге.</p>
                 <div class="form-group">
@@ -639,7 +732,7 @@
 
               <!-- Блок 2: Выдача подарка -->
               <div>
-                <h3 class="section-title">2. Выдача подарка клиенту</h3>
+                <h3 class="section-title">Выдача подарка клиенту</h3>
                 <p class="section-desc">
                   После ввода телефона ниже появится список подарков, отсортированный: сначала те, которые можно выдать.
                 </p>
@@ -658,7 +751,7 @@
             <div class="divider"></div>
 
             <!-- Блок 3: Список всех подарков -->
-            <h3 class="section-title">3. Каталог подарков</h3>
+            <h3 class="section-title">Каталог подарков</h3>
             <p class="section-desc">Список всех активных и неактивных подарков SyBaga.</p>
             <div id="gifts-admin" class="gift-grid"></div>
           </section>
@@ -920,28 +1013,51 @@
         );
 
         // Топ-4 гостей (Diamond / Gold / Silver / Bronze)
-        const topRows = rows.filter(r=>r.tier).slice(0,4);
+                // Топ-4 гостей (Diamond / Gold / Silver / Bronze)
+                const topRows = rows.filter(r=>r.tier).slice(0,4);
         if(topRows.length){
-          const list = el('div',{style:'margin-top:6px;font-size:13px;'});
-          topRows.forEach(r=>{
-            const tierIcon =
-              r.tier === 'Diamond' ? 'fa-gem' :
-              r.tier === 'Gold'    ? 'fa-crown' :
-              r.tier === 'Silver'  ? 'fa-medal' :
-              'fa-award';
-            const rowEl = el('div',{html:
-              `<i class="fas ${tierIcon}" style="margin-right:6px;"></i><strong>${r.tier}</strong> — ${r.name} (${formatMoney(r.sum_bill_total)})`
-            });
-            list.append(rowEl);
+          const topCard = el('div',{class:'kpi-card top4-card'},[
+            el('div',{class:'top4-header'},[
+              el('div',{},[
+                el('div',{class:'top4-title',html:'Топ-4 гостя'}),
+                el('div',{class:'top4-sub',html:'По сумме всех чеков за период'}),
+              ]),
+              el('div',{class:'kpi-icon primary'},[
+                el('i',{class:'fas fa-ranking-star'})
+              ])
+            ]),
+            el('div',{class:'top4-list'})
+          ]);
+
+          const listNode = topCard.querySelector('.top4-list');
+
+          topRows.forEach((r,idx)=>{
+            const tier = r.tier || '';
+            let tierClass = 'top4-tier-bronze';
+            let tierIcon  = 'fa-award';
+            if(tier === 'Diamond'){ tierClass='top4-tier-diamond'; tierIcon='fa-gem'; }
+            else if(tier === 'Gold'){ tierClass='top4-tier-gold'; tierIcon='fa-crown'; }
+            else if(tier === 'Silver'){ tierClass='top4-tier-silver'; tierIcon='fa-medal'; }
+
+            const item = el('div',{class:'top4-item'},[
+              el('div',{class:'top4-rank',html:idx+1}),
+              el('div',{class:'top4-main'},[
+                el('div',{class:'top4-name',html:r.name}),
+                el('div',{class:'top4-phone',html:r.phone})
+              ]),
+              el('div',{class:'top4-right'},[
+                el('div',{class:'top4-sum',html:formatMoney(r.sum_bill_total)}),
+                el('div',{class:`top4-tier-badge ${tierClass}`},[
+                  el('i',{class:`fas ${tierIcon}`}),
+                  document.createTextNode(tier || '—')
+                ])
+              ])
+            ]);
+
+            listNode.append(item);
           });
 
-          box.append(
-            el('div',{class:'kpi-card'},[
-              el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-ranking-star'})]),
-              el('div',{class:'kpi-label',html:'Топ-4 гостя'}),
-              list
-            ])
-          );
+          box.append(topCard);
         }
       }catch(err){
         toast($('#a-toast'),err.message || 'Ошибка дашборда',false);
