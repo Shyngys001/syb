@@ -1363,14 +1363,14 @@
             ? 'Баллы за банкеты'
             : 'Обычные баллы';
 
-          const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
-            el('i',{class:'fas fa-pen'}),
-            document.createTextNode('Редактировать')
-          ]);
-          const btnDel = el('button',{class:'btn btn-danger btn-sm'},[
-            el('i',{class:'fas fa-trash'}),
-            document.createTextNode('Удалить')
-          ]);
+              const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
+              el('i',{class:'fas fa-pen'}),
+              document.createTextNode('Редактировать')
+            ]);
+            const btnDel = el('button',{class:'btn btn-danger btn-sm'},[
+              el('i',{class:'fas fa-trash'}),
+              document.createTextNode('Удалить')
+            ]);
 
           btnEdit.addEventListener('click', ()=>{
             $('#g-name').value = g.name;
@@ -1396,11 +1396,7 @@
             el('div',{class:'gift-price',html:`Цена: ${formatMoney(g.price)}`}),
             el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
             el('div',{class:'card-subtitle',html:`Тип бонусов: ${typeLabel}`}),
-            el('div',{class:'card-subtitle',html:`Выдано: ${gotCount} клиентам`}),
-            el('div',{style:'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;'},[
-              btnEdit,
-              btnDel
-            ])
+            el('div',{class:'card-subtitle',html:`Выдано: ${gotCount} клиентам`})
           ]);
 
           card.append(img,content);
