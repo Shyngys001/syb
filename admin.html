@@ -904,6 +904,23 @@
       });
     }
 
+
+    function saveAdminSession(data){
+  try{
+    localStorage.setItem('syb_admin_session', JSON.stringify(data));
+  }catch(e){}
+}
+
+function loadAdminSession(){
+  try{
+    const raw = localStorage.getItem('syb_admin_session');
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){
+    return null;
+  }
+}
+
     /* Авторизация */
     function initAdminAuth(){
       $('#btn-adm-login').addEventListener('click', async ()=>{
@@ -915,6 +932,13 @@
           ADMIN_LOGIN = res.login;
           ADMIN_NAME = res.name;
           ADMIN_ROLE = res.role;
+
+          // сохраняем сессию
+          saveAdminSession({
+            login: ADMIN_LOGIN,
+            name: ADMIN_NAME,
+            role: ADMIN_ROLE
+          });
 
           $('#admin-login-card').style.display='none';
           $('#admin-layout').style.display='block';
@@ -1535,18 +1559,32 @@
     }
 
     document.addEventListener('DOMContentLoaded', ()=>{
-      initAdminAuth();
-      initAdminNav();
-      initAnalyticsButtons();
-      initClientsAdmin();
-      initGiftsAdmin();
+    // пробуем восстановить сессию
+    const session = loadAdminSession();
+    if(session){
+      ADMIN_LOGGED = true;
+      ADMIN_LOGIN = session.login;
+      ADMIN_NAME = session.name;
+      ADMIN_ROLE = session.role;
 
-      let redeemTimer=null;
-      $('#r-phone').addEventListener('input', ()=>{
-        clearTimeout(redeemTimer);
-        redeemTimer = setTimeout(refreshAdminRedeemCards,400);
-      });
+      // сразу показываем админку
+      $('#admin-login-card').style.display='none';
+      $('#admin-layout').style.display='block';
+      loadDashboard();
+    }
+
+    initAdminAuth();
+    initAdminNav();
+    initAnalyticsButtons();
+    initClientsAdmin();
+    initGiftsAdmin();
+
+    let redeemTimer=null;
+    $('#r-phone').addEventListener('input', ()=>{
+      clearTimeout(redeemTimer);
+      redeemTimer = setTimeout(refreshAdminRedeemCards,400);
     });
+  });
   </script>
 </body>
 </html>
