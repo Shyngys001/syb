@@ -1614,5 +1614,34 @@ function loadAdminSession(){
       });
     });
   </script>
+  <script>
+    let logoutTimer;
+    
+    // Запуск таймера
+    function startLogoutTimer() {
+      clearTimeout(logoutTimer);
+    
+      // 15 минут бездействия
+      logoutTimer = setTimeout(() => {
+    
+        // Удаляем САМОЕ ВАЖНОЕ — ключ админ-сессии
+        localStorage.removeItem('syb_admin_session');
+    
+        // Удаляем сохранённую страницу
+        localStorage.removeItem('syb_admin_page');
+    
+        // Перезагружаем на страницу логина
+        window.location.href = 'admin.html';
+    
+      }, 24 * 60 * 60 * 1000);
+    }
+    
+    // Сбрасывать таймер при любой активности
+    window.onload = startLogoutTimer;
+    document.onclick = startLogoutTimer;
+    document.onkeypress = startLogoutTimer;
+    document.onmousemove = startLogoutTimer;
+    document.onscroll = startLogoutTimer;
+    </script>
 </body>
 </html>
