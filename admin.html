@@ -872,6 +872,10 @@
     let ADMIN_ROLE = null;
     let ADMIN_CURRENT_PHONE = null;
 
+    // новые ключи для localStorage
+    const ADMIN_SESSION_KEY = 'syb_admin_session';
+    const ADMIN_PAGE_KEY    = 'syb_admin_page';
+
     /* Навигация между блоками админки */
     function switchAdminSubpage(id){
       $$('.admin-subpage').forEach(p=>p.style.display='none');
@@ -880,6 +884,8 @@
 
       $$('.nav-item').forEach(i=>i.classList.remove('active'));
       $(`.nav-item[data-page="${id}"]`)?.classList.add('active');
+      // сохраняем последнюю открытую страницу
+      localStorage.setItem(ADMIN_PAGE_KEY, id);
     }
 
     function initAdminNav(){
@@ -934,14 +940,16 @@ function loadAdminSession(){
           ADMIN_ROLE = res.role;
 
           // сохраняем сессию
-          saveAdminSession({
+          localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
             login: ADMIN_LOGIN,
             name: ADMIN_NAME,
             role: ADMIN_ROLE
-          });
+          }));
+          localStorage.setItem(ADMIN_PAGE_KEY, 'admin-dashboard');
 
           $('#admin-login-card').style.display='none';
           $('#admin-layout').style.display='block';
+
           toast($('#a-toast'),'Вход выполнен',true);
           loadDashboard();
         }catch(err){
@@ -949,6 +957,37 @@ function loadAdminSession(){
         }
       });
     }
+
+    function restoreAdminSession(){
+  try{
+    const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+    if(!raw) return;
+
+    const saved = JSON.parse(raw);
+    if(!saved || !saved.login) return;
+
+    ADMIN_LOGGED = true;
+    ADMIN_LOGIN = saved.login;
+    ADMIN_NAME = saved.name || '';
+    ADMIN_ROLE = saved.role || '';
+
+    // скрываем логин, показываем админку
+    $('#admin-login-card').style.display='none';
+    $('#admin-layout').style.display='block';
+
+    // какая страница была открыта
+    const pageId = localStorage.getItem(ADMIN_PAGE_KEY) || 'admin-dashboard';
+    switchAdminSubpage(pageId);
+
+    // подгружаем данные для нужного раздела
+    if(pageId === 'admin-dashboard')      loadDashboard();
+    else if(pageId === 'admin-gifts')     loadGiftsAdmin();
+    else if(pageId === 'admin-analytics') loadAnalyticsPage();
+    // для admin-clients отдельно ничего не нужно — всё руками
+  }catch(e){
+    console.warn('restoreAdminSession error', e);
+  }
+}
 
     /* Парсер analytics.csv под новую структуру */
     function parseAnalyticsCSV(csv){
@@ -1559,32 +1598,21 @@ function loadAdminSession(){
     }
 
     document.addEventListener('DOMContentLoaded', ()=>{
-    // пробуем восстановить сессию
-    const session = loadAdminSession();
-    if(session){
-      ADMIN_LOGGED = true;
-      ADMIN_LOGIN = session.login;
-      ADMIN_NAME = session.name;
-      ADMIN_ROLE = session.role;
+      initAdminAuth();
+      initAdminNav();
+      initAnalyticsButtons();
+      initClientsAdmin();
+      initGiftsAdmin();
 
-      // сразу показываем админку
-      $('#admin-login-card').style.display='none';
-      $('#admin-layout').style.display='block';
-      loadDashboard();
-    }
+      // попытаться восстановить сессию и страницу
+      restoreAdminSession();
 
-    initAdminAuth();
-    initAdminNav();
-    initAnalyticsButtons();
-    initClientsAdmin();
-    initGiftsAdmin();
-
-    let redeemTimer=null;
-    $('#r-phone').addEventListener('input', ()=>{
-      clearTimeout(redeemTimer);
-      redeemTimer = setTimeout(refreshAdminRedeemCards,400);
+      let redeemTimer=null;
+      $('#r-phone').addEventListener('input', ()=>{
+        clearTimeout(redeemTimer);
+        redeemTimer = setTimeout(refreshAdminRedeemCards,400);
+      });
     });
-  });
   </script>
 </body>
 </html>
