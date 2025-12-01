@@ -1,501 +1,565 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>SyBaga — кабинет гостя</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #018610;
-      --primary-dark: #059669;
-      --primary-bg: #f5f3ff;
-      --secondary: #10b981;
-      --secondary-dark: #059669;
-      --danger: #ef4444;
-      --text: #1f2937;
-      --text-light: #6b7280;
-      --text-lighter: #9ca3af;
-      --bg: #f9fafb;
-      --bg-card: #ffffff;
-      --border: #e5e7eb;
-      --border-light: #f3f4f6;
-      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --radius: 12px;
-      --radius-lg: 16px;
-    }
-
-    * { box-sizing:border-box; margin:0; padding:0; }
-
-    body {
-      min-height:100vh;
-      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.5;
-    }
-
-    .app-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 16px 40px;
-    }
-
-    .app-header {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:20px 0;
-      margin-bottom:16px;
-    }
-
-    .logo {
-      display:flex;
-      align-items:center;
-      gap:12px;
-      font-weight:800;
-      font-size:24px;
-      color:var(--primary);
-    }
-
-    .logo-icon {
-      background:var(--primary);
-      color:white;
-      width:40px;
-      height:40px;
-      border-radius:10px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .card {
-      background:var(--bg-card);
-      border-radius:var(--radius-lg);
-      padding:24px;
-      box-shadow:var(--shadow);
-      border:1px solid var(--border);
-      margin-bottom:20px;
-    }
-
-    .card-title {
-      font-size:20px;
-      font-weight:700;
-      margin-bottom:4px;
-    }
-
-    .card-subtitle {
-      font-size:14px;
-      color:var(--text-light);
-    }
-
-    .form-group { margin-top:16px; margin-bottom:12px; }
-
-    .form-label {
-      display:block;
-      font-size:14px;
-      font-weight:500;
-      margin-bottom:6px;
-    }
-
-    .form-input {
-      width:100%;
-      padding:12px 16px;
-      border-radius:var(--radius);
-      border:1px solid var(--border);
-      font-size:15px;
-      transition:all .2s;
-    }
-
-    .form-input:focus {
-      outline:none;
-      border-color:var(--primary);
-      box-shadow:0 0 0 3px rgba(124,58,237,0.1);
-    }
-
-    .btn {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px 20px;
-      border-radius:var(--radius);
-      font-size:14px;
-      font-weight:500;
-      cursor:pointer;
-      transition:all .2s;
-      border:none;
-      gap:8px;
-    }
-    .btn-primary { background:var(--primary); color:white; }
-    .btn-primary:hover { background:var(--primary-dark); }
-
-    .btn-secondary {
-      background:var(--secondary);
-      color:white;
-    }
-    .btn-secondary:hover { background:var(--secondary-dark); }
-
-    .btn-outline {
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--text);
-    }
-
-    .btn[disabled]{opacity:.6;cursor:default;}
-
-    .toast {
-      margin-top:12px;
-      padding:10px 14px;
-      border-radius:var(--radius);
-      font-size:14px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .toast-success {
-      background:#ecfdf5;
-      color:var(--secondary-dark);
-      border:1px solid #a7f3d0;
-    }
-    .toast-error {
-      background:#fef2f2;
-      color:#b91c1c;
-      border:1px solid #fecaca;
-    }
-
-    .accordion {
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border);
-      background:var(--bg-card);
-      margin-bottom:16px;
-      overflow:hidden;
-      box-shadow:var(--shadow);
-    }
-
-    .accordion-header {
-      padding:16px 20px;
-      background:var(--bg);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-weight:600;
-    }
-    .accordion-header:hover { background:var(--border-light); }
-
-    .accordion-body { padding:20px; border-top:1px solid var(--border); display:none; }
-    .accordion.open .accordion-body { display:block; }
-
-    .accordion-icon { transition:transform .3s; }
-    .accordion.open .accordion-icon { transform:rotate(180deg); }
-
-    .user-info-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-      gap:16px;
-    }
-    .info-card {
-      background:var(--bg);
-      border-radius:var(--radius);
-      padding:16px;
-      border:1px solid var(--border-light);
-    }
-    .info-label {
-      font-size:13px;
-      color:var(--text-light);
-      margin-bottom:4px;
-    }
-    .info-value {
-      font-size:18px;
-      font-weight:700;
-    }
-
-    .gift-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-      gap:16px;
-    }
-    .gift-card{
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border);
-      overflow:hidden;
-      background:var(--bg-card);
-      position:relative;
-      transition:all .3s;
-    }
-    .gift-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lg);}
-    .gift-image{
-      width:100%;
-      height:160px;
-      object-fit:cover;
-      background:#e5e7eb;
-    }
-    .gift-content{padding:16px;}
-    .gift-title{font-size:16px;font-weight:600;margin-bottom:8px;}
-    .gift-price{font-size:14px;color:var(--text-light);margin-bottom:4px;}
-    .gift-left{font-size:12px;color:var(--text-lighter);margin-bottom:8px;}
-    .gift-out{
-      position:absolute;
-      top:10px;right:10px;
-      padding:4px 10px;
-      border-radius:999px;
-      background:#fee2e2;
-      color:#b91c1c;
-      font-size:11px;
-      font-weight:600;
-    }
-
-    .link-admin {
-      font-size:13px;
-      color:var(--text-light);
-      text-align:right;
-      margin-top:8px;
-    }
-    .link-admin a { color:var(--text-light); text-decoration:underline; }
-  </style>
-</head>
-<body>
-  <div class="app-container">
-    <header class="app-header">
-      <div class="logo">
-        <div class="logo-icon"><i class="fas fa-gift"></i></div>
-        <span>SyBaga</span>
-      </div>
-      <div class="link-admin">
-        <a href="admin.html">Вход для сотрудников</a>
-      </div>
-    </header>
-
-    <section class="card">
-      <h2 class="card-title">Личный кабинет гостя</h2>
-      <p class="card-subtitle">Введите номер телефона, который вы оставляли в ресторане SyBaga.</p>
-
-      <div class="form-group">
-        <label class="form-label">Номер телефона</label>
-        <input type="text" class="form-input" id="user-phone" placeholder="+7 777 000 00 00">
-      </div>
-      <button class="btn btn-primary" id="btn-user-login">
-        <i class="fas fa-sign-in-alt"></i> Поиск
-      </button>
-      <div id="u-toast" class="toast"></div>
-    </section>
-
-    <section class="accordion" id="acc-status">
-      <div class="accordion-header">
-        <span>Мой статус и баланс</span>
-        <i class="fas fa-chevron-down accordion-icon"></i>
-      </div>
-      <div class="accordion-body">
-        <div id="user-info"></div>
-      </div>
-    </section>
-
-    <section class="accordion" id="acc-gifts">
-      <div class="accordion-header">
-        <span>Доступные подарки</span>
-        <i class="fas fa-chevron-down accordion-icon"></i>
-      </div>
-      <div class="accordion-body">
-        <p class="card-subtitle" style="margin-bottom:10px;">
-          Обычные баллы и баллы за банкеты считаются отдельно. Подарок может требовать один из двух типов баллов.
-        </p>
-        <div id="user-gifts" class="gift-grid"></div>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    /* URL Apps Script */
-    const API_BASE = 'https://script.google.com/macros/s/AKfycbwtVhNoiosNdVcQ7QmHjjB1yQ-8fpxbGgURbSeWWg_VM8h3j1KGnSSw0l2UMTSfsNmI/exec';
-
-    const $ = s => document.querySelector(s);
-    const $$ = s => document.querySelectorAll(s);
-
-    const el = (t,a={},c=[])=>{
-      const n=document.createElement(t);
-      for(const k in a){
-        if(k==='class') n.className=a[k];
-        else if(k==='html') n.innerHTML=a[k];
-        else n.setAttribute(k,a[k]);
-      }
-      (Array.isArray(c)?c:[c]).filter(Boolean).forEach(x=>n.append(x));
-      return n;
-    };
-
-    function normPhone(p){
-      p = String(p || '').replace(/[^\d+]/g,'');
-      if(p.startsWith('+7')) return p;
-      if(p.startsWith('8') && p.length===11) return '+7'+p.slice(1);
-      if(p.length===10) return '+7'+p;
-      if(p.length===11 && p[0]==='7') return '+'+p;
-      return p;
-    }
-
-    function toast(node,msg,ok=true){
-      if(!node) return;
-      node.className = 'toast ' + (ok?'toast-success':'toast-error');
-      node.innerHTML = ok
-        ? `<i class="fas fa-check-circle"></i> ${msg}`
-        : `<i class="fas fa-exclamation-circle"></i> ${msg}`;
-      setTimeout(()=>{ if(node.innerHTML.includes(msg)) node.innerHTML=''; },3000);
-    }
-
-    async function api(action, body={}, method='POST'){
-      const params = new URLSearchParams({action, ...body});
-      let res;
-      if(method === 'GET'){
-        res = await fetch(`${API_BASE}?${params.toString()}`, {method:'GET'});
-      }else{
-        res = await fetch(API_BASE, {
-          method:'POST',
-          headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-          body: params.toString()
-        });
-      }
-      const data = await res.json().catch(()=>({ok:false,error:'JSON parse error'}));
-      if(!data.ok) throw new Error(data.error || 'Ошибка запроса');
-      return data;
-    }
-
-    function formatMoney(x){
-      x = Number(x||0);
-      return x.toLocaleString('ru-RU') + ' ₸';
-    }
-
-    let CURRENT_USER_PHONE = null;
-
-    function initAccordions(){
-      $$('.accordion').forEach(acc=>{
-        acc.querySelector('.accordion-header').addEventListener('click', ()=>{
-          acc.classList.toggle('open');
-        });
-      });
-    }
-
-    async function loadUserProfile(phone){
-      const res = await api('users_me',{phone});
-      const u = res.user;
-      const box = $('#user-info');
-      box.innerHTML = '';
-      const grid = el('div',{class:'user-info-grid'});
-
-      grid.append(
-        el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Имя'}),
-          el('div',{class:'info-value',html:u.name || '-'}),
-          el('div',{class:'card-subtitle',html:u.phone})
-        ]),
-        el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Сумма чеков'}),
-          el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)}),
-          el('div',{class:'card-subtitle',html:
-            `Обычные: ${formatMoney(u.sum_normal)}<br>Банкеты: ${formatMoney(u.sum_banquet)}`
-          })
-        ]),
-        el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Бонусный баланс'}),
-          el('div',{class:'info-value',html:formatMoney(u.balance_normal + u.balance_banquet)}),
-          el('div',{class:'card-subtitle',html:
-            `Обычные баллы: ${formatMoney(u.balance_normal)}<br>Баллы за банкеты: ${formatMoney(u.balance_banquet)}`
-          })
-        ]),
-        el('div',{class:'info-card'},[
-          el('div',{class:'info-label',html:'Полученные подарки'}),
-          el('div',{class:'info-value',html:u.gifts_got && u.gifts_got.length ? u.gifts_got.join(', ') : '—'})
-        ])
-      );
-
-      box.append(grid);
-      return u;
-    }
-
-    async function loadGiftsForUser(phone, cachedUser){
-      const prof = cachedUser || (await api('users_me',{phone})).user;
-      const res = await api('gifts_list',{});
-      const gifts = res.gifts || [];
-      const container = $('#user-gifts');
-      container.innerHTML = '';
-
-      if(!gifts.length){
-        container.innerHTML = '<p class="card-subtitle">Пока нет доступных подарков.</p>';
-        return;
+  <!DOCTYPE html>
+  <html lang="ru">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>SyBaga — кабинет гостя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root {
+        --primary: #018610;
+        --primary-dark: #059669;
+        --primary-bg: #f5f3ff;
+        --secondary: #10b981;
+        --secondary-dark: #059669;
+        --danger: #ef4444;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --text-lighter: #9ca3af;
+        --bg: #f9fafb;
+        --bg-card: #ffffff;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius: 12px;
+        --radius-lg: 16px;
       }
 
-      gifts.forEach(g=>{
-        const left = Number(g.left || 0);
-        const outOfStock = left <= 0;
+      * { box-sizing:border-box; margin:0; padding:0; }
 
-        const type = g.bonus_type === 'banquet' ? 'banquet' : 'normal';
-        const typeLabel = type === 'banquet' ? 'Баллы за банкеты' : 'Обычные баллы';
-        const userBalance = type === 'banquet'
-          ? prof.balance_banquet
-          : prof.balance_normal;
+      body {
+        min-height:100vh;
+        font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        background:var(--bg);
+        color:var(--text);
+        line-height:1.5;
+      }
 
-        const price = Number(g.price || 0);
-        const enoughBonus = userBalance >= price;
+      .app-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 16px 40px;
+      }
 
-        const card = el('div',{class:'gift-card'});
-        if(outOfStock){
-          card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
+      .app-header {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:20px 0;
+        margin-bottom:16px;
+      }
+
+      .logo {
+        display:flex;
+        align-items:center;
+        gap:12px;
+        font-weight:800;
+        font-size:24px;
+        color:var(--primary);
+      }
+
+      .logo-icon {
+        background:var(--primary);
+        color:white;
+        width:40px;
+        height:40px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .card {
+        background:var(--bg-card);
+        border-radius:var(--radius-lg);
+        padding:24px;
+        box-shadow:var(--shadow);
+        border:1px solid var(--border);
+        margin-bottom:20px;
+      }
+
+      .card-title {
+        font-size:20px;
+        font-weight:700;
+        margin-bottom:4px;
+      }
+
+      .card-subtitle {
+        font-size:14px;
+        color:var(--text-light);
+      }
+
+      .form-group { margin-top:16px; margin-bottom:12px; }
+
+      .form-label {
+        display:block;
+        font-size:14px;
+        font-weight:500;
+        margin-bottom:6px;
+      }
+
+      .form-input {
+        width:100%;
+        padding:12px 16px;
+        border-radius:var(--radius);
+        border:1px solid var(--border);
+        font-size:15px;
+        transition:all .2s;
+      }
+
+      .form-input:focus {
+        outline:none;
+        border-color:var(--primary);
+        box-shadow:0 0 0 3px rgba(124,58,237,0.1);
+      }
+
+      .btn {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px 20px;
+        border-radius:var(--radius);
+        font-size:14px;
+        font-weight:500;
+        cursor:pointer;
+        transition:all .2s;
+        border:none;
+        gap:8px;
+      }
+      .btn-primary { background:var(--primary); color:white; }
+      .btn-primary:hover { background:var(--primary-dark); }
+
+      .btn-secondary {
+        background:var(--secondary);
+        color:white;
+      }
+      .btn-secondary:hover { background:var(--secondary-dark); }
+
+      .btn-outline {
+        background:transparent;
+        border:1px solid var(--border);
+        color:var(--text);
+      }
+
+      .btn[disabled]{opacity:.6;cursor:default;}
+
+      .toast {
+        margin-top:12px;
+        padding:10px 14px;
+        border-radius:var(--radius);
+        font-size:14px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+      }
+      .toast-success {
+        background:#ecfdf5;
+        color:var(--secondary-dark);
+        border:1px solid #a7f3d0;
+      }
+      .toast-error {
+        background:#fef2f2;
+        color:#b91c1c;
+        border:1px solid #fecaca;
+      }
+
+      .accordion {
+        border-radius:var(--radius-lg);
+        border:1px solid var(--border);
+        background:var(--bg-card);
+        margin-bottom:16px;
+        overflow:hidden;
+        box-shadow:var(--shadow);
+      }
+
+      .accordion-header {
+        padding:16px 20px;
+        background:var(--bg);
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        font-weight:600;
+      }
+      .accordion-header:hover { background:var(--border-light); }
+
+      .accordion-body { padding:20px; border-top:1px solid var(--border); display:none; }
+      .accordion.open .accordion-body { display:block; }
+
+      .accordion-icon { transition:transform .3s; }
+      .accordion.open .accordion-icon { transform:rotate(180deg); }
+
+      .user-info-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+        gap:16px;
+      }
+      .info-card {
+        background:var(--bg);
+        border-radius:var(--radius);
+        padding:16px;
+        border:1px solid var(--border-light);
+      }
+      .info-label {
+        font-size:13px;
+        color:var(--text-light);
+        margin-bottom:4px;
+      }
+      .info-value {
+        font-size:18px;
+        font-weight:700;
+      }
+
+      .gift-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+        gap:16px;
+      }
+      .gift-card{
+        border-radius:var(--radius-lg);
+        border:1px solid var(--border);
+        overflow:hidden;
+        background:var(--bg-card);
+        position:relative;
+        transition:all .3s;
+      }
+      .gift-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lg);}
+      .gift-image{
+        width:100%;
+        height:120px;
+        object-fit:contain;
+      }
+      .gift-content{padding:16px;}
+      .gift-title{font-size:16px;font-weight:600;margin-bottom:8px;}
+      .gift-price{font-size:14px;color:var(--text-light);margin-bottom:4px;}
+      .gift-left{font-size:12px;color:var(--text-lighter);margin-bottom:8px;}
+      .gift-out{
+        position:absolute;
+        top:10px;right:10px;
+        padding:4px 10px;
+        border-radius:999px;
+        background:#fee2e2;
+        color:#b91c1c;
+        font-size:11px;
+        font-weight:600;
+      }
+
+      .link-admin {
+        font-size:13px;
+        color:var(--text-light);
+        text-align:right;
+        margin-top:8px;
+      }
+      .link-admin a { color:var(--text-light); text-decoration:underline; }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="logo">
+          <div class="logo-icon"><i class="fas fa-gift"></i></div>
+          <span>SyBaga</span>
+        </div>
+        <div class="link-admin">
+          <a href="admin.html">Вход для сотрудников</a>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2 class="card-title">Личный кабинет гостя</h2>
+        <p class="card-subtitle">Введите номер телефона, который вы оставляли в ресторане SyBaga.</p>
+
+        <div class="form-group">
+          <label class="form-label">Номер телефона</label>
+          <input type="text" class="form-input" id="user-phone" placeholder="+7 777 000 00 00">
+        </div>
+        <button class="btn btn-primary" id="btn-user-login">
+          <i class="fas fa-sign-in-alt"></i> Поиск
+        </button>
+        <div id="u-toast" class="toast"></div>
+      </section>
+
+      <section class="accordion" id="acc-status">
+        <div class="accordion-header">
+          <span>Мой статус и баланс</span>
+          <i class="fas fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="accordion-body">
+          <div id="user-info"></div>
+        </div>
+      </section>
+
+      <section class="accordion" id="acc-gifts">
+        <div class="accordion-header">
+          <span>Доступные подарки</span>
+          <i class="fas fa-chevron-down accordion-icon"></i>
+        </div>
+        <div class="accordion-body">
+          <p class="card-subtitle" style="margin-bottom:10px;">
+            Обычные баллы и баллы за банкеты считаются отдельно. Подарок может требовать один из двух типов баллов.
+          </p>
+          <div id="user-gifts" class="gift-grid"></div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      /* URL Apps Script */
+      const API_BASE = 'https://script.google.com/macros/s/AKfycbwtVhNoiosNdVcQ7QmHjjB1yQ-8fpxbGgURbSeWWg_VM8h3j1KGnSSw0l2UMTSfsNmI/exec';
+
+      const $ = s => document.querySelector(s);
+      const $$ = s => document.querySelectorAll(s);
+
+      const el = (t,a={},c=[])=>{
+        const n=document.createElement(t);
+        for(const k in a){
+          if(k==='class') n.className=a[k];
+          else if(k==='html') n.innerHTML=a[k];
+          else n.setAttribute(k,a[k]);
         }
+        (Array.isArray(c)?c:[c]).filter(Boolean).forEach(x=>n.append(x));
+        return n;
+      };
 
-        const img = el('img',{
-          class:'gift-image',
-          src: g.photo || 'https://via.placeholder.com/400x300?text=Gift'
-        });
+      function normPhone(p){
+        p = String(p || '').replace(/[^\d+]/g,'');
+        if(p.startsWith('+7')) return p;
+        if(p.startsWith('8') && p.length===11) return '+7'+p.slice(1);
+        if(p.length===10) return '+7'+p;
+        if(p.length===11 && p[0]==='7') return '+'+p;
+        return p;
+      }
 
-        let statusText;
-        if(outOfStock){
-          statusText = 'Подарок временно недоступен.';
-        }else if(enoughBonus){
-          statusText = `Доступен за ваши ${typeLabel.toLowerCase()}. Обратитесь к администратору ресторана.`;
+      function normalizePhotoUrl(url) {
+  if (!url) return '';
+  
+  url = String(url).trim();
+  if (!url) return '';
+  
+  // 1) Если это data:image — возвращаем как есть
+  if (url.startsWith('data:image')) return url;
+  
+  // 2) Убираем формулы Google Sheets
+  if (url.startsWith('=IMAGE("')) {
+    url = url.replace(/^=IMAGE\("(.*?)"\)$/i, '$1');
+    url = url.replace(/^["']+|["']+$/g, ''); // Убираем кавычки
+  }
+  
+  // 3) Извлечение ID из различных форматов Google Drive
+  let fileId = '';
+  
+  // Формат: https://drive.usercontent.google.com/download?id=ID...
+  let match = url.match(/drive\.usercontent\.google\.com\/download\?id=([a-zA-Z0-9_-]+)/);
+  if (match) {
+    fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/file/d/ID/view
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/open?id=ID
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/uc?id=ID
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/uc\?id=([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: Просто ID (без полного URL)
+  if (!fileId && /^[a-zA-Z0-9_-]{25,}$/.test(url)) {
+    fileId = url;
+  }
+  
+  // 4) Если нашли ID — формируем правильную ссылку для просмотра
+  if (fileId) {
+    return `https://lh3.googleusercontent.com/d/${fileId}=s1000?authuser=0`;
+  }
+  
+  // 5) Проверяем, является ли ссылка прямым изображением
+  if (/^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(url)) {
+    return url;
+  }
+  
+  // 6) Для других внешних ссылок — возвращаем как есть
+  if (url.startsWith('http')) {
+    return url;
+  }
+  
+  // 7) Возвращаем пустую строку, если не распознали
+  return '';
+}
+      function toast(node,msg,ok=true){
+        if(!node) return;
+        node.className = 'toast ' + (ok?'toast-success':'toast-error');
+        node.innerHTML = ok
+          ? `<i class="fas fa-check-circle"></i> ${msg}`
+          : `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+        setTimeout(()=>{ if(node.innerHTML.includes(msg)) node.innerHTML=''; },3000);
+      }
+
+      async function api(action, body={}, method='POST'){
+        const params = new URLSearchParams({action, ...body});
+        let res;
+        if(method === 'GET'){
+          res = await fetch(`${API_BASE}?${params.toString()}`, {method:'GET'});
         }else{
-          statusText = `Недостаточно ${typeLabel.toLowerCase()}.`;
+          res = await fetch(API_BASE, {
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+            body: params.toString()
+          });
         }
+        const data = await res.json().catch(()=>({ok:false,error:'JSON parse error'}));
+        if(!data.ok) throw new Error(data.error || 'Ошибка запроса');
+        return data;
+      }
 
-        const content = el('div',{class:'gift-content'},[
-          el('div',{class:'gift-title',html:g.name}),
-          el('div',{class:'gift-price',html:`Цена: ${formatMoney(price)}`}),
-          el('div',{class:'gift-left',html:`Тип бонусов: ${typeLabel}`}),
-          el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
-          el('div',{class:'card-subtitle',html:statusText})
-        ]);
+      function formatMoney(x){
+        x = Number(x||0);
+        return x.toLocaleString('ru-RU') + ' ₸';
+      }
 
-        card.append(img, content);
-        container.append(card);
-      });
-    }
+      let CURRENT_USER_PHONE = null;
 
-    function initClient(){
-      $('#btn-user-login').addEventListener('click', async ()=>{
-        const raw = $('#user-phone').value.trim();
-        const phone = normPhone(raw);
-        if(!phone){
-          toast($('#u-toast'),'Введите корректный номер телефона',false);
+      function initAccordions(){
+        $$('.accordion').forEach(acc=>{
+          acc.querySelector('.accordion-header').addEventListener('click', ()=>{
+            acc.classList.toggle('open');
+          });
+        });
+      }
+
+      async function loadUserProfile(phone){
+        const res = await api('users_me',{phone});
+        const u = res.user;
+        const box = $('#user-info');
+        box.innerHTML = '';
+        const grid = el('div',{class:'user-info-grid'});
+
+        grid.append(
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Имя'}),
+            el('div',{class:'info-value',html:u.name || '-'}),
+            el('div',{class:'card-subtitle',html:u.phone})
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Сумма чеков'}),
+            el('div',{class:'info-value',html:formatMoney(u.lifetime_sum)}),
+            el('div',{class:'card-subtitle',html:
+              `Обычные: ${formatMoney(u.sum_normal)}<br>Банкеты: ${formatMoney(u.sum_banquet)}`
+            })
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Бонусный баланс'}),
+            el('div',{class:'info-value',html:formatMoney(u.balance_normal + u.balance_banquet)}),
+            el('div',{class:'card-subtitle',html:
+              `Обычные баллы: ${formatMoney(u.balance_normal)}<br>Баллы за банкеты: ${formatMoney(u.balance_banquet)}`
+            })
+          ]),
+          el('div',{class:'info-card'},[
+            el('div',{class:'info-label',html:'Полученные подарки'}),
+            el('div',{class:'info-value',html:u.gifts_got && u.gifts_got.length ? u.gifts_got.join(', ') : '—'})
+          ])
+        );
+
+        box.append(grid);
+        return u;
+      }
+
+      async function loadGiftsForUser(phone, cachedUser){
+        const prof = cachedUser || (await api('users_me',{phone})).user;
+        const res = await api('gifts_list',{});
+        const gifts = res.gifts || [];
+        const container = $('#user-gifts');
+        container.innerHTML = '';
+
+        if(!gifts.length){
+          container.innerHTML = '<p class="card-subtitle">Пока нет доступных подарков.</p>';
           return;
         }
-        try{
-          await api('auth_user',{phone});
-          CURRENT_USER_PHONE = phone;
-          const u = await loadUserProfile(phone);
-          await loadGiftsForUser(phone, u);
-          toast($('#u-toast'),'Вы успешно вошли',true);
-          $('#acc-status').classList.add('open');
-          $('#acc-gifts').classList.add('open');
-        }catch(err){
-          toast($('#u-toast'),err.message || 'Клиент не найден',false);
-        }
-      });
-    }
 
-    document.addEventListener('DOMContentLoaded', ()=>{
-      initAccordions();
-      initClient();
-    });
-  </script>
-</body>
-</html>
+        gifts.forEach(g=>{
+          const left = Number(g.left || 0);
+          const outOfStock = left <= 0;
+
+          const type = g.bonus_type === 'banquet' ? 'banquet' : 'normal';
+          const typeLabel = type === 'banquet' ? 'Баллы за банкеты' : 'Обычные баллы';
+          const userBalance = type === 'banquet'
+            ? prof.balance_banquet
+            : prof.balance_normal;
+
+          const price = Number(g.price || 0);
+          const enoughBonus = userBalance >= price;
+
+          const card = el('div',{class:'gift-card'});
+          if(outOfStock){
+            card.append(el('div',{class:'gift-out',html:'Нет в наличии'}));
+          }
+
+          const img = el('img',{
+            class:'gift-image',
+            src: normalizePhotoUrl(g.photo) || 'https://via.placeholder.com/400x300?text=Gift'
+          });
+
+          let statusText;
+          if(outOfStock){
+            statusText = 'Подарок временно недоступен.';
+          }else if(enoughBonus){
+            statusText = `Доступен за ваши ${typeLabel.toLowerCase()}. Обратитесь к администратору ресторана.`;
+          }else{
+            statusText = `Недостаточно ${typeLabel.toLowerCase()}.`;
+          }
+
+          const content = el('div',{class:'gift-content'},[
+            el('div',{class:'gift-title',html:g.name}),
+            el('div',{class:'gift-price',html:`Цена: ${formatMoney(price)}`}),
+            el('div',{class:'gift-left',html:`Тип бонусов: ${typeLabel}`}),
+            el('div',{class:'gift-left',html:`Остаток: ${left} шт.`}),
+            el('div',{class:'card-subtitle',html:statusText})
+          ]);
+
+          card.append(img, content);
+          container.append(card);
+        });
+      }
+
+      function initClient(){
+        $('#btn-user-login').addEventListener('click', async ()=>{
+          const raw = $('#user-phone').value.trim();
+          const phone = normPhone(raw);
+          if(!phone){
+            toast($('#u-toast'),'Введите корректный номер телефона',false);
+            return;
+          }
+          try{
+            await api('auth_user',{phone});
+            CURRENT_USER_PHONE = phone;
+            const u = await loadUserProfile(phone);
+            await loadGiftsForUser(phone, u);
+            toast($('#u-toast'),'Вы успешно вошли',true);
+            $('#acc-status').classList.add('open');
+            $('#acc-gifts').classList.add('open');
+          }catch(err){
+            toast($('#u-toast'),err.message || 'Клиент не найден',false);
+          }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        initAccordions();
+        initClient();
+      });
+    </script>
+  </body>
+  </html>

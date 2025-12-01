@@ -398,9 +398,8 @@
     }
     .gift-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
     .gift-image{
-      width:100%;height:150px;
-      object-fit:cover;
-      background:#e5e7eb;
+      width:100%;height:120px;
+      object-fit:contain;
     }
     .gift-content{padding:14px;}
     .gift-title{font-size:15px;font-weight:600;margin-bottom:4px;}
@@ -823,6 +822,71 @@
       return p;
     }
 
+    function normalizePhotoUrl(url) {
+  if (!url) return '';
+  
+  url = String(url).trim();
+  if (!url) return '';
+  
+  // 1) Если это data:image — возвращаем как есть
+  if (url.startsWith('data:image')) return url;
+  
+  // 2) Убираем формулы Google Sheets
+  if (url.startsWith('=IMAGE("')) {
+    url = url.replace(/^=IMAGE\("(.*?)"\)$/i, '$1');
+    url = url.replace(/^["']+|["']+$/g, ''); // Убираем кавычки
+  }
+  
+  // 3) Извлечение ID из различных форматов Google Drive
+  let fileId = '';
+  
+  // Формат: https://drive.usercontent.google.com/download?id=ID...
+  let match = url.match(/drive\.usercontent\.google\.com\/download\?id=([a-zA-Z0-9_-]+)/);
+  if (match) {
+    fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/file/d/ID/view
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/open?id=ID
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: https://drive.google.com/uc?id=ID
+  if (!fileId) {
+    match = url.match(/drive\.google\.com\/uc\?id=([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Формат: Просто ID (без полного URL)
+  if (!fileId && /^[a-zA-Z0-9_-]{25,}$/.test(url)) {
+    fileId = url;
+  }
+  
+  // 4) Если нашли ID — формируем правильную ссылку для просмотра
+  if (fileId) {
+    return `https://lh3.googleusercontent.com/d/${fileId}=s1000?authuser=0`;
+  }
+  
+  // 5) Проверяем, является ли ссылка прямым изображением
+  if (/^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(url)) {
+    return url;
+  }
+  
+  // 6) Для других внешних ссылок — возвращаем как есть
+  if (url.startsWith('http')) {
+    return url;
+  }
+  
+  // 7) Возвращаем пустую строку, если не распознали
+  return '';
+}
     function toast(node,msg,ok=true){
       if(!node) return;
       node.className = 'toast ' + (ok?'toast-success':'toast-error');
@@ -1418,7 +1482,7 @@ function loadAdminSession(){
           }
           const img = el('img',{
             class:'gift-image',
-            src:g.photo || 'https://via.placeholder.com/400x300?text=Gift'
+            src: normalizePhotoUrl(g.photo) || 'https://via.placeholder.com/400x300?text=Gift'
           });
           const gotCount = g.user_got ? g.user_got.split(',').filter(v=>v.trim().length>0).length : 0;
 
@@ -1546,7 +1610,7 @@ function loadAdminSession(){
 
           const card = el('div',{class:'redeem-gift-card '+(canGive?'available':'locked')});
           const img = el('img',{
-            src: gift.photo || 'https://via.placeholder.com/200x150?text=Gift'
+            src: normalizePhotoUrl(gift.photo) || 'https://via.placeholder.com/200x150?text=Gift'
           });
 
           const main = el('div',{class:'redeem-gift-main'});
