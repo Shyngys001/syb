@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SyBaga — WhatsApp Рассылки</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #25D366;
+      --primary-dark: #128C7E;
+      --primary-light: #dcf8c6;
+      --secondary: #075E54;
+      --accent: #34B7F1;
+      --danger: #ff4444;
+      --danger-dark: #cc0000;
+      --text: #1a1a1a;
+      --text-light: #666666;
+      --text-lighter: #999999;
+      --bg: #f5f5f5;
+      --bg-card: #ffffff;
+      --border: #e0e0e0;
+      --border-light: #f0f0f0;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Auth Card */
+    .auth-card {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 40px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--secondary);
+    }
+
+    .auth-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover:not([disabled]) {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .btn-secondary:hover:not([disabled]) {
+      background: #05443d;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover:not([disabled]) {
+      background: var(--bg);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover:not([disabled]) {
+      background: var(--danger-dark);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    /* Toast */
+    .toast {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-success {
+      background: #ecfdf5;
+      color: var(--primary);
+      border: 1px solid #a7f3d0;
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 18px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-success {
+      background: #dcf8c6;
+      color: var(--secondary);
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-failed {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-sent {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    tr:hover {
+      background: var(--bg);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Template Buttons */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .template-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .template-card:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .template-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--secondary);
+    }
+
+    .template-preview {
+      font-size: 13px;
+      color: var(--text-light);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-light);
+      line-height: 1;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* Recipient List */
+    .recipient-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .recipient-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .recipient-item:last-child {
+      border-bottom: none;
+    }
+
+    .recipient-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .recipient-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .recipient-name {
+      font-weight: 500;
+    }
+
+    .recipient-phone {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    .badge-diamond { background: #ecfeff; color: #0e7490; }
+    .badge-gold { background: #fef3c7; color: #b45309; }
+    .badge-silver { background: #e5e7eb; color: #374151; }
+    .badge-bronze { background: #fef2f2; color: #b91c1c; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+      position: relative;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab.active {
+      color: var(--primary);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    /* Message Preview */
+    .message-preview {
+      background: var(--primary-light);
+      border-radius: 18px;
+      padding: 16px;
+      max-width: 400px;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .message-preview::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 20px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid var(--primary-light);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 12px;
+      }
+      
+      .card {
+        padding: 16px;
+      }
+      
+      th, td {
+        padding: 8px 12px;
+      }
+      
+      .modal-content {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <a href="admin.html" class="logo">
+        <div class="logo-icon">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <span>SyBaga · WhatsApp Рассылки</span>
+      </a>
+      
+      <div class="header-actions" id="user-info-header">
+        <!-- Filled by JavaScript -->
+      </div>
+    </header>
+
+    <!-- Auth Section -->
+    <section id="auth-section" class="auth-card">
+      <h2 class="auth-title">Вход в сервис рассылок</h2>
+      <p class="auth-subtitle">Используйте учетные данные администратора SyBaga</p>
+      
+      <div class="form-group">
+        <label class="form-label">Логин</label>
+        <input type="text" class="form-input" id="login-input" placeholder="admin">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="password-input" placeholder="••••••••">
+      </div>
+      
+      <button class="btn btn-primary" id="login-btn" style="width: 100%;">
+        <i class="fas fa-sign-in-alt"></i> Войти
+      </button>
+      
+      <div id="auth-toast" class="toast" style="margin-top: 16px;"></div>
+      
+      <div style="margin-top: 24px; text-align: center;">
+        <a href="admin.html" style="font-size: 14px; color: var(--text-light);">
+          <i class="fas fa-arrow-left"></i> Вернуться в админ-панель
+        </a>
+      </div>
+    </section>
+
+    <!-- Main Content (hidden until auth) -->
+    <div id="main-content" style="display: none;">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="create">Создать рассылку</button>
+        <button class="tab" data-tab="history">История рассылок</button>
+        <button class="tab" data-tab="templates">Шаблоны</button>
+        <button class="tab" data-tab="settings">Настройки</button>
+      </div>
+
+      <!-- Create Broadcast Tab -->
+      <section class="tab-content" id="create-tab">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Новая WhatsApp рассылка</h3>
+              <p class="card-subtitle">Отправьте сообщение выбранным клиентам</p>
+            </div>
+            <div class="status-badge status-pending" id="queue-info" style="display: none;">
+              <i class="fas fa-clock"></i> В очереди: <span id="queue-count">0</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Текст сообщения</label>
+            <textarea class="form-textarea" id="message-input" placeholder="Введите текст сообщения..."></textarea>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+              <span style="font-size: 13px; color: var(--text-light);">
+                <span id="char-count">0</span> / 1000 символов
+              </span>
+              <span style="font-size: 13px; color: var(--text-light);">
+                Переменные: {name} - имя, {balance} - баланс, {tier} - статус
+              </span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Фильтр клиентов</label>
+              <select class="form-select" id="filter-select">
+                <option value="all">Все клиенты</option>
+                <option value="active">Активные (с чеками)</option>
+                <option value="with_balance">С балансом > 0</option>
+                <option value="no_gifts">Без полученных подарков</option>
+                <option value="diamond">Только Diamond</option>
+                <option value="gold">Только Gold</option>
+                <option value="silver">Только Silver</option>
+                <option value="bronze">Только Bronze</option>
+                <option value="birthday">Дни рождения в этом месяце</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Лимит получателей</label>
+              <select class="form-select" id="limit-select">
+                <option value="0">Всех (без лимита)</option>
+                <option value="10">10 клиентов</option>
+                <option value="20">20 клиентов</option>
+                <option value="50">50 клиентов</option>
+                <option value="100">100 клиентов</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Предварительный просмотр</label>
+            <div class="message-preview" id="message-preview">
+              Сообщение появится здесь...
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Быстрые шаблоны</label>
+            <div class="templates-grid" id="quick-templates">
+              <!-- Filled by JavaScript -->
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button class="btn btn-primary" id="create-broadcast-btn">
+              <i class="fab fa-whatsapp"></i> Создать рассылку
+            </button>
+            <button class="btn btn-outline" id="preview-recipients-btn">
+              <i class="fas fa-users"></i> Предпросмотр получателей
+            </button>
+            <button class="btn btn-outline" id="test-send-btn">
+              <i class="fas fa-vial"></i> Тестовая отправка
+            </button>
+          </div>
+
+          <div id="create-toast" class="toast" style="margin-top: 16px;"></div>
+        </div>
+      </section>
+
+      <!-- History Tab -->
+      <section class="tab-content" id="history-tab" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">История рассылок</h3>
+              <p class="card-subtitle">Все отправленные сообщения и их статусы</p>
+            </div>
+            
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="date" id="date-filter" class="form-input" style="width: 140px;">
+              <select id="status-filter" class="form-select" style="width: 140px;">
+                <option value="">Все статусы</option>
+                <option value="sent">Отправлено</option>
+                <option value="pending">В очереди</option>
+                <option value="failed">Ошибка</option>
+                <option value="partial">Частично</option>
+              </select>
+              <button class="btn btn-outline btn-sm" id="refresh-history-btn">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="history-stats">
+            <!-- Filled by JavaScript -->
+          </div>
+
+          <div class="table-container">
+            <table id="broadcasts-table">
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Сообщение</th>
+                  <th>Получатели</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="broadcasts-body">
+                <!-- Filled by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Templates Tab -->
+      <section class="tab-content" id="templates-tab" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Шаблоны сообщений</h3>
+              <p class="card-subtitle">Сохраненные шаблоны для быстрой отправки</p>
+            </div>
+            <button class="btn btn-primary" id="add-template-btn">
+              <i class="fas fa-plus"></i> Новый шаблон
+            </button>
+          </div>
+
+          <div class="templates-grid" id="templates-list">
+            <!-- Filled by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Tab -->
+      <section class="tab-content" id="settings-tab" style="display: none;">
+        <div class="card">
+          <h3 class="card-title">Настройки WhatsApp API</h3>
+          <p class="card-subtitle">Подключение к сервису WhatsApp Business</p>
+          
+          <div class="divider"></div>
+          
+          <div class="form-group">
+            <label class="form-label">Тип подключения</label>
+            <select class="form-select" id="api-type">
+              <option value="twilio">Twilio WhatsApp API</option>
+              <option value="meta">Meta WhatsApp Business API</option>
+              <option value="custom">Кастомный сервис</option>
+              <option value="none" selected>Не настроено</option>
+            </select>
+          </div>
+          
+          <div id="twilio-settings" style="display: none;">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Account SID</label>
+                <input type="password" class="form-input" id="twilio-sid" placeholder="AC...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Auth Token</label>
+                <input type="password" class="form-input" id="twilio-token" placeholder="...">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">WhatsApp номер (отправитель)</label>
+              <input type="text" class="form-input" id="twilio-number" placeholder="whatsapp:+14155238886">
+            </div>
+          </div>
+          
+          <div id="meta-settings" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">Access Token</label>
+              <input type="password" class="form-input" id="meta-token" placeholder="EAAD...">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Phone Number ID</label>
+              <input type="text" class="form-input" id="meta-phone-id" placeholder="1234567890">
+            </div>
+          </div>
+          
+          <div id="custom-settings" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">API Endpoint</label>
+              <input type="url" class="form-input" id="custom-endpoint" placeholder="https://api.example.com/send">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">API Key</label>
+              <input type="password" class="form-input" id="custom-key" placeholder="sk_...">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">
+              <input type="checkbox" id="enable-api"> Включить интеграцию с WhatsApp
+            </label>
+          </div>
+          
+          <button class="btn btn-primary" id="save-settings-btn">
+            <i class="fas fa-save"></i> Сохранить настройки
+          </button>
+          
+          <div id="settings-toast" class="toast" style="margin-top: 16px;"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-overlay" id="recipients-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Получатели рассылки</h3>
+        <button class="modal-close" data-modal="recipients">&times;</button>
+      </div>
+      
+      <div class="recipient-list" id="recipients-list">
+        <!-- Filled by JavaScript -->
+      </div>
+      
+      <div style="margin-top: 20px; text-align: center;">
+        <span style="font-size: 14px; color: var(--text-light);">
+          Всего получателей: <span id="total-recipients">0</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Детали рассылки</h3>
+        <button class="modal-close" data-modal="details">&times;</button>
+      </div>
+      
+      <div id="broadcast-details">
+        <!-- Filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="template-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Новый шаблон</h3>
+        <button class="modal-close" data-modal="template">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Название шаблона</label>
+        <input type="text" class="form-input" id="template-name" placeholder="Приветственное письмо">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Текст шаблона</label>
+        <textarea class="form-textarea" id="template-text" rows="6" placeholder="Здравствуйте, {name}!..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <select class="form-select" id="template-category">
+          <option value="welcome">Приветствие</option>
+          <option value="promo">Акции</option>
+          <option value="birthday">День рождения</option>
+          <option value="notification">Уведомления</option>
+          <option value="other">Другое</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-primary" id="save-template-btn">
+        <i class="fas fa-save"></i> Сохранить шаблон
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="test-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Тестовая отправка</h3>
+        <button class="modal-close" data-modal="test">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Тестовый номер WhatsApp</label>
+        <input type="text" class="form-input" id="test-phone" placeholder="+77771234567">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Просмотр сообщения</label>
+        <div class="message-preview" id="test-preview">
+          <!-- Filled by JavaScript -->
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" id="send-test-btn">
+        <i class="fas fa-paper-plane"></i> Отправить тестовое сообщение
+      </button>
+      
+      <div id="test-toast" class="toast" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbwtVhNoiosNdVcQ7QmHjjB1yQ-8fpxbGgURbSeWWg_VM8h3j1KGnSSw0l2UMTSfsNmI/exec';
+    
+    // State
+    let ADMIN_DATA = null;
+    let BROADCASTS = [];
+    let TEMPLATES = [];
+    let SETTINGS = {};
+    
+    // DOM Elements
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+    
+    // Helper functions
+    function el(tag, attrs = {}, children = []) {
+      const element = document.createElement(tag);
+      
+      for (const [key, value] of Object.entries(attrs)) {
+        if (key === 'class') {
+          element.className = value;
+        } else if (key === 'html') {
+          element.innerHTML = value;
+        } else if (key === 'text') {
+          element.textContent = value;
+        } else {
+          element.setAttribute(key, value);
+        }
+      }
+      
+      if (Array.isArray(children)) {
+        children.forEach(child => {
+          if (child) element.appendChild(child);
+        });
+      } else if (children) {
+        element.appendChild(children);
+      }
+      
+      return element;
+    }
+    
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('ru-RU') + ' ' + date.toLocaleTimeString('ru-RU', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+    
+    function formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    
+    function showToast(elementId, message, success = true) {
+      const toast = $(`#${elementId}`);
+      if (!toast) return;
+      
+      toast.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
+      toast.innerHTML = `
+        <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        ${message}
+      `;
+      toast.style.display = 'flex';
+      
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+    
+    function showModal(modalId) {
+      $(`#${modalId}`).style.display = 'flex';
+    }
+    
+    function hideModal(modalId) {
+      $(`#${modalId}`).style.display = 'none';
+    }
+    
+    async function api(action, data = {}) {
+      const params = new URLSearchParams({ action, ...data });
+      
+      try {
+        const response = await fetch(API_BASE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString()
+        });
+        
+        const result = await response.json();
+        
+        if (!result.ok) {
+          throw new Error(result.error || 'Unknown error');
+        }
+        
+        return result;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+    
+    // Authentication
+    async function login(login, password) {
+      try {
+        const result = await api('auth_admin', { login, password });
+        
+        ADMIN_DATA = {
+          login: result.login,
+          name: result.name,
+          role: result.role
+        };
+        
+        // Save to localStorage
+        localStorage.setItem('syb_broadcast_admin', JSON.stringify(ADMIN_DATA));
+        
+        // Show main content
+        $('#auth-section').style.display = 'none';
+        $('#main-content').style.display = 'block';
+        
+        // Update header
+        updateUserHeader();
+        
+        // Load initial data
+        loadInitialData();
+        
+        showToast('auth-toast', 'Вход выполнен успешно!', true);
+        
+      } catch (error) {
+        showToast('auth-toast', error.message || 'Ошибка входа', false);
+      }
+    }
+    
+    function logout() {
+      ADMIN_DATA = null;
+      localStorage.removeItem('syb_broadcast_admin');
+      
+      $('#auth-section').style.display = 'block';
+      $('#main-content').style.display = 'none';
+      
+      // Clear inputs
+      $('#login-input').value = '';
+      $('#password-input').value = '';
+    }
+    
+    function updateUserHeader() {
+      if (!ADMIN_DATA) return;
+      
+      $('#user-info-header').innerHTML = `
+        <div style="font-size: 14px; text-align: right;">
+          <div style="font-weight: 500;">${ADMIN_DATA.name}</div>
+          <div style="font-size: 12px; color: var(--text-light);">${ADMIN_DATA.role}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" id="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Выйти
+        </button>
+      `;
+      
+      $('#logout-btn').addEventListener('click', logout);
+    }
+    
+    function checkAuth() {
+      const saved = localStorage.getItem('syb_broadcast_admin');
+      
+      if (saved) {
+        try {
+          ADMIN_DATA = JSON.parse(saved);
+          
+          $('#auth-section').style.display = 'none';
+          $('#main-content').style.display = 'block';
+          
+          updateUserHeader();
+          loadInitialData();
+          
+        } catch (error) {
+          console.error('Error parsing saved auth:', error);
+          logout();
+        }
+      }
+    }
+    
+    // Tab Navigation
+    function setupTabs() {
+      const tabs = $$('.tab');
+      const tabContents = $$('.tab-content');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.style.display = 'none');
+          
+          // Add active class to clicked tab
+          tab.classList.add('active');
+          
+          // Show corresponding content
+          const tabId = tab.dataset.tab;
+          $(`#${tabId}-tab`).style.display = 'block';
+          
+          // Load data for tab if needed
+          if (tabId === 'history') {
+            loadBroadcastHistory();
+          } else if (tabId === 'templates') {
+            loadTemplates();
+          } else if (tabId === 'settings') {
+            loadSettings();
+          }
+        });
+      });
+    }
+    
+    // Template Management
+    const DEFAULT_TEMPLATES = [
+      {
+        id: 'welcome',
+        name: 'Приветственное письмо',
+        text: `Здравствуйте, {name}! 🎉
+
+Добро пожаловать в программу лояльности SyBaga Ethno Restaurant!
+
+Ваш текущий баланс: {balance} ₸
+
+Спасибо, что выбираете нас! Ждем вас снова!
+
+С уважением, команда SyBaga`,
+        category: 'welcome'
+      },
+      {
+        id: 'birthday',
+        name: 'День рождения',
+        text: `🎂 Дорогой(ая) {name}!
+
+От всего сердца поздравляем вас с Днем рождения! 🎉
+
+В честь вашего праздника дарим вам 500 бонусных баллов на счет!
+
+Ваш баланс теперь: {balance} ₸
+
+Желаем вам счастья, здоровья и прекрасного настроения!
+
+Ждем в гости в SyBaga Ethno Restaurant!`,
+        category: 'birthday'
+      },
+      {
+        id: 'promo',
+        name: 'Специальная акция',
+        text: `🎁 {name}, специально для вас!
+
+Только до конца месяца скидка 15% на все банкетные заказы!
+
+Ваш баланс бонусов: {balance} ₸
+
+Бронируйте стол по телефону: +7 700 177 7381
+
+С уважением, команда SyBaga`,
+        category: 'promo'
+      },
+      {
+        id: 'balance',
+        name: 'Напоминание о балансе',
+        text: `💰 {name}, напоминаем о вашем балансе
+
+На вашем счету: {balance} ₸
+
+Вы можете обменять бонусы на подарки из нашего каталога:
+• Подарочные сертификаты
+• Десерты и напитки
+• Эксклюзивные блюда
+
+Посмотреть доступные подарки можно по ссылке:
+https://sybaga-kz.github.io/
+
+Ждем вас в SyBaga Ethno Restaurant!`,
+        category: 'notification'
+      },
+      {
+        id: 'special',
+        name: 'Эксклюзивное предложение',
+        text: `✨ {name}, эксклюзивно для вас!
+
+Как нашему постоянному гостю со статусом {tier}, предлагаем специальное меню от шеф-повара.
+
+Только для вас - десерт в подарок при заказе от 10,000 ₸!
+
+Ваш баланс: {balance} ₸
+
+Бронируйте стол: +7 700 177 7381
+
+SyBaga Ethno Restaurant`,
+        category: 'promo'
+      }
+    ];
+    
+    function loadTemplates() {
+      const saved = localStorage.getItem('syb_templates');
+      
+      if (saved) {
+        try {
+          TEMPLATES = JSON.parse(saved);
+        } catch (error) {
+          TEMPLATES = [...DEFAULT_TEMPLATES];
+        }
+      } else {
+        TEMPLATES = [...DEFAULT_TEMPLATES];
+        localStorage.setItem('syb_templates', JSON.stringify(TEMPLATES));
+      }
+      
+      renderTemplates();
+      renderQuickTemplates();
+    }
+    
+    function renderTemplates() {
+      const container = $('#templates-list');
+      container.innerHTML = '';
+      
+      TEMPLATES.forEach(template => {
+        const templateCard = el('div', {
+          class: 'template-card'
+        }, [
+          el('div', {
+            class: 'template-title',
+            text: template.name
+          }),
+          el('div', {
+            class: 'template-preview',
+            text: template.text.substring(0, 150) + (template.text.length > 150 ? '...' : '')
+          }),
+          el('div', {
+            style: 'margin-top: 12px; display: flex; justify-content: space-between;'
+          }, [
+            el('span', {
+              class: 'badge',
+              text: template.category === 'welcome' ? 'Приветствие' :
+                    template.category === 'promo' ? 'Акция' :
+                    template.category === 'birthday' ? 'День рождения' :
+                    template.category === 'notification' ? 'Уведомление' : 'Другое'
+            }),
+            el('div', {
+              style: 'display: flex; gap: 8px;'
+            }, [
+              el('button', {
+                class: 'btn btn-outline btn-sm',
+                html: '<i class="fas fa-edit"></i>',
+                onclick: () => useTemplate(template.text)
+              }),
+              el('button', {
+                class: 'btn btn-outline btn-sm',
+                html: '<i class="fas fa-trash"></i>',
+                onclick: () => deleteTemplate(template.id)
+              })
+            ])
+          ])
+        ]);
+        
+        templateCard.addEventListener('click', (e) => {
+          if (!e.target.closest('button')) {
+            $('#template-name').value = template.name;
+            $('#template-text').value = template.text;
+            $('#template-category').value = template.category;
+            showModal('template-modal');
+          }
+        });
+        
+        container.appendChild(templateCard);
+      });
+    }
+    
+    function renderQuickTemplates() {
+      const container = $('#quick-templates');
+      container.innerHTML = '';
+      
+      TEMPLATES.slice(0, 4).forEach(template => {
+        const templateCard = el('div', {
+          class: 'template-card'
+        }, [
+          el('div', {
+            class: 'template-title',
+            text: template.name
+          }),
+          el('div', {
+            class: 'template-preview',
+            text: template.text.substring(0, 100) + (template.text.length > 100 ? '...' : '')
+          }),
+          el('button', {
+            class: 'btn btn-outline btn-sm',
+            style: 'margin-top: 12px; width: 100%;',
+            html: '<i class="fas fa-plus"></i> Использовать',
+            onclick: () => useTemplate(template.text)
+          })
+        ]);
+        
+        container.appendChild(templateCard);
+      });
+    }
+    
+    function useTemplate(text) {
+      $('#message-input').value = text;
+      updateMessagePreview();
+      updateCharCount();
+      
+      // Switch to create tab
+      $$('.tab').forEach(tab => tab.classList.remove('active'));
+      $$('.tab-content').forEach(content => content.style.display = 'none');
+      
+      $('[data-tab="create"]').classList.add('active');
+      $('#create-tab').style.display = 'block';
+    }
+    
+    function saveTemplate() {
+      const name = $('#template-name').value.trim();
+      const text = $('#template-text').value.trim();
+      const category = $('#template-category').value;
+      
+      if (!name || !text) {
+        alert('Заполните все поля');
+        return;
+      }
+      
+      const newTemplate = {
+        id: Date.now().toString(),
+        name,
+        text,
+        category
+      };
+      
+      TEMPLATES.push(newTemplate);
+      localStorage.setItem('syb_templates', JSON.stringify(TEMPLATES));
+      
+      renderTemplates();
+      renderQuickTemplates();
+      hideModal('template-modal');
+      
+      // Clear form
+      $('#template-name').value = '';
+      $('#template-text').value = '';
+      $('#template-category').value = 'welcome';
+    }
+    
+    function deleteTemplate(templateId) {
+      if (confirm('Удалить этот шаблон?')) {
+        TEMPLATES = TEMPLATES.filter(t => t.id !== templateId);
+        localStorage.setItem('syb_templates', JSON.stringify(TEMPLATES));
+        renderTemplates();
+        renderQuickTemplates();
+      }
+    }
+    
+    // Message Preview
+    function updateMessagePreview() {
+      const message = $('#message-input').value;
+      const preview = $('#message-preview');
+      
+      if (message.trim()) {
+        // Replace variables with example values
+        const processedMessage = message
+          .replace(/{name}/g, 'Айжан')
+          .replace(/{balance}/g, '5,250 ₸')
+          .replace(/{tier}/g, 'Gold');
+        
+        preview.innerHTML = processedMessage.replace(/\n/g, '<br>');
+      } else {
+        preview.textContent = 'Сообщение появится здесь...';
+      }
+    }
+    
+    function updateCharCount() {
+      const message = $('#message-input').value;
+      $('#char-count').textContent = message.length;
+      
+      if (message.length > 1000) {
+        $('#char-count').style.color = 'var(--danger)';
+      } else {
+        $('#char-count').style.color = 'var(--text-light)';
+      }
+    }
+    
+    // Broadcast Creation
+    async function createBroadcast() {
+      const message = $('#message-input').value.trim();
+      const filter = $('#filter-select').value;
+      const limit = parseInt($('#limit-select').value) || 0;
+      
+      if (!message) {
+        showToast('create-toast', 'Введите текст сообщения', false);
+        return;
+      }
+      
+      if (message.length > 1000) {
+        showToast('create-toast', 'Сообщение слишком длинное (макс. 1000 символов)', false);
+        return;
+      }
+      
+      const btn = $('#create-broadcast-btn');
+      const originalText = btn.innerHTML;
+      
+      btn.innerHTML = '<span class="spinner"></span> Создание...';
+      btn.disabled = true;
+      
+      try {
+        const result = await api('broadcast_create', {
+          message,
+          filter,
+          limit,
+          admin_login: ADMIN_DATA.login,
+          admin_name: ADMIN_DATA.name
+        });
+        
+        showToast('create-toast', `Рассылка создана! Получателей: ${result.recipients_count}`, true);
+        
+        // Clear form
+        $('#message-input').value = '';
+        updateMessagePreview();
+        updateCharCount();
+        
+        // Update queue info
+        updateQueueInfo();
+        
+        // Switch to history tab
+        $$('.tab').forEach(tab => tab.classList.remove('active'));
+        $$('.tab-content').forEach(content => content.style.display = 'none');
+        
+        $('[data-tab="history"]').classList.add('active');
+        $('#history-tab').style.display = 'block';
+        
+        // Load updated history
+        loadBroadcastHistory();
+        
+      } catch (error) {
+        showToast('create-toast', error.message || 'Ошибка создания рассылки', false);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+    
+    async function previewRecipients() {
+      const filter = $('#filter-select').value;
+      const limit = parseInt($('#limit-select').value) || 0;
+      
+      try {
+        const result = await api('broadcast_preview', {
+          filter,
+          limit
+        });
+        
+        const recipients = result.recipients || [];
+        const container = $('#recipients-list');
+        container.innerHTML = '';
+        
+        recipients.forEach(recipient => {
+          const initials = recipient.name ? recipient.name.charAt(0).toUpperCase() : '?';
+          
+          const recipientItem = el('div', {
+            class: 'recipient-item'
+          }, [
+            el('div', {
+              class: 'recipient-info'
+            }, [
+              el('div', {
+                class: 'recipient-avatar',
+                text: initials
+              }),
+              el('div', {}, [
+                el('div', {
+                  class: 'recipient-name',
+                  text: recipient.name || 'Без имени'
+                }),
+                el('div', {
+                  class: 'recipient-phone',
+                  text: recipient.phone
+                })
+              ])
+            ]),
+            el('div', {
+              style: 'display: flex; align-items: center; gap: 8px;'
+            }, [
+              el('span', {
+                class: `badge badge-${(recipient.tier || '').toLowerCase()}`,
+                text: recipient.tier || '—'
+              }),
+              el('span', {
+                style: 'font-size: 13px; color: var(--text-light);',
+                text: `${formatNumber(recipient.balance || 0)} ₸`
+              })
+            ])
+          ]);
+          
+          container.appendChild(recipientItem);
+        });
+        
+        $('#total-recipients').textContent = recipients.length;
+        showModal('recipients-modal');
+        
+      } catch (error) {
+        showToast('create-toast', 'Ошибка загрузки получателей', false);
+      }
+    }
+    
+    async function testSend() {
+      const message = $('#message-input').value.trim();
+      
+      if (!message) {
+        showToast('create-toast', 'Введите текст сообщения', false);
+        return;
+      }
+      
+      const testPhone = $('#test-phone').value.trim();
+      
+      if (!testPhone || !testPhone.startsWith('+')) {
+        alert('Введите корректный номер телефона в формате +7...');
+        return;
+      }
+      
+      // Update preview
+      $('#test-preview').innerHTML = message.replace(/\n/g, '<br>');
+      
+      showModal('test-modal');
+    }
+    
+    async function sendTestMessage() {
+      const message = $('#message-input').value.trim();
+      const testPhone = $('#test-phone').value.trim();
+      
+      const btn = $('#send-test-btn');
+      const originalText = btn.innerHTML;
+      
+      btn.innerHTML = '<span class="spinner"></span> Отправка...';
+      btn.disabled = true;
+      
+      try {
+        const result = await api('broadcast_test', {
+          message,
+          phone: testPhone,
+          admin_login: ADMIN_DATA.login
+        });
+        
+        showToast('test-toast', 'Тестовое сообщение отправлено!', true);
+        
+        setTimeout(() => {
+          hideModal('test-modal');
+          $('#test-phone').value = '';
+        }, 2000);
+        
+      } catch (error) {
+        showToast('test-toast', error.message || 'Ошибка отправки тестового сообщения', false);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+    
+    // Broadcast History
+    async function loadBroadcastHistory() {
+      try {
+        const result = await api('broadcast_history', {});
+        BROADCASTS = result.broadcasts || [];
+        
+        renderBroadcastStats();
+        renderBroadcastTable();
+        
+      } catch (error) {
+        console.error('Error loading broadcast history:', error);
+      }
+    }
+    
+    function renderBroadcastStats() {
+      const statsContainer = $('#history-stats');
+      
+      const total = BROADCASTS.length;
+      const sent = BROADCASTS.filter(b => b.status === 'sent').length;
+      const pending = BROADCASTS.filter(b => b.status === 'pending').length;
+      const totalRecipients = BROADCASTS.reduce((sum, b) => sum + (b.recipients_count || 0), 0);
+      
+      statsContainer.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-paper-plane"></i>
+          </div>
+          <div class="stat-value">${total}</div>
+          <div class="stat-label">Всего рассылок</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #dcf8c6; color: #25D366;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-value">${sent}</div>
+          <div class="stat-label">Отправлено</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fff3cd; color: #856404;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-value">${pending}</div>
+          <div class="stat-label">В ожидании</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #d1ecf1; color: #0c5460;">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-value">${formatNumber(totalRecipients)}</div>
+          <div class="stat-label">Получателей</div>
+        </div>
+      `;
+    }
+    
+    function renderBroadcastTable() {
+      const tableBody = $('#broadcasts-body');
+      tableBody.innerHTML = '';
+      
+      if (BROADCASTS.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-light);">
+              <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+              Пока нет рассылок
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      // Sort by date (newest first)
+      BROADCASTS.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      
+      BROADCASTS.forEach(broadcast => {
+        const statusBadge = broadcast.status === 'sent' ? 
+          `<span class="status-badge status-success"><i class="fas fa-check-circle"></i> Отправлено</span>` :
+          broadcast.status === 'pending' ?
+          `<span class="status-badge status-pending"><i class="fas fa-clock"></i> В ожидании</span>` :
+          broadcast.status === 'failed' ?
+          `<span class="status-badge status-failed"><i class="fas fa-exclamation-circle"></i> Ошибка</span>` :
+          `<span class="status-badge status-sent"><i class="fas fa-exclamation-triangle"></i> Частично</span>`;
+        
+        const messagePreview = broadcast.message.length > 50 ?
+          broadcast.message.substring(0, 50) + '...' : broadcast.message;
+        
+        const row = el('tr');
+        row.innerHTML = `
+          <td>${formatDate(broadcast.created_at)}</td>
+          <td title="${broadcast.message}">${messagePreview}</td>
+          <td>${broadcast.sent_count || 0} / ${broadcast.recipients_count || 0}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline btn-sm view-details-btn" data-id="${broadcast.id}">
+                <i class="fas fa-eye"></i>
+              </button>
+              ${broadcast.status === 'pending' ? `
+                <button class="btn btn-danger btn-sm cancel-broadcast-btn" data-id="${broadcast.id}">
+                  <i class="fas fa-times"></i>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Add event listeners
+      $$('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', () => showBroadcastDetails(btn.dataset.id));
+      });
+      
+      $$('.cancel-broadcast-btn').forEach(btn => {
+        btn.addEventListener('click', () => cancelBroadcast(btn.dataset.id));
+      });
+    }
+    
+    async function showBroadcastDetails(broadcastId) {
+      try {
+        const result = await api('broadcast_details', { broadcast_id: broadcastId });
+        const broadcast = result.broadcast;
+        const recipients = result.recipients || [];
+        
+        let detailsHtml = `
+          <div style="margin-bottom: 20px;">
+            <div style="font-weight: 500; margin-bottom: 8px;">Сообщение:</div>
+            <div style="background: var(--bg); padding: 16px; border-radius: var(--radius);">
+              ${broadcast.message.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div class="info-card">
+              <div class="info-label">Статус</div>
+              <div class="info-value">${broadcast.status === 'sent' ? 'Отправлено' : 
+                                      broadcast.status === 'pending' ? 'В ожидании' : 
+                                      broadcast.status === 'failed' ? 'Ошибка' : 'Частично'}</div>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-label">Получателей</div>
+              <div class="info-value">${broadcast.sent_count || 0} / ${broadcast.recipients_count || 0}</div>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-label">Дата создания</div>
+              <div class="info-value">${formatDate(broadcast.created_at)}</div>
+            </div>
+            
+            <div class="info-card">
+              <div class="info-label">Фильтр</div>
+              <div class="info-value">${broadcast.filter || 'Все'}</div>
+            </div>
+          </div>
+        `;
+        
+        if (recipients.length > 0) {
+          detailsHtml += `
+            <div style="margin-bottom: 12px; font-weight: 500;">Получатели:</div>
+            <div class="recipient-list" style="max-height: 300px;">
+          `;
+          
+          recipients.forEach(recipient => {
+            const statusIcon = recipient.status === 'sent' ? 
+              '<i class="fas fa-check-circle" style="color: #25D366;"></i>' :
+              recipient.status === 'failed' ?
+              '<i class="fas fa-exclamation-circle" style="color: #ff4444;"></i>' :
+              '<i class="fas fa-clock" style="color: #ffc107;"></i>';
+            
+            detailsHtml += `
+              <div class="recipient-item">
+                <div class="recipient-info">
+                  <div class="recipient-avatar">${recipient.name ? recipient.name.charAt(0).toUpperCase() : '?'}</div>
+                  <div>
+                    <div class="recipient-name">${recipient.name || 'Без имени'}</div>
+                    <div class="recipient-phone">${recipient.phone}</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  ${statusIcon}
+                  <span style="font-size: 13px; color: var(--text-light);">
+                    ${recipient.sent_at ? formatDate(recipient.sent_at) : '—'}
+                  </span>
+                </div>
+              </div>
+            `;
+          });
+          
+          detailsHtml += `</div>`;
+        }
+        
+        $('#broadcast-details').innerHTML = detailsHtml;
+        showModal('details-modal');
+        
+      } catch (error) {
+        showToast('create-toast', 'Ошибка загрузки деталей рассылки', false);
+      }
+    }
+    
+    async function cancelBroadcast(broadcastId) {
+      if (!confirm('Отменить эту рассылку? Сообщения, которые еще не отправлены, не будут доставлены.')) {
+        return;
+      }
+      
+      try {
+        await api('broadcast_cancel', { broadcast_id: broadcastId });
+        
+        showToast('create-toast', 'Рассылка отменена', true);
+        
+        // Refresh history
+        loadBroadcastHistory();
+        
+      } catch (error) {
+        showToast('create-toast', 'Ошибка отмены рассылки', false);
+      }
+    }
+    
+    // Queue Info
+    async function updateQueueInfo() {
+      try {
+        const result = await api('broadcast_queue');
+        const pendingCount = result.pending_count || 0;
+        
+        if (pendingCount > 0) {
+          $('#queue-info').style.display = 'flex';
+          $('#queue-count').textContent = pendingCount;
+        } else {
+          $('#queue-info').style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error updating queue info:', error);
+      }
+    }
+    
+    // Settings
+    function loadSettings() {
+      const saved = localStorage.getItem('syb_broadcast_settings');
+      
+      if (saved) {
+        try {
+          SETTINGS = JSON.parse(saved);
+        } catch (error) {
+          SETTINGS = {};
+        }
+      }
+      
+      // Apply settings to form
+      $('#api-type').value = SETTINGS.api_type || 'none';
+      $('#enable-api').checked = SETTINGS.enabled || false;
+      
+      if (SETTINGS.twilio) {
+        $('#twilio-sid').value = SETTINGS.twilio.sid || '';
+        $('#twilio-token').value = SETTINGS.twilio.token || '';
+        $('#twilio-number').value = SETTINGS.twilio.number || '';
+      }
+      
+      if (SETTINGS.meta) {
+        $('#meta-token').value = SETTINGS.meta.token || '';
+        $('#meta-phone-id').value = SETTINGS.meta.phone_id || '';
+      }
+      
+      if (SETTINGS.custom) {
+        $('#custom-endpoint').value = SETTINGS.custom.endpoint || '';
+        $('#custom-key').value = SETTINGS.custom.key || '';
+      }
+      
+      updateApiSettingsVisibility();
+    }
+    
+    function updateApiSettingsVisibility() {
+      const apiType = $('#api-type').value;
+      
+      // Hide all settings sections
+      $('#twilio-settings').style.display = 'none';
+      $('#meta-settings').style.display = 'none';
+      $('#custom-settings').style.display = 'none';
+      
+      // Show selected settings section
+      if (apiType === 'twilio') {
+        $('#twilio-settings').style.display = 'block';
+      } else if (apiType === 'meta') {
+        $('#meta-settings').style.display = 'block';
+      } else if (apiType === 'custom') {
+        $('#custom-settings').style.display = 'block';
+      }
+    }
+    
+    function saveSettings() {
+      const apiType = $('#api-type').value;
+      const enabled = $('#enable-api').checked;
+      
+      SETTINGS = {
+        api_type: apiType,
+        enabled: enabled,
+        updated_at: new Date().toISOString()
+      };
+      
+      if (apiType === 'twilio') {
+        SETTINGS.twilio = {
+          sid: $('#twilio-sid').value.trim(),
+          token: $('#twilio-token').value.trim(),
+          number: $('#twilio-number').value.trim()
+        };
+      } else if (apiType === 'meta') {
+        SETTINGS.meta = {
+          token: $('#meta-token').value.trim(),
+          phone_id: $('#meta-phone-id').value.trim()
+        };
+      } else if (apiType === 'custom') {
+        SETTINGS.custom = {
+          endpoint: $('#custom-endpoint').value.trim(),
+          key: $('#custom-key').value.trim()
+        };
+      }
+      
+      localStorage.setItem('syb_broadcast_settings', JSON.stringify(SETTINGS));
+      
+      showToast('settings-toast', 'Настройки сохранены!', true);
+    }
+    
+    // Initial Data Loading
+    async function loadInitialData() {
+      loadTemplates();
+      loadBroadcastHistory();
+      updateQueueInfo();
+      
+      // Start periodic queue updates
+      setInterval(updateQueueInfo, 30000); // Every 30 seconds
+    }
+    
+    // Event Listeners Setup
+    function setupEventListeners() {
+      // Login
+      $('#login-btn').addEventListener('click', () => {
+        const login = $('#login-input').value.trim();
+        const password = $('#password-input').value.trim();
+        
+        if (!login || !password) {
+          showToast('auth-toast', 'Введите логин и пароль', false);
+          return;
+        }
+        
+        login(login, password);
+      });
+      
+      // Enter key for login
+      $('#password-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          $('#login-btn').click();
+        }
+      });
+      
+      // Tabs
+      setupTabs();
+      
+      // Message input events
+      $('#message-input').addEventListener('input', () => {
+        updateMessagePreview();
+        updateCharCount();
+      });
+      
+      // Create broadcast
+      $('#create-broadcast-btn').addEventListener('click', createBroadcast);
+      
+      // Preview recipients
+      $('#preview-recipients-btn').addEventListener('click', previewRecipients);
+      
+      // Test send
+      $('#test-send-btn').addEventListener('click', testSend);
+      
+      // Send test message
+      $('#send-test-btn').addEventListener('click', sendTestMessage);
+      
+      // Refresh history
+      $('#refresh-history-btn').addEventListener('click', loadBroadcastHistory);
+      
+      // API type change
+      $('#api-type').addEventListener('change', updateApiSettingsVisibility);
+      
+      // Save settings
+      $('#save-settings-btn').addEventListener('click', saveSettings);
+      
+      // Add template
+      $('#add-template-btn').addEventListener('click', () => {
+        $('#template-name').value = '';
+        $('#template-text').value = '';
+        $('#template-category').value = 'welcome';
+        showModal('template-modal');
+      });
+      
+      // Save template
+      $('#save-template-btn').addEventListener('click', saveTemplate);
+      
+      // Modal close buttons
+      $$('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const modalId = btn.dataset.modal;
+          hideModal(`${modalId}-modal`);
+        });
+      });
+      
+      // Close modal on overlay click
+      $$('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+      });
+      
+      // Enter key in template modal
+      $('#template-name').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          saveTemplate();
+        }
+      });
+      
+      $('#template-text').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+          saveTemplate();
+        }
+      });
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      setupEventListeners();
+    });
+  </script>
+</body>
+</html>

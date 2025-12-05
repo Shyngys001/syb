@@ -232,8 +232,9 @@
       padding:18px;
       border:1px solid var(--border);
     }
-        /* Top-4 guests card */
-        .top4-card {
+
+    /* Top-4 guests card */
+    .top4-card {
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -325,6 +326,7 @@
       background:#fef2f2;
       color:#b91c1c;
     }
+
     .kpi-icon{
       width:36px;height:36px;
       border-radius:10px;
@@ -359,7 +361,7 @@
     }
     table{width:100%;border-collapse:collapse;font-size:14px;}
     th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
-    th{background:var(--bg);font-weight:600;font-size:13px;color:var(--text-light);}
+    th{background:var(--bg);font-weight:600;font-size:13px;color:var(--text-light);cursor:default;}
     tr:last-child td{border-bottom:none;}
     tr:hover{background:var(--bg);}
 
@@ -504,13 +506,23 @@
       margin-top:6px;
       align-self:flex-start;
     }
+
+    /* курсор для сортируемого столбца даты */
+    .sortable-header {
+      cursor:pointer;
+    }
+    .sortable-header span {
+      margin-left:4px;
+      font-size:11px;
+      color:var(--text-lighter);
+    }
   </style>
 </head>
 <body>
   <div class="app-container">
     <header class="app-header">
       <div class="logo">
-        <div class="logo-icon"><img src="logo.png" alt=""></i></div>
+        <div class="logo-icon"><img src="logo.png" alt=""></div>
         <span>SyBaga · Админ-панель</span>
       </div>
       <div class="link-client">
@@ -766,7 +778,7 @@
             <div class="card-header">
               <div>
                 <h2 class="card-title">Аналитика и отчёты</h2>
-                <p class="card-subtitle">Статистика по сумме чеков и активности клиентов.</p>
+                <p class="card-subtitle">Статистика по сумме чеков, клиентам и подаркам.</p>
               </div>
             </div>
 
@@ -786,7 +798,7 @@
               </button>
             </div>
 
-            <!-- Блок 2: KPI -->
+            <!-- Блок 2: KPI по клиентам -->
             <div class="kpi-grid" id="kpi"></div>
 
             <div class="divider"></div>
@@ -795,6 +807,28 @@
             <h3 class="section-title">Детальная статистика по клиентам</h3>
             <p class="section-desc">Список гостей с суммой чеков, балансами и статусом (Diamond / Gold / Silver / Bronze).</p>
             <div id="analytics-table" class="table-container"></div>
+
+            <div class="divider"></div>
+
+            <!-- Блок 4: Подарки -->
+            <h3 class="section-title">Статистика по подаркам</h3>
+            <p class="section-desc">
+              Здесь видно, кто какой подарок получил и когда. По дате можно сортировать, а также видно общее количество
+              выданных подарков и остаток на складе.
+            </p>
+
+            <!-- KPI по подаркам -->
+            <div class="kpi-grid" id="gifts-analytics-kpi"></div>
+
+            <!-- Лог выдачи подарков -->
+            <h4 class="section-title" style="margin-top:16px;">Лог выдачи подарков</h4>
+            <p class="section-desc">Кликните по заголовку «Дата», чтобы поменять направление сортировки.</p>
+            <div id="gifts-analytics-table" class="table-container"></div>
+
+            <!-- Остатки по каждому подарку -->
+            <h4 class="section-title" style="margin-top:20px;">Остатки и выдача по каждому подарку</h4>
+            <p class="section-desc">Сводка: сколько единиц подарка выдано и сколько осталось на складе.</p>
+            <div id="gifts-inventory-table" class="table-container"></div>
           </section>
         </main>
       </div>
@@ -829,70 +863,56 @@
     }
 
     function normalizePhotoUrl(url) {
-  if (!url) return '';
-  
-  url = String(url).trim();
-  if (!url) return '';
-  
-  // 1) Если это data:image — возвращаем как есть
-  if (url.startsWith('data:image')) return url;
-  
-  // 2) Убираем формулы Google Sheets
-  if (url.startsWith('=IMAGE("')) {
-    url = url.replace(/^=IMAGE\("(.*?)"\)$/i, '$1');
-    url = url.replace(/^["']+|["']+$/g, ''); // Убираем кавычки
-  }
-  
-  // 3) Извлечение ID из различных форматов Google Drive
-  let fileId = '';
-  
-  // Формат: https://drive.usercontent.google.com/download?id=ID...
-  let match = url.match(/drive\.usercontent\.google\.com\/download\?id=([a-zA-Z0-9_-]+)/);
-  if (match) {
-    fileId = match[1];
-  }
-  
-  // Формат: https://drive.google.com/file/d/ID/view
-  if (!fileId) {
-    match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) fileId = match[1];
-  }
-  
-  // Формат: https://drive.google.com/open?id=ID
-  if (!fileId) {
-    match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-    if (match) fileId = match[1];
-  }
-  
-  // Формат: https://drive.google.com/uc?id=ID
-  if (!fileId) {
-    match = url.match(/drive\.google\.com\/uc\?id=([a-zA-Z0-9_-]+)/);
-    if (match) fileId = match[1];
-  }
-  
-  // Формат: Просто ID (без полного URL)
-  if (!fileId && /^[a-zA-Z0-9_-]{25,}$/.test(url)) {
-    fileId = url;
-  }
-  
-  // 4) Если нашли ID — формируем правильную ссылку для просмотра
-  if (fileId) {
-    return `https://lh3.googleusercontent.com/d/${fileId}=s1000?authuser=0`;
-  }
-  
-  // 5) Проверяем, является ли ссылка прямым изображением
-  if (/^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(url)) {
-    return url;
-  }
-  
-  // 6) Для других внешних ссылок — возвращаем как есть
-  if (url.startsWith('http')) {
-    return url;
-  }
-  
-  // 7) Возвращаем пустую строку, если не распознали
-  return '';
-}
+      if (!url) return '';
+      url = String(url).trim();
+      if (!url) return '';
+
+      if (url.startsWith('data:image')) return url;
+
+      if (url.startsWith('=IMAGE("')) {
+        url = url.replace(/^=IMAGE\("(.*?)"\)$/i, '$1');
+        url = url.replace(/^["']+|["']+$/g, '');
+      }
+
+      let fileId = '';
+
+      let match = url.match(/drive\.usercontent\.google\.com\/download\?id=([a-zA-Z0-9_-]+)/);
+      if (match) fileId = match[1];
+
+      if (!fileId) {
+        match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) fileId = match[1];
+      }
+
+      if (!fileId) {
+        match = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+        if (match) fileId = match[1];
+      }
+
+      if (!fileId) {
+        match = url.match(/drive\.google\.com\/uc\?id=([a-zA-Z0-9_-]+)/);
+        if (match) fileId = match[1];
+      }
+
+      if (!fileId && /^[a-zA-Z0-9_-]{25,}$/.test(url)) {
+        fileId = url;
+      }
+
+      if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}=s1000?authuser=0`;
+      }
+
+      if (/^https?:\/\/.*\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(url)) {
+        return url;
+      }
+
+      if (url.startsWith('http')) {
+        return url;
+      }
+
+      return '';
+    }
+
     function toast(node,msg,ok=true){
       if(!node) return;
       node.className = 'toast ' + (ok?'toast-success':'toast-error');
@@ -942,7 +962,6 @@
     let ADMIN_ROLE = null;
     let ADMIN_CURRENT_PHONE = null;
 
-    // новые ключи для localStorage
     const ADMIN_SESSION_KEY = 'syb_admin_session';
     const ADMIN_PAGE_KEY    = 'syb_admin_page';
 
@@ -954,7 +973,7 @@
 
       $$('.nav-item').forEach(i=>i.classList.remove('active'));
       $(`.nav-item[data-page="${id}"]`)?.classList.add('active');
-      // сохраняем последнюю открытую страницу
+
       localStorage.setItem(ADMIN_PAGE_KEY, id);
     }
 
@@ -980,22 +999,21 @@
       });
     }
 
-
     function saveAdminSession(data){
-  try{
-    localStorage.setItem('syb_admin_session', JSON.stringify(data));
-  }catch(e){}
-}
+      try{
+        localStorage.setItem('syb_admin_session', JSON.stringify(data));
+      }catch(e){}
+    }
 
-function loadAdminSession(){
-  try{
-    const raw = localStorage.getItem('syb_admin_session');
-    if(!raw) return null;
-    return JSON.parse(raw);
-  }catch(e){
-    return null;
-  }
-}
+    function loadAdminSession(){
+      try{
+        const raw = localStorage.getItem('syb_admin_session');
+        if(!raw) return null;
+        return JSON.parse(raw);
+      }catch(e){
+        return null;
+      }
+    }
 
     /* Авторизация */
     function initAdminAuth(){
@@ -1009,7 +1027,6 @@ function loadAdminSession(){
           ADMIN_NAME = res.name;
           ADMIN_ROLE = res.role;
 
-          // сохраняем сессию
           localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
             login: ADMIN_LOGIN,
             name: ADMIN_NAME,
@@ -1029,37 +1046,33 @@ function loadAdminSession(){
     }
 
     function restoreAdminSession(){
-  try{
-    const raw = localStorage.getItem(ADMIN_SESSION_KEY);
-    if(!raw) return;
+      try{
+        const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+        if(!raw) return;
 
-    const saved = JSON.parse(raw);
-    if(!saved || !saved.login) return;
+        const saved = JSON.parse(raw);
+        if(!saved || !saved.login) return;
 
-    ADMIN_LOGGED = true;
-    ADMIN_LOGIN = saved.login;
-    ADMIN_NAME = saved.name || '';
-    ADMIN_ROLE = saved.role || '';
+        ADMIN_LOGGED = true;
+        ADMIN_LOGIN = saved.login;
+        ADMIN_NAME = saved.name || '';
+        ADMIN_ROLE = saved.role || '';
 
-    // скрываем логин, показываем админку
-    $('#admin-login-card').style.display='none';
-    $('#admin-layout').style.display='block';
+        $('#admin-login-card').style.display='none';
+        $('#admin-layout').style.display='block';
 
-    // какая страница была открыта
-    const pageId = localStorage.getItem(ADMIN_PAGE_KEY) || 'admin-dashboard';
-    switchAdminSubpage(pageId);
+        const pageId = localStorage.getItem(ADMIN_PAGE_KEY) || 'admin-dashboard';
+        switchAdminSubpage(pageId);
 
-    // подгружаем данные для нужного раздела
-    if(pageId === 'admin-dashboard')      loadDashboard();
-    else if(pageId === 'admin-gifts')     loadGiftsAdmin();
-    else if(pageId === 'admin-analytics') loadAnalyticsPage();
-    // для admin-clients отдельно ничего не нужно — всё руками
-  }catch(e){
-    console.warn('restoreAdminSession error', e);
-  }
-}
+        if(pageId === 'admin-dashboard')      loadDashboard();
+        else if(pageId === 'admin-gifts')     loadGiftsAdmin();
+        else if(pageId === 'admin-analytics') loadAnalyticsPage();
+      }catch(e){
+        console.warn('restoreAdminSession error', e);
+      }
+    }
 
-    /* Парсер analytics.csv под новую структуру */
+    /* Парсер analytics.csv */
     function parseAnalyticsCSV(csv){
       const lines = csv.split(/\r?\n/).filter(l=>l.trim().length>0);
       if(lines.length<=1) return [];
@@ -1100,10 +1113,57 @@ function loadAdminSession(){
           sum_bill_total: sumTotal,
           sum_bill_normal: sumNormal,
           sum_bill_banquet: sumBanquet,
-          sum_bill: sumTotal, // алиас для старого кода
+          sum_bill: sumTotal,
           gifts,
           tier
         });
+      }
+      return rows;
+    }
+
+    /* Парсер redeem_log.csv */
+    function parseRedeemCSV(csv){
+      const lines = csv.split(/\r?\n/).filter(l=>l.trim().length>0);
+      if(lines.length <= 1) return [];
+
+      const unq = s=>{
+        s = s.trim();
+        if(s.startsWith('"') && s.endsWith('"')){
+          s = s.slice(1,-1).replace(/""/g,'"');
+        }
+        return s;
+      };
+
+      const header = lines[0].split(',');
+      const idx = {
+        date: header.indexOf('date'),
+        phone: header.indexOf('phone'),
+        name: header.indexOf('name'),
+        gift: header.indexOf('gift'),
+        price: header.indexOf('price'),
+        sum_before_reset: header.indexOf('sum_before_reset'),
+        actor: header.indexOf('actor'),
+        bonus: header.indexOf('bonus'),
+        bonus_type: header.indexOf('bonus_type')
+      };
+
+      const rows = [];
+      for(let i=1;i<lines.length;i++){
+        const parts = lines[i].split(',');
+        if(!parts.length) continue;
+
+        const r = {
+          date: idx.date >=0 ? unq(parts[idx.date] || '') : '',
+          phone: idx.phone >=0 ? unq(parts[idx.phone] || '') : '',
+          name: idx.name >=0 ? unq(parts[idx.name] || '') : '',
+          gift: idx.gift >=0 ? unq(parts[idx.gift] || '') : '',
+          price: idx.price >=0 ? Number(parts[idx.price] || 0) : 0,
+          sum_before_reset: idx.sum_before_reset >=0 ? Number(parts[idx.sum_before_reset] || 0) : 0,
+          actor: idx.actor >=0 ? unq(parts[idx.actor] || '') : '',
+          bonus: idx.bonus >=0 ? Number(parts[idx.bonus] || 0) : 0,
+          bonus_type: idx.bonus_type >=0 ? unq(parts[idx.bonus_type] || '') : ''
+        };
+        rows.push(r);
       }
       return rows;
     }
@@ -1145,9 +1205,7 @@ function loadAdminSession(){
           ])
         );
 
-        // Топ-4 гостей (Diamond / Gold / Silver / Bronze)
-                // Топ-4 гостей (Diamond / Gold / Silver / Bronze)
-                const topRows = rows.filter(r=>r.tier).slice(0,4);
+        const topRows = rows.filter(r=>r.tier).slice(0,4);
         if(topRows.length){
           const topCard = el('div',{class:'kpi-card top4-card'},[
             el('div',{class:'top4-header'},[
@@ -1197,11 +1255,20 @@ function loadAdminSession(){
       }
     }
 
+    /* Аналитика (клиенты + подарки) */
     async function loadAnalyticsPage(){
       try{
-        const res = await api('export_csv',{kind:'analytics'});
-        const rows = parseAnalyticsCSV(res.csv);
+        const [resAnalytics, resRedeem, resGifts] = await Promise.all([
+          api('export_csv',{kind:'analytics'}),
+          api('export_csv',{kind:'redeem_log'}),
+          api('gifts_list',{})
+        ]);
 
+        const rows = parseAnalyticsCSV(resAnalytics.csv);
+        const redeemRows = parseRedeemCSV(resRedeem.csv);
+        const giftsList = resGifts.gifts || [];
+
+        /* KPI по клиентам */
         const totalClients = rows.length;
         const totalSum = rows.reduce((acc,r)=>acc + (Number(r.sum_bill_total)||0),0);
         let withGifts=0;
@@ -1229,44 +1296,209 @@ function loadAdminSession(){
           ])
         );
 
+        /* Таблица по клиентам */
         const tableWrap = $('#analytics-table');
         if(!rows.length){
           tableWrap.innerHTML='<p class="card-subtitle">Пока нет данных аналитики.</p>';
-          return;
-        }
-        const table = el('table');
-        const thead = el('thead',{},[
-          el('tr',{},[
-            el('th',{html:'Имя'}),
-            el('th',{html:'Телефон'}),
-            el('th',{html:'Сумма всего'}),
-            el('th',{html:'Обычные'}),
-            el('th',{html:'Банкеты'}),
-            el('th',{html:'Статус'}),
-            el('th',{html:'Подарки'})
-          ])
-        ]);
-        const tbody = el('tbody');
-        rows.forEach(r=>{
-          tbody.append(
+        } else {
+          const table = el('table');
+          const thead = el('thead',{},[
             el('tr',{},[
-              el('td',{html:r.name}),
-              el('td',{html:r.phone}),
-              el('td',{html:formatMoney(r.sum_bill_total)}),
-              el('td',{html:formatMoney(r.sum_bill_normal)}),
-              el('td',{html:formatMoney(r.sum_bill_banquet)}),
-              el('td',{html:r.tier || '—'}),
-              el('td',{html:r.gifts || '—'})
+              el('th',{html:'Имя'}),
+              el('th',{html:'Телефон'}),
+              el('th',{html:'Сумма всего'}),
+              el('th',{html:'Обычные'}),
+              el('th',{html:'Банкеты'}),
+              el('th',{html:'Статус'}),
+              el('th',{html:'Подарки'})
             ])
+          ]);
+          const tbody = el('tbody');
+          rows.forEach(r=>{
+            tbody.append(
+              el('tr',{},[
+                el('td',{html:r.name}),
+                el('td',{html:r.phone}),
+                el('td',{html:formatMoney(r.sum_bill_total)}),
+                el('td',{html:formatMoney(r.sum_bill_normal)}),
+                el('td',{html:formatMoney(r.sum_bill_banquet)}),
+                el('td',{html:r.tier || '—'}),
+                el('td',{html:r.gifts || '—'})
+              ])
+            );
+          });
+          table.append(thead,tbody);
+          tableWrap.innerHTML='';
+          tableWrap.append(table);
+        }
+
+        /* === Аналитика по подаркам === */
+
+        /* KPI по подаркам */
+        const giftsKpiBox = $('#gifts-analytics-kpi');
+        giftsKpiBox.innerHTML = '';
+
+        const totalIssued = redeemRows.length;
+        const uniquePhones = new Set(redeemRows.map(r=>r.phone));
+        const totalUniqueReceivers = uniquePhones.size;
+        const totalInStock = giftsList.reduce((acc,g)=>acc + (Number(g.left || 0)), 0);
+
+        giftsKpiBox.append(
+  el('div',{class:'kpi-card'},[
+    el('div',{class:'kpi-icon primary'},[el('i',{class:'fas fa-gift'})]),
+    el('div',{class:'kpi-label',html:'Всего выдано подарков'}),
+    el('div',{class:'kpi-value',html:String(totalIssued)})
+  ]),
+  el('div',{class:'kpi-card'},[
+    el('div',{class:'kpi-icon success'},[el('i',{class:'fas fa-user-check'})]),
+    el('div',{class:'kpi-label',html:'Гостей получили подарки'}),
+    el('div',{class:'kpi-value',html:String(totalUniqueReceivers)})
+  ]),
+  el('div',{class:'kpi-card'},[
+    el('div',{class:'kpi-icon warning'},[el('i',{class:'fas fa-box-open'})]),
+    el('div',{class:'kpi-label',html:'Остаток подарков на складе'}),
+    el('div',{class:'kpi-value',html:String(totalInStock)+' шт.'})
+  ])
+);
+
+
+        /* Лог выдачи подарков (сортировка по дате) */
+        const giftsLogWrap = $('#gifts-analytics-table');
+        giftsLogWrap.innerHTML = '';
+
+        if(!redeemRows.length){
+          giftsLogWrap.innerHTML = '<p class="card-subtitle">Пока ни один подарок не был выдан.</p>';
+        } else {
+          const table = el('table');
+          const theadRow = el('tr');
+          const thDate = el('th',{class:'sortable-header',html:'Дата <span>↓</span>'});
+          theadRow.append(
+            thDate,
+            el('th',{html:'Клиент'}),
+            el('th',{html:'Телефон'}),
+            el('th',{html:'Подарок'}),
+            el('th',{html:'Цена, ₸'}),
+            el('th',{html:'Бонусов списано'}),
+            el('th',{html:'Тип бонусов'}),
+            el('th',{html:'Администратор'})
           );
-        });
-        table.append(thead,tbody);
-        tableWrap.innerHTML='';
-        tableWrap.append(table);
+          const thead = el('thead',{},[theadRow]);
+          const tbody = el('tbody');
+
+          const renderRows = (rowsArr)=>{
+            tbody.innerHTML='';
+            rowsArr.forEach(r=>{
+              tbody.append(
+                el('tr',{},[
+                  el('td',{html:r.date}),
+                  el('td',{html:r.name || '—'}),
+                  el('td',{html:r.phone || '—'}),
+                  el('td',{html:r.gift || '—'}),
+                  el('td',{html:formatMoney(r.price || 0)}),
+                  el('td',{html:formatMoney(r.bonus || 0)}),
+                  el('td',{html:r.bonus_type || 'normal'}),
+                  el('td',{html:r.actor || '—'})
+                ])
+              );
+            });
+          };
+
+          let asc = false;
+          const baseRows = [...redeemRows];
+          baseRows.sort((a,b)=>new Date(b.date) - new Date(a.date));
+          renderRows(baseRows);
+
+          thDate.addEventListener('click', ()=>{
+            asc = !asc;
+            const sorted = [...redeemRows].sort((a,b)=>{
+              const da = new Date(a.date);
+              const db = new Date(b.date);
+              return asc ? (da - db) : (db - da);
+            });
+            thDate.innerHTML = asc ? 'Дата <span>↑</span>' : 'Дата <span>↓</span>';
+            renderRows(sorted);
+          });
+
+          table.append(thead,tbody);
+          giftsLogWrap.append(table);
+        }
+
+        /* Таблица "остатки по каждому подарку" */
+        const invWrap = $('#gifts-inventory-table');
+        invWrap.innerHTML = '';
+
+        if(!giftsList.length){
+          invWrap.innerHTML = '<p class="card-subtitle">Каталог подарков пуст.</p>';
+        } else {
+          const agg = {};
+          giftsList.forEach(g=>{
+            agg[g.name] = {
+              name: g.name,
+              price: Number(g.price || 0),
+              left: Number(g.left || 0),
+              bonus_type: g.bonus_type || 'normal',
+              issued: 0,
+              last_date: null
+            };
+          });
+
+          redeemRows.forEach(r=>{
+            if(!r.gift) return;
+            if(!agg[r.gift]){
+              agg[r.gift] = {
+                name: r.gift,
+                price: r.price || 0,
+                left: 0,
+                bonus_type: r.bonus_type || 'normal',
+                issued: 0,
+                last_date: null
+              };
+            }
+            agg[r.gift].issued += 1;
+            const d = new Date(r.date);
+            if(!agg[r.gift].last_date || d > new Date(agg[r.gift].last_date)){
+              agg[r.gift].last_date = r.date;
+            }
+          });
+
+          const items = Object.values(agg).sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+
+          const table = el('table');
+          const thead = el('thead',{},[
+            el('tr',{},[
+              el('th',{html:'Подарок'}),
+              el('th',{html:'Цена (баллы)'}),
+              el('th',{html:'Выдано, шт.'}),
+              el('th',{html:'Остаток, шт.'}),
+              el('th',{html:'Тип бонусов'}),
+              el('th',{html:'Последняя выдача'})
+            ])
+          ]);
+          const tbody = el('tbody');
+
+          items.forEach(it=>{
+            const typeLabel = it.bonus_type === 'banquet' ? 'банкетные' : 'обычные';
+            tbody.append(
+              el('tr',{},[
+                el('td',{html:it.name}),
+                el('td',{html:formatMoney(it.price || 0)}),
+                el('td',{html:String(it.issued)}),
+                el('td',{html:String(it.left)}),
+                el('td',{html:typeLabel}),
+                el('td',{html:it.last_date || '—'})
+              ])
+            );
+          });
+
+          table.append(thead,tbody);
+          invWrap.append(table);
+        }
+
       }catch(err){
         toast($('#a-toast'),err.message || 'Ошибка аналитики',false);
       }
     }
+
 
     function initAnalyticsButtons(){
       $('#btn-analytics').addEventListener('click', async ()=>{
@@ -1496,14 +1728,14 @@ function loadAdminSession(){
             ? 'Баллы за банкеты'
             : 'Обычные баллы';
 
-              const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
-              el('i',{class:'fas fa-pen'}),
-              document.createTextNode('Редактировать')
-            ]);
-            const btnDel = el('button',{class:'btn btn-danger btn-sm'},[
-              el('i',{class:'fas fa-trash'}),
-              document.createTextNode('Удалить')
-            ]);
+          const btnEdit = el('button',{class:'btn btn-outline btn-sm'},[
+            el('i',{class:'fas fa-pen'}),
+            document.createTextNode('Редактировать')
+          ]);
+          const btnDel = el('button',{class:'btn btn-danger btn-sm'},[
+            el('i',{class:'fas fa-trash'}),
+            document.createTextNode('Удалить')
+          ]);
 
           btnEdit.addEventListener('click', ()=>{
             $('#g-name').value = g.name;
@@ -1585,6 +1817,7 @@ function loadAdminSession(){
       try{
         const uRes = await api('users_me',{phone});
         const user = uRes.user;
+        const userGifts = Array.isArray(user.gifts_got) ? user.gifts_got : [];
 
         const gRes = await api('gifts_list',{});
         const gifts = gRes.gifts || [];
@@ -1601,20 +1834,26 @@ function loadAdminSession(){
           const balance = type === 'banquet'
             ? user.balance_banquet
             : user.balance_normal;
-          const canGive = left > 0 && balance >= price;
-          return {gift:g,left,price,type,balance,canGive};
+
+          const alreadyGot = userGifts.includes(g.name);
+          const canGive = left > 0 && balance >= price && !alreadyGot;
+
+          return {gift:g,left,price,type,balance,canGive,alreadyGot};
         });
 
-        // сначала доступные, потом недоступные — без дублей
         entries.sort((a,b)=>Number(b.canGive)-Number(a.canGive));
 
         entries.forEach(entry=>{
-          const {gift,left,price,type,balance,canGive} = entry;
+          const {gift,left,price,type,balance,canGive,alreadyGot} = entry;
           const typeLabel = type === 'banquet'
             ? 'банкетные баллы'
             : 'обычные баллы';
 
-          const card = el('div',{class:'redeem-gift-card '+(canGive?'available':'locked')});
+          const cardClasses = ['redeem-gift-card'];
+          if(canGive) cardClasses.push('available');
+          if(!canGive) cardClasses.push('locked');
+
+          const card = el('div',{class:cardClasses.join(' ')});
           const img = el('img',{
             src: normalizePhotoUrl(gift.photo) || 'https://via.placeholder.com/200x150?text=Gift'
           });
@@ -1627,35 +1866,87 @@ function loadAdminSession(){
             el('div',{class:'redeem-gift-balance',html:`Баланс клиента по этому типу: ${formatMoney(balance)}`})
           );
 
-          if(canGive){
-            main.append(
-              el('div',{class:'redeem-gift-note redeem-gift-note-ok',html:'Можно выдать 🎁'})
-            );
+          let noteEl;
+
+          if(alreadyGot){
+            noteEl = el('div',{
+              class:'redeem-gift-note redeem-gift-note-bad',
+              html:'Этот гость уже получал этот подарок.'
+            });
+            main.append(noteEl);
+          } else if(canGive){
+            noteEl = el('div',{
+              class:'redeem-gift-note redeem-gift-note-ok',
+              html:'Можно выдать 🎁'
+            });
+            main.append(noteEl);
+
             const btn = el('button',{class:'btn btn-primary btn-sm redeem-gift-btn'},[
               el('i',{class:'fas fa-gift'}),
               document.createTextNode('Выдать этот подарок')
             ]);
+
             btn.addEventListener('click', async ()=>{
+              if(btn.disabled) return;
+
+              const originalHtml = btn.innerHTML;
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Выдаём...';
+
+              if(noteEl){
+                noteEl.classList.remove('redeem-gift-note-bad');
+                noteEl.classList.add('redeem-gift-note-ok');
+                noteEl.textContent = 'Оформляем выдачу подарка...';
+              }
+
               try{
-                await api('redeem',{phone,giftName:gift.name,actor:ADMIN_LOGIN || 'admin'});
-                toast($('#a-toast'),'Подарок выдан',true);
+                await api('redeem',{
+                  phone,
+                  giftName:gift.name,
+                  actor:ADMIN_LOGIN || 'admin'
+                });
+
+                if(noteEl){
+                  noteEl.classList.remove('redeem-gift-note-bad');
+                  noteEl.classList.add('redeem-gift-note-ok');
+                  noteEl.textContent = 'Подарок успешно выдан этому гостю 🎉';
+                }
+                btn.innerHTML = '<i class="fas fa-check"></i> Выдано';
+                btn.disabled = true;
+
+                toast($('#a-toast'),'Подарок успешно выдан клиенту ✅',true);
+
                 await loadDashboard();
                 await refreshAdminRedeemCards();
+
               }catch(err){
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
                 toast($('#a-toast'),err.message || 'Ошибка выдачи подарка',false);
+
+                if(noteEl){
+                  noteEl.classList.remove('redeem-gift-note-ok');
+                  noteEl.classList.add('redeem-gift-note-bad');
+                  noteEl.textContent = 'Произошла ошибка. Попробуйте ещё раз.';
+                }
               }
             });
+
             main.append(btn);
-          }else{
+          } else {
             let reason = '';
             if(left <= 0){
               reason = 'Подарок закончился.';
             }else if(balance < price){
               reason = 'Бонусов не хватает.';
+            }else{
+              reason = 'Сейчас выдать нельзя.';
             }
-            main.append(
-              el('div',{class:'redeem-gift-note redeem-gift-note-bad',html:reason || 'Сейчас выдать нельзя.'})
-            );
+            noteEl = el('div',{
+              class:'redeem-gift-note redeem-gift-note-bad',
+              html:reason
+            });
+            main.append(noteEl);
           }
 
           card.append(img,main);
@@ -1674,7 +1965,6 @@ function loadAdminSession(){
       initClientsAdmin();
       initGiftsAdmin();
 
-      // попытаться восстановить сессию и страницу
       restoreAdminSession();
 
       let redeemTimer=null;
@@ -1684,34 +1974,22 @@ function loadAdminSession(){
       });
     });
   </script>
+
   <script>
     let logoutTimer;
-    
-    // Запуск таймера
     function startLogoutTimer() {
       clearTimeout(logoutTimer);
-    
-      // 15 минут бездействия
       logoutTimer = setTimeout(() => {
-    
-        // Удаляем САМОЕ ВАЖНОЕ — ключ админ-сессии
         localStorage.removeItem('syb_admin_session');
-    
-        // Удаляем сохранённую страницу
         localStorage.removeItem('syb_admin_page');
-    
-        // Перезагружаем на страницу логина
         window.location.href = 'admin.html';
-    
       }, 24 * 60 * 60 * 1000);
     }
-    
-    // Сбрасывать таймер при любой активности
     window.onload = startLogoutTimer;
     document.onclick = startLogoutTimer;
     document.onkeypress = startLogoutTimer;
     document.onmousemove = startLogoutTimer;
     document.onscroll = startLogoutTimer;
-    </script>
+  </script>
 </body>
 </html>
