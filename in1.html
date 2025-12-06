@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>SyBaga — Қонақ кабинеті</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Rounded:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      /* Цветовая палитра Apple */
+      --system-blue: #007AFF;
+      --system-green: #34C759;
+      --system-indigo: #5856D6;
+      --system-teal: #5AC8FA;
+      --system-purple: #AF52DE;
+      --system-pink: #FF2D55;
+      --system-red: #FF3B30;
+      --system-orange: #FF9500;
+      --system-yellow: #FFCC00;
+      
+      /* Нейтральные цвета */
+      --system-gray-1: #8E8E93;
+      --system-gray-2: #AEAEB2;
+      --system-gray-3: #C7C7CC;
+      --system-gray-4: #D1D1D6;
+      --system-gray-5: #E5E5EA;
+      --system-gray-6: #F2F2F7;
+      
+      /* Фоны */
+      --background-primary: #FFFFFF;
+      --background-secondary: #F2F2F7;
+      --background-tertiary: #FFFFFF;
+      --background-elevated: #FFFFFF;
+      --background-blur: rgba(255, 255, 255, 0.8);
+      
+      /* Текст */
+      --text-primary: #000000;
+      --text-secondary: #8E8E93;
+      --text-tertiary: #C7C7CC;
+      --text-white: #FFFFFF;
+      
+      /* Акценты */
+      --accent-primary: #007AFF;
+      --accent-green: #34C759;
+      
+      /* Эффекты */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.16);
+      
+      /* Скругления */
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      
+      /* Анимации */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Отступы */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+      
+      /* Блюр */
+      --backdrop-blur: saturate(180%) blur(20px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #F2F2F7 0%, #FFFFFF 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* iOS-подобные скроллбары */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--system-gray-4);
+      border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--system-gray-3);
+    }
+
+    /* Основной контейнер */
+    .app-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+      position: relative;
+    }
+
+    /* Хедер в стиле iOS */
+    .app-header {
+      padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+      position: relative;
+      z-index: 100;
+      animation: fadeInDown 0.8s var(--transition-normal);
+    }
+
+    .restaurant-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .logo-img {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--system-indigo) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition-normal);
+    }
+
+    .logo-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+    }
+
+    .logo-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.8s ease;
+    }
+
+    .restaurant-logo:hover .logo-img::after {
+      transform: translateX(100%);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-main {
+      font-family: 'SF Pro Rounded', 'SF Pro Display', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+    }
+
+    /* Переключатель языка */
+    .header-right {
+      position: absolute;
+      top: var(--spacing-lg);
+      right: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .lang-switch {
+      display: flex;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-full);
+      padding: 2px;
+      box-shadow: var(--shadow-sm);
+      border: 0.5px solid rgba(0,0,0,0.04);
+    }
+
+    .lang-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-full);
+      transition: all var(--transition-fast);
+    }
+
+    .lang-btn.active {
+      background: var(--background-primary);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Герой-секция */
+    .hero-section {
+      padding: var(--spacing-xl) var(--spacing-md);
+      text-align: center;
+      animation: slideUp 0.8s var(--transition-normal) 0.1s both;
+    }
+
+    .hero-title {
+      font-family: 'SF Pro Rounded', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--system-indigo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Карточки в стиле iOS */
+    .card {
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.6s var(--transition-normal) 0.2s both;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'SF Pro Rounded', sans-serif;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .card-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Формы в стиле iOS */
+    .form-group {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .form-input-wrapper {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--system-gray-5);
+      font-size: 16px;
+      font-family: 'SF Pro Display', sans-serif;
+      background: var(--background-primary);
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .form-icon {
+      position: absolute;
+      right: var(--spacing-lg);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--system-gray-2);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    /* Кнопки в стиле iOS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg) var(--spacing-xl);
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      font-weight: 600;
+      font-family: 'SF Pro Rounded', sans-serif;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      gap: var(--spacing-sm);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #0056CC 100%);
+      color: var(--text-white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:active:not([disabled]) {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Анимация нажатия */
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+
+    .btn:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(40, 40);
+      }
+    }
+
+    /* Лоадер iOS */
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--system-gray-5);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast-уведомления */
+    .toast {
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      animation: slideUp 0.3s ease;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-md);
+    }
+
+    .toast-success {
+      color: var(--system-green);
+      border-left: 4px solid var(--system-green);
+    }
+
+    .toast-error {
+      color: var(--system-red);
+      border-left: 4px solid var(--system-red);
+    }
+
+    /* Аккордеоны */
+    .accordion {
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+      animation: slideUp 0.6s var(--transition-normal) 0.3s both;
+    }
+
+    .accordion-header {
+      padding: var(--spacing-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .accordion-header:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .accordion-header i:first-child {
+      margin-right: var(--spacing-sm);
+      color: var(--accent-primary);
+    }
+
+    .accordion-icon {
+      transition: transform var(--transition-normal);
+      color: var(--system-gray-2);
+    }
+
+    .accordion.open .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-body {
+      padding: 0 var(--spacing-xl);
+      max-height: 0;
+      overflow: hidden;
+      transition: all var(--transition-normal);
+      border-top: 1px solid transparent;
+    }
+
+    .accordion.open .accordion-body {
+      padding: 0 var(--spacing-xl) var(--spacing-xl);
+      max-height: 2000px;
+      border-top-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Сетка информации пользователя */
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .info-card {
+      background: var(--background-primary);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--system-gray-5);
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--system-indigo));
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      font-family: 'SF Pro Rounded', sans-serif;
+    }
+
+    /* Сетка подарков */
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .gift-card {
+      background: var(--background-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--system-gray-5);
+      overflow: hidden;
+      position: relative;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .gift-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gift-image {
+      width: 100%;
+      height: 180px;
+      background: var(--system-gray-6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gift-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
+    }
+
+    .gift-card:hover .gift-image img {
+      transform: scale(1.05);
+    }
+
+    .gift-image i {
+      font-size: 48px;
+      color: var(--system-gray-4);
+    }
+
+    .gift-content {
+      padding: var(--spacing-lg);
+    }
+
+    .gift-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .gift-price {
+      font-size: 15px;
+      color: var(--accent-primary);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+
+    .gift-left {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .gift-out {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      padding: 4px 10px;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      color: var(--system-red);
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .gift-badge {
+      position: absolute;
+      top: var(--spacing-md);
+      left: var(--spacing-md);
+      padding: 4px 10px;
+      background: var(--system-green);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Секция посещения */
+    .visit-section {
+      padding: var(--spacing-2xl) var(--spacing-md);
+      text-align: center;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      margin: var(--spacing-2xl) 0;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      animation: slideUp 0.6s var(--transition-normal) 0.4s both;
+    }
+
+    .visit-title {
+      font-family: 'SF Pro Rounded', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.2;
+    }
+
+    .visit-subtitle {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto var(--spacing-xl);
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Социальные ссылки */
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      justify-content: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md) var(--spacing-xl);
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      font-weight: 600;
+      text-decoration: none;
+      gap: var(--spacing-sm);
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+      min-width: 160px;
+    }
+
+    .social-link.whatsapp {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .social-link.instagram {
+      background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .social-link:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .social-link:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Контактная информация */
+    .contact-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-xl);
+      margin: var(--spacing-xl) 0;
+    }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .contact-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+      color: var(--accent-primary);
+      font-size: 22px;
+      transition: all var(--transition-fast);
+    }
+
+    .contact-item:hover .contact-icon {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .contact-detail {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .contact-detail a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .contact-detail a:hover {
+      text-decoration: underline;
+    }
+
+    /* Футер */
+    .app-footer {
+      margin-top: var(--spacing-2xl);
+      padding: var(--spacing-xl) var(--spacing-md);
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      animation: slideUp 0.6s var(--transition-normal) 0.5s both;
+    }
+
+    /* Анимации */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Микро-интеракции */
+    .hover-lift {
+      transition: transform var(--transition-fast);
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Скелетон-лоадер */
+    .skeleton {
+      background: linear-gradient(90deg, var(--system-gray-5) 25%, var(--system-gray-6) 50%, var(--system-gray-5) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes skeleton-loading {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      :root {
+        --spacing-lg: 16px;
+        --spacing-xl: 20px;
+        --spacing-2xl: 32px;
+      }
+
+      .app-container {
+        padding: var(--spacing-sm);
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-subtitle {
+        font-size: 16px;
+      }
+
+      .card {
+        padding: var(--spacing-lg);
+      }
+
+      .gift-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .social-links {
+        flex-direction: column;
+      }
+
+      .social-link {
+        width: 100%;
+      }
+
+      .contact-info {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+      }
+
+      .header-right {
+        position: static;
+        margin-top: var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 28px;
+      }
+
+      .user-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Динамический бэкграунд */
+    .dynamic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #F2F2F7 0%, #FFFFFF 50%, #F2F2F7 100%);
+      opacity: 0.8;
+    }
+
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      25% {
+        transform: translate(20px, -20px) rotate(90deg);
+      }
+      50% {
+        transform: translate(40px, 0) rotate(180deg);
+      }
+      75% {
+        transform: translate(20px, 20px) rotate(270deg);
+      }
+    }
+
+    /* Плавный скролл */
+    .smooth-scroll {
+      scroll-behavior: smooth;
+    }
+
+    /* Подсветка активного элемента */
+    .highlight {
+      position: relative;
+    }
+
+    .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-primary);
+      transform: scaleX(0);
+      transition: transform var(--transition-normal);
+    }
+
+    .highlight:hover::after {
+      transform: scaleX(1);
+    }
+  </style>
+</head>
+<body class="smooth-scroll">
+  <!-- Динамический фон -->
+  <div class="dynamic-bg"></div>
+  <div class="bg-particles" id="bg-particles"></div>
+
+  <div class="app-container">
+    <!-- Хедер -->
+    <header class="app-header">
+      <a href="#" class="restaurant-logo highlight">
+        <div class="logo-img">
+            <img src="logo.png" alt="SyBaga Logo"
+            onerror="this.onerror=null; this.style.display='none'; this.insertAdjacentHTML('afterend','<i class=\'fas fa-utensils\'></i>');">        </div>
+        <div class="logo-text">
+          <div class="logo-main">SyBaga</div>
+          <div class="logo-sub">ETHNO RESTAURANT</div>
+        </div>
+      </a>
+
+      <div class="header-right">
+        <div class="lang-switch" aria-label="Language switch">
+          <button class="lang-btn" data-lang="kk">Қаз</button>
+          <button class="lang-btn" data-lang="ru">Рус</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Главный герой -->
+    <section class="hero-section">
+      <h1 class="hero-title" data-i18n="hero-title"></h1>
+      <p class="hero-subtitle" data-i18n="hero-subtitle"></p>
+    </section>
+
+    <!-- Карточка проверки бонусов -->
+    <section class="card">
+      <h2 class="card-title" data-i18n="card-check-title"></h2>
+      <p class="card-subtitle" data-i18n="card-check-subtitle"></p>
+
+      <div class="form-group">
+        <label class="form-label" data-i18n="label-phone"></label>
+        <div class="form-input-wrapper">
+          <input
+            type="tel"
+            class="form-input"
+            id="user-phone"
+            data-i18n-placeholder="placeholder-phone"
+            inputmode="tel"
+            autocomplete="tel"
+          >
+          <i class="fas fa-phone form-icon"></i>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-user-login">
+        <span id="btn-text" data-i18n="btn-find-bonuses"></span>
+        <div class="loader" id="btn-loader" style="display: none;"></div>
+      </button>
+
+      <div id="u-toast" class="toast" style="display:none;"></div>
+    </section>
+
+    <!-- Аккордеон статуса -->
+    <section class="accordion" id="acc-status">
+      <div class="accordion-header">
+        <span>
+          <i class="fas fa-crown"></i>
+          <span data-i18n="acc-status-title"></span>
+        </span>
+        <i class="fas fa-chevron-down accordion-icon"></i>
+      </div>
+      <div class="accordion-body">
+        <div id="user-info" class="user-info-grid"></div>
+      </div>
+    </section>
+
+    <!-- Аккордеон подарков -->
+    <section class="accordion" id="acc-gifts">
+      <div class="accordion-header">
+        <span>
+          <i class="fas fa-gift"></i>
+          <span data-i18n="acc-gifts-title"></span>
+        </span>
+        <i class="fas fa-chevron-down accordion-icon"></i>
+      </div>
+      <div class="accordion-body">
+        <p class="card-subtitle" style="margin-bottom:20px;" data-i18n="gifts-note"></p>
+        <div id="user-gifts" class="gift-grid"></div>
+      </div>
+    </section>
+
+    <!-- Секция посещения -->
+    <section class="visit-section">
+      <h2 class="visit-title" data-i18n="visit-title"></h2>
+      <p class="visit-subtitle" data-i18n="visit-subtitle"></p>
+
+      <div class="social-links">
+        <a href="https://wa.me/77001777381" class="social-link whatsapp" target="_blank">
+          <i class="fab fa-whatsapp"></i>
+          <span data-i18n="btn-whatsapp"></span>
+        </a>
+        <a href="https://www.instagram.com/sybaga_ethno_kz/" class="social-link instagram" target="_blank">
+          <i class="fab fa-instagram"></i>
+          <span data-i18n="btn-instagram"></span>
+        </a>
+      </div>
+
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="contact-text" data-i18n="contact-address-title"></div>
+          <div class="contact-detail">
+            <a href="https://go.2gis.com/tMmOq" target="_blank">2GIS</a>
+            <span data-i18n="contact-address-text"></span>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="contact-text" data-i18n="contact-phone-title"></div>
+          <div class="contact-detail">+7 700 177 7381</div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="contact-text" data-i18n="contact-hours-title"></div>
+          <div class="contact-detail" data-i18n="contact-hours-text"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="app-footer">
+      <p data-i18n="footer-copy"></p>
+    </footer>
+  </div>
+
+  <script>
+    // === КОНФИГУРАЦИЯ И УТИЛИТЫ ===
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbwtVhNoiosNdVcQ7QmHjjB1yQ-8fpxbGgURbSeWWg_VM8h3j1KGnSSw0l2UMTSfsNmI/exec';
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    const el = (t, a = {}, c = []) => {
+      const n = document.createElement(t);
+      for (const k in a) {
+        if (k === 'class') n.className = a[k];
+        else if (k === 'html') n.innerHTML = a[k];
+        else n.setAttribute(k, a[k]);
+      }
+      (Array.isArray(c) ? c : [c]).filter(Boolean).forEach((x) => n.append(x));
+      return n;
+    };
+
+    // Нормализация телефона
+    function normPhone(raw) {
+      let p = String(raw || '').replace(/[^\d+]/g, '');
+      if (p.startsWith('+7')) return p;
+      if (p.startsWith('8') && p.length === 11) return '+7' + p.slice(1);
+      if (p.length === 10) return '+7' + p;
+      if (p.length === 11 && p[0] === '7') return '+' + p;
+      return p;
+    }
+
+    // Форматирование денег
+    function formatMoney(x) {
+      x = Number(x || 0);
+      return x.toLocaleString('ru-RU') + ' ₸';
+    }
+
+    // Лоадер кнопки
+    function toggleButtonLoader(show) {
+      const btn = $('#btn-user-login');
+      const btnText = $('#btn-text');
+      const loader = $('#btn-loader');
+      
+      if (show) {
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        loader.style.display = 'block';
+      } else {
+        btn.disabled = false;
+        btnText.style.display = 'block';
+        loader.style.display = 'none';
+      }
+    }
+
+    // Toast уведомления
+    function showToast(node, msg, ok = true) {
+      if (!node) return;
+      node.style.display = 'flex';
+      node.className = 'toast ' + (ok ? 'toast-success' : 'toast-error');
+      node.innerHTML = ok
+        ? `<i class="fas fa-check-circle"></i>${msg}`
+        : `<i class="fas fa-exclamation-circle"></i>${msg}`;
+      setTimeout(() => {
+        if (node.innerHTML.includes(msg)) {
+          node.style.display = 'none';
+          node.innerHTML = '';
+        }
+      }, 4000);
+    }
+
+    // API запросы
+    async function api(action, body = {}, method = 'POST') {
+      const params = new URLSearchParams({ action, ...body });
+      let res;
+
+      if (method === 'GET') {
+        res = await fetch(`${API_BASE}?${params.toString()}`, { method: 'GET' });
+      } else {
+        res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: params.toString()
+        });
+      }
+
+      const data = await res.json().catch(() => ({ ok: false, error: 'JSON parse error' }));
+      if (!data.ok) throw new Error(data.error || 'Request error');
+      return data;
+    }
+
+    // === МЕЖДУНАРОДИЗАЦИЯ ===
+    const translations = {
+      kk: {
+        'hero-title': '<span>Бонус жүйесі</span> — SyBaga',
+        'hero-subtitle': 'Бонус теңгеріміңізді көріңіз, сыйлықтарыңызды қадағалаңыз және эксклюзивті ұсыныстар алыңыз.',
+        
+        'card-check-title': 'Бонусыңызды тексеріңіз',
+        'card-check-subtitle': 'SyBaga бонус бағдарламасын қолданып, сыйлықтар алып отыр.',
+        'label-phone': 'Телефон нөмірі',
+        'placeholder-phone': '+7 777 000 00 00',
+        'btn-find-bonuses': 'Бонустарымды табу',
+        
+        'acc-status-title': 'Менің мәртебем және балансым',
+        'acc-gifts-title': 'Қолжетімді сыйлықтар',
+        'gifts-note': 'Кәдімгі және банкет бонустары бөлек есептеледі.',
+        
+        'visit-title': 'SyBaga Ethno Restaurant',
+        'visit-subtitle': 'Ұлттық мәдениет пен заманауи тағамдардың үйлесімі.',
+        'btn-whatsapp': 'WhatsApp арқылы жазу',
+        'btn-instagram': 'Instagram парақшасы',
+        
+        'contact-address-title': 'Мекенжай',
+        'contact-address-text': 'Алматы',
+        'contact-phone-title': 'Телефон',
+        'contact-hours-title': 'Жұмыс уақыты',
+        'contact-hours-text': 'Күн сайын 10:30 – 00:00',
+        
+        'footer-copy': '© 2025 SyBaga Ethno Restaurant. Барлық құқықтар қорғалған.',
+        
+        'user-name-label': 'Қонақтың аты',
+        'user-default-name': 'Қонақ',
+        'user-sum-label': 'Барлық чек сомасы',
+        'user-balance-label': 'Бонус балансы',
+        'user-gifts-label': 'Алынған сыйлықтар',
+        
+        'gifts-empty': 'Қазіргі уақытта қолжетімді сыйлықтар жоқ.',
+      },
+      ru: {
+        'hero-title': '<span>Бонусная система</span> — SyBaga',
+        'hero-subtitle': 'Проверьте баланс бонусов, отслеживайте подарки и получайте эксклюзивные предложения.',
+        
+        'card-check-title': 'Проверьте свои бонусы',
+        'card-check-subtitle': 'Используйте бонусную программу SyBaga и получайте подарки.',
+        'label-phone': 'Номер телефона',
+        'placeholder-phone': '+7 777 000 00 00',
+        'btn-find-bonuses': 'Найти мои бонусы',
+        
+        'acc-status-title': 'Мой статус и баланс',
+        'acc-gifts-title': 'Доступные подарки',
+        'gifts-note': 'Обычные и банкетные бонусы учитываются отдельно.',
+        
+        'visit-title': 'SyBaga Ethno Restaurant',
+        'visit-subtitle': 'Соединение национальной культуры и современной кухни.',
+        'btn-whatsapp': 'Написать в WhatsApp',
+        'btn-instagram': 'Страница в Instagram',
+        
+        'contact-address-title': 'Адрес',
+        'contact-address-text': 'Алматы',
+        'contact-phone-title': 'Телефон',
+        'contact-hours-title': 'Время работы',
+        'contact-hours-text': 'Каждый день с 10:30 до 00:00',
+        
+        'footer-copy': '© 2025 SyBaga Ethno Restaurant. Все права защищены.',
+        
+        'user-name-label': 'Имя гостя',
+        'user-default-name': 'Гость',
+        'user-sum-label': 'Общая сумма чеков',
+        'user-balance-label': 'Бонусный баланс',
+        'user-gifts-label': 'Полученные подарки',
+        
+        'gifts-empty': 'Сейчас нет доступных подарков.',
+      }
+    };
+
+    let currentLang = localStorage.getItem('sybaga_lang') || 'kk';
+
+    function t(key, vars = {}) {
+      const pack = translations[currentLang] || translations.kk;
+      let text = pack[key] || translations.kk[key] || key;
+      Object.entries(vars).forEach(([k, v]) => {
+        text = text.replace(`{${k}}`, v);
+      });
+      return text;
+    }
+
+    function applyTranslations() {
+      $$('[data-i18n]').forEach(node => {
+        const key = node.getAttribute('data-i18n');
+        if (!key) return;
+        node.innerHTML = t(key);
+      });
+
+      $$('[data-i18n-placeholder]').forEach(node => {
+        const key = node.getAttribute('data-i18n-placeholder');
+        if (!key) return;
+        node.placeholder = t(key);
+      });
+
+      $$('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+      });
+    }
+
+    // === АНИМАЦИИ И ЭФФЕКТЫ ===
+    function createParticles() {
+      const bg = $('#bg-particles');
+      const count = 15;
+      
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        
+        const size = Math.random() * 60 + 20;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 20 + 's';
+        p.style.opacity = Math.random() * 0.05 + 0.02;
+        
+        bg.appendChild(p);
+      }
+    }
+
+    function initAccordions() {
+      $$('.accordion').forEach(acc => {
+        const head = acc.querySelector('.accordion-header');
+        head.addEventListener('click', () => {
+          acc.classList.toggle('open');
+        });
+      });
+    }
+
+    // === ОТОБРАЖЕНИЕ ДАННЫХ ===
+    async function loadUserProfile(phone) {
+      try {
+        const res = await api('users_me', { phone });
+        const u = res.user;
+        
+        const box = $('#user-info');
+        box.innerHTML = '';
+        
+        const grid = el('div', { class: 'user-info-grid' });
+        
+        const name = u.name || t('user-default-name');
+        
+        grid.append(
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: t('user-name-label') }),
+            el('div', { class: 'info-value', html: name }),
+            el('div', {
+              class: 'card-subtitle',
+              html: `<i class="fas fa-phone" style="margin-right:5px;"></i> ${u.phone}`
+            })
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: t('user-sum-label') }),
+            el('div', { class: 'info-value', html: formatMoney(u.lifetime_sum) }),
+            el('div', {
+              class: 'card-subtitle',
+              html: `Обычные: ${formatMoney(u.sum_normal)}<br>Банкетные: ${formatMoney(u.sum_banquet)}`
+            })
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: t('user-balance-label') }),
+            el('div', {
+              class: 'info-value',
+              html: formatMoney((u.balance_normal || 0) + (u.balance_banquet || 0))
+            }),
+            el('div', {
+              class: 'card-subtitle',
+              html: `Обычные: ${formatMoney(u.balance_normal)}<br>Банкетные: ${formatMoney(u.balance_banquet)}`
+            })
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: t('user-gifts-label') }),
+            el('div', {
+              class: 'info-value',
+              html: u.gifts_got && u.gifts_got.length
+                ? u.gifts_got.join(', ')
+                : t('user-gifts-empty')
+            })
+          ])
+        );
+        
+        box.append(grid);
+        return u;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    // === ОСНОВНАЯ ЛОГИКА ===
+    function initClient() {
+      const phoneInput = $('#user-phone');
+      const loginBtn = $('#btn-user-login');
+      const toastNode = $('#u-toast');
+
+      loginBtn.addEventListener('click', async () => {
+        const raw = phoneInput.value.trim();
+        const phone = normPhone(raw);
+
+        if (!phone || phone.length < 12) {
+          showToast(toastNode, t('toast-invalid-phone'), false);
+          return;
+        }
+
+        toggleButtonLoader(true);
+
+        try {
+          await api('auth_user', { phone });
+          
+          const u = await loadUserProfile(phone);
+          
+          // Открываем аккордеоны
+          $('#acc-status').classList.add('open');
+          $('#acc-gifts').classList.add('open');
+          
+          // Плавная прокрутка
+          setTimeout(() => {
+            $('#acc-gifts').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 300);
+          
+        } catch (err) {
+          showToast(toastNode, err.message || t('toast-not-found'), false);
+        } finally {
+          toggleButtonLoader(false);
+        }
+      });
+
+      phoneInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          loginBtn.click();
+        }
+      });
+    }
+
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      initAccordions();
+      applyTranslations();
+      initClient();
+
+      // Инициализация переключателя языка
+      $$('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const lang = btn.dataset.lang;
+          if (!translations[lang]) return;
+          currentLang = lang;
+          localStorage.setItem('sybaga_lang', lang);
+          applyTranslations();
+        });
+      });
+
+      // Анимация появления элементов
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+
+      $$('.card, .accordion, .visit-section').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>SyBaga — Админ-панель</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Rounded:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      /* Цветовая палитра Apple */
+      --system-blue: #007AFF;
+      --system-green: #34C759;
+      --system-indigo: #5856D6;
+      --system-teal: #5AC8FA;
+      --system-purple: #AF52DE;
+      --system-pink: #FF2D55;
+      --system-red: #FF3B30;
+      --system-orange: #FF9500;
+      --system-yellow: #FFCC00;
+      
+      /* Нейтральные цвета */
+      --system-gray-1: #8E8E93;
+      --system-gray-2: #AEAEB2;
+      --system-gray-3: #C7C7CC;
+      --system-gray-4: #D1D1D6;
+      --system-gray-5: #E5E5EA;
+      --system-gray-6: #F2F2F7;
+      
+      /* Фоны */
+      --background-primary: #FFFFFF;
+      --background-secondary: #F2F2F7;
+      --background-tertiary: #FFFFFF;
+      --background-elevated: #FFFFFF;
+      --background-blur: rgba(255, 255, 255, 0.8);
+      --background-sidebar: #F8F9FA;
+      
+      /* Текст */
+      --text-primary: #000000;
+      --text-secondary: #8E8E93;
+      --text-tertiary: #C7C7CC;
+      --text-white: #FFFFFF;
+      
+      /* Акценты */
+      --accent-primary: #007AFF;
+      --accent-green: #34C759;
+      --accent-red: #FF3B30;
+      --accent-orange: #FF9500;
+      
+      /* Эффекты */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.16);
+      
+      /* Скругления */
+      --radius-xs: 6px;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      
+      /* Анимации */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Отступы */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+      
+      /* Блюр */
+      --backdrop-blur: saturate(180%) blur(20px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #F2F2F7 0%, #FFFFFF 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* iOS-подобные скроллбары */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--system-gray-4);
+      border-radius: var(--radius-full);
+    }
+
+    /* Основной контейнер */
+    .app-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+      position: relative;
+    }
+
+    /* Хедер */
+    .app-header {
+      padding: var(--spacing-lg) var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: sticky;
+      top: var(--spacing-md);
+      z-index: 1000;
+      animation: slideDown 0.6s var(--transition-normal);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--system-indigo) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-main {
+      font-family: 'SF Pro Rounded', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    .link-client {
+      font-size: 15px;
+    }
+
+    .link-client a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      transition: all var(--transition-fast);
+    }
+
+    .link-client a:hover {
+      opacity: 0.8;
+    }
+
+    /* Карточки */
+    .card {
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.6s var(--transition-normal) 0.1s both;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-xl);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'SF Pro Rounded', sans-serif;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .card-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    /* Формы */
+    .form-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--system-gray-5);
+      font-size: 16px;
+      font-family: 'SF Pro Display', sans-serif;
+      background: var(--background-primary);
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    select.form-input {
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%238E8E93' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+      background-position: right var(--spacing-md) center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5em;
+    }
+
+    /* Кнопки */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'SF Pro Rounded', sans-serif;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      gap: var(--spacing-sm);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #0056CC 100%);
+      color: var(--text-white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--accent-green) 0%, #2DA44E 100%);
+      color: var(--text-white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--accent-red) 0%, #D70015 100%);
+      color: var(--text-white);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent-primary);
+      border: 1.5px solid var(--accent-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-sm {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 14px;
+    }
+
+    .btn:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn:active:not([disabled]) {
+      transform: translateY(0);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Лоадер */
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--system-gray-5);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast */
+    .toast {
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      animation: slideUp 0.3s ease;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-md);
+    }
+
+    .toast-success {
+      color: var(--system-green);
+      border-left: 4px solid var(--system-green);
+    }
+
+    .toast-error {
+      color: var(--system-red);
+      border-left: 4px solid var(--system-red);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .badge-warning {
+      color: var(--accent-orange);
+      border-color: rgba(255, 149, 0, 0.2);
+    }
+
+    .badge-success {
+      color: var(--accent-green);
+      border-color: rgba(52, 199, 89, 0.2);
+    }
+
+    /* Layout */
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: var(--spacing-lg);
+      animation: slideUp 0.6s var(--transition-normal) 0.2s both;
+    }
+
+    @media (max-width: 1024px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg) 0;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      height: fit-content;
+      position: sticky;
+      top: calc(var(--spacing-md) * 2 + 60px);
+    }
+
+    @media (max-width: 1024px) {
+      .admin-sidebar {
+        position: relative;
+        top: 0;
+      }
+    }
+
+    .sidebar-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      padding: 0 var(--spacing-lg);
+      font-weight: 600;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-md) var(--spacing-lg);
+      font-size: 16px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      color: var(--text-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item span i {
+      margin-right: var(--spacing-sm);
+      width: 20px;
+      text-align: center;
+    }
+
+    .nav-item:hover {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(0, 122, 255, 0.1) 0%, transparent 100%);
+      color: var(--accent-primary);
+      border-left: 3px solid var(--accent-primary);
+    }
+
+    .nav-badge {
+      background: var(--background-primary);
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      color: var(--text-secondary);
+      min-width: 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-item.active .nav-badge {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .kpi-card {
+      background: var(--background-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--system-gray-5);
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: var(--spacing-md);
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
+      color: var(--accent-primary);
+    }
+
+    .kpi-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'SF Pro Rounded', sans-serif;
+      line-height: 1;
+    }
+
+    /* Top 4 Guests */
+    .top4-card {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .top4-card {
+        grid-column: span 1;
+      }
+    }
+
+    .top4-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .top4-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top4-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .top4-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .top4-item {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      background: var(--system-gray-6);
+      transition: all var(--transition-fast);
+    }
+
+    .top4-item:hover {
+      background: var(--system-gray-5);
+      transform: translateX(2px);
+    }
+
+    .top4-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--background-primary);
+      color: var(--accent-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top4-main {
+      min-width: 0;
+    }
+
+    .top4-name {
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .top4-phone {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .top4-right {
+      text-align: right;
+    }
+
+    .top4-sum {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tier-diamond {
+      background: linear-gradient(135deg, #ECFEFF 0%, #CFFAFE 100%);
+      color: #0E7490;
+    }
+
+    .tier-gold {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      color: #B45309;
+    }
+
+    .tier-silver {
+      background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
+      color: #374151;
+    }
+
+    .tier-bronze {
+      background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+      color: #B91C1C;
+    }
+
+    /* Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--system-gray-5), transparent);
+      margin: var(--spacing-xl) 0;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--system-gray-5);
+      background: var(--background-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      background: var(--system-gray-6);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: var(--spacing-md);
+      text-align: left;
+      border-bottom: 1px solid var(--system-gray-5);
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--system-gray-5);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: var(--system-gray-6);
+    }
+
+    /* Clickable rows */
+    .clickable-row {
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--system-gray-5);
+      margin-bottom: var(--spacing-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all var(--transition-fast);
+      background: var(--background-primary);
+    }
+
+    .clickable-row:hover {
+      background: var(--system-gray-6);
+      border-color: var(--accent-primary);
+      transform: translateX(4px);
+    }
+
+    .clickable-row.active {
+      border-color: var(--accent-primary);
+      background: linear-gradient(90deg, rgba(0, 122, 255, 0.1) 0%, transparent 100%);
+      color: var(--accent-primary);
+    }
+
+    /* Gift Cards */
+    .gift-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .gift-card {
+      background: var(--background-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--system-gray-5);
+      overflow: hidden;
+      position: relative;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .gift-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gift-image {
+      width: 100%;
+      height: 160px;
+      background: var(--system-gray-6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gift-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
+    }
+
+    .gift-card:hover .gift-image img {
+      transform: scale(1.05);
+    }
+
+    .gift-content {
+      padding: var(--spacing-lg);
+    }
+
+    .gift-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .gift-price {
+      font-size: 15px;
+      color: var(--accent-primary);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+    }
+
+    .gift-left {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .gift-out {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      padding: 6px 12px;
+      background: var(--background-blur);
+      backdrop-filter: var(--backdrop-blur);
+      color: var(--accent-red);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    /* User Info Grid */
+    .user-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .info-card {
+      background: var(--background-primary);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--system-gray-5);
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--system-indigo));
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      font-family: 'SF Pro Rounded', sans-serif;
+    }
+
+    /* Redeem Gifts */
+    .redeem-gifts-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .redeem-gift-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--system-gray-5);
+      background: var(--background-primary);
+      padding: var(--spacing-lg);
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: var(--spacing-lg);
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .redeem-gift-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .redeem-gift-card.available {
+      border-color: #BBF7D0;
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    }
+
+    .redeem-gift-card.locked {
+      opacity: 0.8;
+    }
+
+    .redeem-gift-card img {
+      width: 100%;
+      height: 120px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      background: var(--system-gray-6);
+    }
+
+    .redeem-gift-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .redeem-gift-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .redeem-gift-price {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    .redeem-gift-balance {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .redeem-gift-note {
+      font-size: 13px;
+      margin-top: var(--spacing-sm);
+      font-weight: 500;
+    }
+
+    .redeem-gift-note-ok {
+      color: var(--accent-green);
+    }
+
+    .redeem-gift-note-bad {
+      color: var(--accent-red);
+    }
+
+    /* Sortable Header */
+    .sortable-header {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sortable-header span {
+      margin-left: var(--spacing-xs);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* Section */
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'SF Pro Rounded', sans-serif;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.5;
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--system-gray-5) 25%, var(--system-gray-6) 50%, var(--system-gray-5) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes skeleton-loading {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      :root {
+        --spacing-lg: 16px;
+        --spacing-xl: 20px;
+        --spacing-2xl: 32px;
+      }
+
+      .app-container {
+        padding: var(--spacing-sm);
+      }
+
+      .card {
+        padding: var(--spacing-lg);
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .gift-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .redeem-gift-card {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-layout {
+        gap: var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .btn {
+        width: 100%;
+      }
+
+      .top4-item {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+      }
+
+      .top4-right {
+        text-align: left;
+        margin-top: var(--spacing-sm);
+      }
+    }
+
+    /* Dynamic Background */
+    .dynamic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #F2F2F7 0%, #FFFFFF 50%, #F2F2F7 100%);
+      opacity: 0.8;
+    }
+
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(88, 86, 214, 0.05) 100%);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      25% {
+        transform: translate(20px, -20px) rotate(90deg);
+      }
+      50% {
+        transform: translate(40px, 0) rotate(180deg);
+      }
+      75% {
+        transform: translate(20px, 20px) rotate(270deg);
+      }
+    }
+
+    /* Subpages */
+    .admin-subpage {
+      display: none;
+      animation: slideUp 0.6s var(--transition-normal);
+    }
+
+    .admin-subpage.active {
+      display: block;
+    }
+
+    /* Scroll Animation */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="smooth-scroll">
+  <!-- Динамический фон -->
+  <div class="dynamic-bg"></div>
+  <div class="bg-particles" id="bg-particles"></div>
+
+  <div class="app-container">
+    <!-- Хедер -->
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-crown"></i>
+        </div>
+        <div class="logo-text">
+          <div class="logo-main">SyBaga Admin</div>
+          <div class="logo-sub">Панель управления</div>
+        </div>
+      </div>
+      <div class="link-client">
+        <a href="index.html">
+          <i class="fas fa-arrow-left"></i>
+          Вернуться к кабинету гостя
+        </a>
+      </div>
+    </header>
+
+    <!-- Блок авторизации -->
+    <section class="card" id="admin-login-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Вход для сотрудников</h2>
+          <p class="card-subtitle">Используйте служебный логин и пароль</p>
+        </div>
+        <div class="badge badge-warning">
+          <i class="fas fa-lock"></i> Доступ закрыт
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Логин</label>
+          <input type="text" class="form-input" id="adm-login" placeholder="Введите логин">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" class="form-input" id="adm-pass" placeholder="Введите пароль">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-adm-login">
+        <i class="fas fa-key"></i> Войти в админ-панель
+      </button>
+      <div id="a-toast" class="toast"></div>
+    </section>
+
+    <!-- Основная админ-панель -->
+    <section id="admin-layout" style="display:none;">
+      <div class="admin-layout">
+        <!-- Сайдбар -->
+        <aside class="admin-sidebar">
+          <div class="sidebar-section-title">Навигация</div>
+          <nav class="nav-list">
+            <div class="nav-item active" data-page="admin-dashboard">
+              <span><i class="fas fa-chart-line"></i>Дашборд</span>
+              <span class="nav-badge">Обзор</span>
+            </div>
+            <div class="nav-item" data-page="admin-clients">
+              <span><i class="fas fa-users"></i>Клиенты</span>
+              <span class="nav-badge">База</span>
+            </div>
+            <div class="nav-item" data-page="admin-gifts">
+              <span><i class="fas fa-gift"></i>Подарки</span>
+              <span class="nav-badge">Каталог</span>
+            </div>
+            <div class="nav-item" data-page="admin-analytics">
+              <span><i class="fas fa-chart-bar"></i>Аналитика</span>
+              <span class="nav-badge">Отчёты</span>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- Основной контент -->
+        <main>
+          <!-- Дашборд -->
+          <section class="card admin-subpage active" id="admin-dashboard">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Дашборд</h2>
+                <p class="card-subtitle">Краткий обзор программы лояльности</p>
+              </div>
+              <button class="btn btn-outline" id="btn-refresh-dashboard">
+                <i class="fas fa-rotate-right"></i> Обновить
+              </button>
+            </div>
+
+            <div class="kpi-grid" id="dash-kpis">
+              <!-- KPI будут загружены динамически -->
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">Работа с клиентами</h3>
+                <p class="section-desc">Добавление новых гостей и регистрация чеков</p>
+                <button class="btn btn-primary" id="btn-go-clients">
+                  <i class="fas fa-users"></i> Раздел «Клиенты»
+                </button>
+              </div>
+              <div>
+                <h3 class="section-title">Подарки и аналитика</h3>
+                <p class="section-desc">Настройка каталога подарков и просмотр статистики</p>
+                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm);">
+                  <button class="btn btn-outline" id="btn-go-gifts">
+                    <i class="fas fa-gift"></i> Подарки
+                  </button>
+                  <button class="btn btn-outline" id="btn-go-analytics">
+                    <i class="fas fa-chart-bar"></i> Аналитика
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Клиенты -->
+          <section class="card admin-subpage" id="admin-clients">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Клиенты</h2>
+                <p class="card-subtitle">Создание клиентов, поиск и работа с чеками</p>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <!-- Новый клиент -->
+              <div>
+                <h3 class="section-title">1. Новый клиент</h3>
+                <p class="section-desc">Заполните данные гостя, чтобы начать копить бонусы</p>
+                <div class="form-group">
+                  <label class="form-label">Имя гостя</label>
+                  <input type="text" class="form-input" id="new-name" placeholder="Введите имя">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Телефон</label>
+                  <input type="tel" class="form-input" id="new-phone" placeholder="+7 777 000 00 00">
+                </div>
+                <button class="btn btn-primary" id="btn-add-user">
+                  <i class="fas fa-user-plus"></i> Создать клиента
+                </button>
+              </div>
+
+              <!-- Поиск клиента -->
+              <div>
+                <h3 class="section-title">2. Поиск клиента</h3>
+                <p class="section-desc">Введите имя или номер телефона и выберите клиента из списка</p>
+                <div class="form-group">
+                  <label class="form-label">Имя или телефон</label>
+                  <input type="text" class="form-input" id="users-q" placeholder="например, Айжан или +7777...">
+                </div>
+                <div id="users-list" style="max-height: 280px; overflow-y: auto;">
+                  <!-- Список клиентов будет загружен динамически -->
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="grid-2">
+              <div>
+                <h3 class="section-title">3. Чеки клиента</h3>
+                <p class="section-desc">Добавьте сумму чека — бонусы начислятся автоматически</p>
+
+                <div class="form-group">
+                  <label class="form-label">Тип чека</label>
+                  <select class="form-input" id="bill-type">
+                    <option value="normal">Обычный чек</option>
+                    <option value="banquet">Банкет</option>
+                  </select>
+                  <p class="section-desc" style="margin-top: var(--spacing-xs);">
+                    Баллы за банкеты копятся отдельно и тратятся только на «банкетные» подарки
+                  </p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Сумма нового чека, ₸</label>
+                  <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-sm);">
+                    <input type="number" class="form-input" id="bill-sum" placeholder="Например, 15000">
+                    <button class="btn btn-primary" id="btn-add-bill">
+                      <i class="fas fa-plus"></i> Добавить
+                    </button>
+                  </div>
+                  <p class="section-desc" style="margin-top: var(--spacing-xs);">
+                    Телефон берётся из выбранного клиента в блоке «Поиск клиента»
+                  </p>
+                </div>
+
+                <div id="bills-list" style="margin-top: var(--spacing-lg);">
+                  <!-- Список чеков будет загружен динамически -->
+                </div>
+              </div>
+
+              <div>
+                <h3 class="section-title">4. Карточка клиента</h3>
+                <p class="section-desc">Информация по балансу и полученным подаркам</p>
+                <div id="client-profile">
+                  <!-- Информация о клиенте будет загружена динамически -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Подарки -->
+          <section class="card admin-subpage" id="admin-gifts">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Подарки</h2>
+                <p class="card-subtitle">Настройка каталога и выдача подарков гостям</p>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <!-- Выдача подарка -->
+              <div>
+                <h3 class="section-title">Выдача подарка клиенту</h3>
+                <p class="section-desc">
+                  После ввода телефона появится список подарков, отсортированный по доступности
+                </p>
+                <div class="form-group">
+                  <label class="form-label">Телефон клиента</label>
+                  <input type="tel" class="form-input" id="r-phone" placeholder="+7 777 000 00 00">
+                </div>
+                <h4 class="section-title" style="margin-top: var(--spacing-lg);">Доступные подарки</h4>
+                <div id="redeem-gifts-list" class="redeem-gifts-list">
+                  <!-- Список доступных подарков будет загружен динамически -->
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Каталог подарков -->
+            <h3 class="section-title">Каталог подарков</h3>
+            <p class="section-desc">Список всех активных и неактивных подарков SyBaga</p>
+            <div id="gifts-admin" class="gift-grid">
+              <!-- Список подарков будет загружен динамически -->
+            </div>
+          </section>
+
+          <!-- Аналитика -->
+          <section class="card admin-subpage" id="admin-analytics">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Аналитика и отчёты</h2>
+                <p class="card-subtitle">Статистика по сумме чеков, клиентам и подаркам</p>
+              </div>
+            </div>
+
+            <!-- Кнопки экспорта -->
+            <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
+              <button class="btn btn-primary" id="btn-analytics">
+                <i class="fas fa-calculator"></i> Пересчитать аналитику
+              </button>
+              <button class="btn btn-outline" id="btn-export-users">
+                <i class="fas fa-file-export"></i> Клиенты
+              </button>
+              <button class="btn btn-outline" id="btn-export-bills">
+                <i class="fas fa-file-export"></i> Чеки
+              </button>
+              <button class="btn btn-outline" id="btn-export-redeem">
+                <i class="fas fa-file-export"></i> Подарки
+              </button>
+            </div>
+
+            <!-- KPI -->
+            <div class="kpi-grid" id="kpi">
+              <!-- KPI будут загружены динамически -->
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Таблица клиентов -->
+            <h3 class="section-title">Детальная статистика по клиентам</h3>
+            <p class="section-desc">Список гостей с суммой чеков, балансами и статусом</p>
+            <div id="analytics-table" class="table-container">
+              <!-- Таблица будет загружена динамически -->
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Статистика по подаркам -->
+            <h3 class="section-title">Статистика по подаркам</h3>
+            <p class="section-desc">Выданные подарки, остатки на складе и история выдачи</p>
+
+            <div class="kpi-grid" id="gifts-analytics-kpi">
+              <!-- KPI по подаркам будут загружены динамически -->
+            </div>
+
+            <h4 class="section-title" style="margin-top: var(--spacing-xl);">Лог выдачи подарков</h4>
+            <p class="section-desc">Кликните по заголовку «Дата» для сортировки</p>
+            <div id="gifts-analytics-table" class="table-container">
+              <!-- Таблица лога будет загружена динамически -->
+            </div>
+
+            <h4 class="section-title" style="margin-top: var(--spacing-xl);">Остатки и выдача по каждому подарку</h4>
+            <p class="section-desc">Сводка: сколько единиц подарка выдано и сколько осталось</p>
+            <div id="gifts-inventory-table" class="table-container">
+              <!-- Таблица остатков будет загружена динамически -->
+            </div>
+          </section>
+        </main>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // === КОНФИГУРАЦИЯ И УТИЛИТЫ ===
+    const API_BASE = 'https://script.google.com/macros/s/AKfycbwtVhNoiosNdVcQ7QmHjjB1yQ-8fpxbGgURbSeWWg_VM8h3j1KGnSSw0l2UMTSfsNmI/exec';
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    const el = (t, a = {}, c = []) => {
+      const n = document.createElement(t);
+      for (const k in a) {
+        if (k === 'class') n.className = a[k];
+        else if (k === 'html') n.innerHTML = a[k];
+        else n.setAttribute(k, a[k]);
+      }
+      (Array.isArray(c) ? c : [c]).filter(Boolean).forEach((x) => n.append(x));
+      return n;
+    };
+
+    // Нормализация телефона
+    function normPhone(raw) {
+      let p = String(raw || '').replace(/[^\d+]/g, '');
+      if (p.startsWith('+7')) return p;
+      if (p.startsWith('8') && p.length === 11) return '+7' + p.slice(1);
+      if (p.length === 10) return '+7' + p;
+      if (p.length === 11 && p[0] === '7') return '+' + p;
+      return p;
+    }
+
+    // Форматирование денег
+    function formatMoney(x) {
+      x = Number(x || 0);
+      return x.toLocaleString('ru-RU') + ' ₸';
+    }
+
+    // Toast уведомления
+    function showToast(node, msg, ok = true) {
+      if (!node) return;
+      node.style.display = 'flex';
+      node.className = 'toast ' + (ok ? 'toast-success' : 'toast-error');
+      node.innerHTML = ok
+        ? `<i class="fas fa-check-circle"></i> ${msg}`
+        : `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+      setTimeout(() => {
+        if (node.innerHTML.includes(msg)) {
+          node.style.display = 'none';
+          node.innerHTML = '';
+        }
+      }, 4000);
+    }
+
+    // Лоадер кнопки
+    function toggleButtonLoader(btn, show) {
+      if (show) {
+        const originalHTML = btn.innerHTML;
+        btn.setAttribute('data-original-html', originalHTML);
+        btn.innerHTML = '<div class="loader"></div>';
+        btn.disabled = true;
+      } else {
+        const originalHTML = btn.getAttribute('data-original-html');
+        if (originalHTML) {
+          btn.innerHTML = originalHTML;
+        }
+        btn.disabled = false;
+      }
+    }
+
+    // API запросы
+    async function api(action, body = {}, method = 'POST') {
+      const params = new URLSearchParams({ action, ...body });
+      let res;
+
+      if (method === 'GET') {
+        res = await fetch(`${API_BASE}?${params.toString()}`, { method: 'GET' });
+      } else {
+        res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: params.toString()
+        });
+      }
+
+      const data = await res.json().catch(() => ({ ok: false, error: 'JSON parse error' }));
+      if (!data.ok) throw new Error(data.error || 'Request error');
+      return data;
+    }
+
+    // === УПРАВЛЕНИЕ СОСТОЯНИЕМ ===
+    let ADMIN_LOGGED = false;
+    let ADMIN_LOGIN = null;
+    let ADMIN_NAME = null;
+    let ADMIN_ROLE = null;
+    let CURRENT_PHONE = null;
+
+    const ADMIN_SESSION_KEY = 'syb_admin_session';
+    const ADMIN_PAGE_KEY = 'syb_admin_page';
+
+    // === НАВИГАЦИЯ ===
+    function switchAdminSubpage(id) {
+      $$('.admin-subpage').forEach(p => p.classList.remove('active'));
+      $$('.nav-item').forEach(i => i.classList.remove('active'));
+      
+      const page = $(`#${id}`);
+      const navItem = $(`.nav-item[data-page="${id}"]`);
+      
+      if (page) page.classList.add('active');
+      if (navItem) navItem.classList.add('active');
+      
+      localStorage.setItem(ADMIN_PAGE_KEY, id);
+    }
+
+    function initAdminNav() {
+      $$('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const pageId = item.getAttribute('data-page');
+          switchAdminSubpage(pageId);
+          
+          if (pageId === 'admin-dashboard') loadDashboard();
+          if (pageId === 'admin-gifts') loadGiftsAdmin();
+          if (pageId === 'admin-analytics') loadAnalyticsPage();
+        });
+      });
+
+      $('#btn-go-clients').addEventListener('click', () => switchAdminSubpage('admin-clients'));
+      $('#btn-go-gifts').addEventListener('click', () => {
+        switchAdminSubpage('admin-gifts');
+        loadGiftsAdmin();
+      });
+      $('#btn-go-analytics').addEventListener('click', () => {
+        switchAdminSubpage('admin-analytics');
+        loadAnalyticsPage();
+      });
+    }
+
+    // === АВТОРИЗАЦИЯ ===
+    function initAdminAuth() {
+      $('#btn-adm-login').addEventListener('click', async () => {
+        const login = $('#adm-login').value.trim();
+        const pass = $('#adm-pass').value.trim();
+        const btn = $('#btn-adm-login');
+        
+        if (!login || !pass) {
+          showToast($('#a-toast'), 'Введите логин и пароль', false);
+          return;
+        }
+
+        toggleButtonLoader(btn, true);
+
+        try {
+          const res = await api('auth_admin', { login, password: pass });
+          ADMIN_LOGGED = true;
+          ADMIN_LOGIN = res.login;
+          ADMIN_NAME = res.name;
+          ADMIN_ROLE = res.role;
+
+          localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
+            login: ADMIN_LOGIN,
+            name: ADMIN_NAME,
+            role: ADMIN_ROLE
+          }));
+          localStorage.setItem(ADMIN_PAGE_KEY, 'admin-dashboard');
+
+          $('#admin-login-card').style.display = 'none';
+          $('#admin-layout').style.display = 'block';
+
+          showToast($('#a-toast'), 'Вход выполнен успешно', true);
+          loadDashboard();
+        } catch (err) {
+          showToast($('#a-toast'), err.message || 'Ошибка авторизации', false);
+        } finally {
+          toggleButtonLoader(btn, false);
+        }
+      });
+    }
+
+    function restoreAdminSession() {
+      try {
+        const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+        if (!raw) return;
+
+        const saved = JSON.parse(raw);
+        if (!saved || !saved.login) return;
+
+        ADMIN_LOGGED = true;
+        ADMIN_LOGIN = saved.login;
+        ADMIN_NAME = saved.name || '';
+        ADMIN_ROLE = saved.role || '';
+
+        $('#admin-login-card').style.display = 'none';
+        $('#admin-layout').style.display = 'block';
+
+        const pageId = localStorage.getItem(ADMIN_PAGE_KEY) || 'admin-dashboard';
+        switchAdminSubpage(pageId);
+
+        if (pageId === 'admin-dashboard') loadDashboard();
+        else if (pageId === 'admin-gifts') loadGiftsAdmin();
+        else if (pageId === 'admin-analytics') loadAnalyticsPage();
+      } catch (e) {
+        console.warn('Ошибка восстановления сессии:', e);
+      }
+    }
+
+    // === ДАШБОРД ===
+    async function loadDashboard() {
+      try {
+        const btn = $('#btn-refresh-dashboard');
+        toggleButtonLoader(btn, true);
+
+        await api('analytics_rebuild', {});
+        const a = await api('export_csv', { kind: 'analytics' });
+        
+        const rows = parseAnalyticsCSV(a.csv);
+        const totalClients = rows.length;
+        const totalSum = rows.reduce((acc, r) => acc + (Number(r.sum_bill_total) || 0), 0);
+        let totalGifts = 0;
+
+        rows.forEach(r => {
+          if (r.gifts) {
+            totalGifts += r.gifts.split(',').map(x => x.trim()).filter(Boolean).length;
+          }
+        });
+
+        // Обновляем KPI
+        const box = $('#dash-kpis');
+        box.innerHTML = '';
+
+        box.append(
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-money-bill-wave' })]),
+            el('div', { class: 'kpi-label', html: 'Общий оборот чеков' }),
+            el('div', { class: 'kpi-value', html: formatMoney(totalSum) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-users' })]),
+            el('div', { class: 'kpi-label', html: 'Всего клиентов' }),
+            el('div', { class: 'kpi-value', html: String(totalClients) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-gift' })]),
+            el('div', { class: 'kpi-label', html: 'Выдано подарков' }),
+            el('div', { class: 'kpi-value', html: String(totalGifts) })
+          ])
+        );
+
+        // Топ-4 клиента
+        const topRows = rows.filter(r => r.tier).slice(0, 4);
+        if (topRows.length) {
+          const topCard = el('div', { class: 'kpi-card top4-card' }, [
+            el('div', { class: 'top4-header' }, [
+              el('div', {}, [
+                el('div', { class: 'top4-title', html: 'Топ-4 гостя' }),
+                el('div', { class: 'top4-sub', html: 'По сумме всех чеков' })
+              ]),
+              el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-ranking-star' })])
+            ]),
+            el('div', { class: 'top4-list' })
+          ]);
+
+          const listNode = topCard.querySelector('.top4-list');
+
+          topRows.forEach((r, idx) => {
+            const tier = r.tier || '';
+            let tierClass = 'tier-bronze';
+            let tierIcon = 'fa-award';
+            
+            if (tier === 'Diamond') { tierClass = 'tier-diamond'; tierIcon = 'fa-gem'; }
+            else if (tier === 'Gold') { tierClass = 'tier-gold'; tierIcon = 'fa-crown'; }
+            else if (tier === 'Silver') { tierClass = 'tier-silver'; tierIcon = 'fa-medal'; }
+
+            const item = el('div', { class: 'top4-item' }, [
+              el('div', { class: 'top4-rank', html: idx + 1 }),
+              el('div', { class: 'top4-main' }, [
+                el('div', { class: 'top4-name', html: r.name }),
+                el('div', { class: 'top4-phone', html: r.phone })
+              ]),
+              el('div', { class: 'top4-right' }, [
+                el('div', { class: 'top4-sum', html: formatMoney(r.sum_bill_total) }),
+                el('div', { class: `tier-badge ${tierClass}` }, [
+                  el('i', { class: `fas ${tierIcon}` }),
+                  document.createTextNode(tier || '—')
+                ])
+              ])
+            ]);
+
+            listNode.append(item);
+          });
+
+          box.append(topCard);
+        }
+
+        showToast($('#a-toast'), 'Дашборд обновлен', true);
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки дашборда', false);
+      } finally {
+        toggleButtonLoader($('#btn-refresh-dashboard'), false);
+      }
+    }
+
+    // === КЛИЕНТЫ ===
+    async function loadUsersList(query) {
+      try {
+        const res = await api('users_list', { query: query || '' });
+        const list = res.users || [];
+        const box = $('#users-list');
+        box.innerHTML = '';
+
+        if (!list.length) {
+          box.innerHTML = '<p class="section-desc">Клиенты не найдены</p>';
+          return;
+        }
+
+        list.forEach(u => {
+          const row = el('div', { class: 'clickable-row' }, [
+            el('div', { html: `
+              <div style="font-weight: 600; margin-bottom: 4px;">${u.name || '-'}</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">${u.phone}</div>
+            `}),
+            el('div', { 
+              class: 'badge',
+              html: u.gift ? 'Подарок: ' + u.gift : 'Без подарка'
+            })
+          ]);
+
+          row.addEventListener('click', () => {
+            CURRENT_PHONE = u.phone;
+            $$('#users-list .clickable-row').forEach(r => r.classList.remove('active'));
+            row.classList.add('active');
+            loadClientProfileAdmin(u.phone);
+            loadClientBillsAdmin(u.phone);
+          });
+
+          box.append(row);
+        });
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки клиентов', false);
+      }
+    }
+
+    async function loadClientProfileAdmin(phone) {
+      try {
+        const res = await api('users_me', { phone });
+        const u = res.user;
+        const box = $('#client-profile');
+        box.innerHTML = '';
+
+        const grid = el('div', { class: 'user-info-grid' }, [
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: 'Имя' }),
+            el('div', { class: 'info-value', html: u.name }),
+            el('div', { class: 'section-desc', html: `<i class="fas fa-phone"></i> ${u.phone}` })
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: 'Сумма чеков' }),
+            el('div', { class: 'info-value', html: formatMoney(u.lifetime_sum) }),
+            el('div', { class: 'section-desc', html: `
+              Обычные: ${formatMoney(u.sum_normal)}<br>
+              Банкеты: ${formatMoney(u.sum_banquet)}
+            `})
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: 'Бонусный баланс' }),
+            el('div', { class: 'info-value', html: formatMoney(u.balance_normal + u.balance_banquet) }),
+            el('div', { class: 'section-desc', html: `
+              Обычные: ${formatMoney(u.balance_normal)}<br>
+              Банкеты: ${formatMoney(u.balance_banquet)}
+            `})
+          ]),
+          el('div', { class: 'info-card' }, [
+            el('div', { class: 'info-label', html: 'Подарки' }),
+            el('div', { class: 'info-value', html: u.gifts_got && u.gifts_got.length ? u.gifts_got.join(', ') : '—' })
+          ])
+        ]);
+
+        box.append(grid);
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки профиля', false);
+      }
+    }
+
+    async function loadClientBillsAdmin(phone) {
+      try {
+        const res = await api('bills_list', { phone });
+        const bills = res.bills || [];
+        const box = $('#bills-list');
+        box.innerHTML = '';
+
+        if (!bills.length) {
+          box.innerHTML = '<p class="section-desc">Пока нет чеков</p>';
+          return;
+        }
+
+        const table = el('table');
+        const thead = el('thead', {}, [
+          el('tr', {}, [
+            el('th', { html: 'Дата' }),
+            el('th', { html: 'Телефон' }),
+            el('th', { html: 'Тип' }),
+            el('th', { html: 'Сумма' })
+          ])
+        ]);
+
+        const tbody = el('tbody');
+        bills.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        bills.forEach(b => {
+          const tLabel = b.bill_type === 'banquet' ? 'Банкет' : 'Обычный';
+          tbody.append(
+            el('tr', {}, [
+              el('td', { html: b.date }),
+              el('td', { html: b.phone }),
+              el('td', { html: tLabel }),
+              el('td', { html: formatMoney(b.bill) })
+            ])
+          );
+        });
+
+        table.append(thead, tbody);
+        box.append(table);
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки чеков', false);
+      }
+    }
+
+    function initClientsAdmin() {
+      // Добавление нового клиента
+      $('#btn-add-user').addEventListener('click', async () => {
+        const name = $('#new-name').value.trim();
+        const phone = normPhone($('#new-phone').value.trim());
+        
+        if (!name || !phone) {
+          showToast($('#a-toast'), 'Имя и телефон обязательны', false);
+          return;
+        }
+
+        const btn = $('#btn-add-user');
+        toggleButtonLoader(btn, true);
+
+        try {
+          await api('users_create', { name, phone, admin_login: ADMIN_LOGIN || '' });
+          showToast($('#a-toast'), 'Клиент успешно создан', true);
+          
+          $('#new-name').value = '';
+          $('#new-phone').value = '';
+          
+          await loadUsersList($('#users-q').value.trim());
+        } catch (err) {
+          showToast($('#a-toast'), err.message || 'Ошибка создания клиента', false);
+        } finally {
+          toggleButtonLoader(btn, false);
+        }
+      });
+
+      // Поиск клиентов
+      let usersSearchTimeout = null;
+      $('#users-q').addEventListener('input', () => {
+        clearTimeout(usersSearchTimeout);
+        usersSearchTimeout = setTimeout(() => {
+          loadUsersList($('#users-q').value.trim());
+        }, 300);
+      });
+
+      // Добавление чека
+      $('#btn-add-bill').addEventListener('click', async () => {
+        if (!CURRENT_PHONE) {
+          showToast($('#a-toast'), 'Сначала выберите клиента', false);
+          return;
+        }
+
+        const sum = Number($('#bill-sum').value);
+        const billType = $('#bill-type').value || 'normal';
+        
+        if (!(sum > 0)) {
+          showToast($('#a-toast'), 'Введите сумму чека', false);
+          return;
+        }
+
+        const btn = $('#btn-add-bill');
+        toggleButtonLoader(btn, true);
+
+        try {
+          await api('bills_add', {
+            phone: CURRENT_PHONE,
+            bill: sum,
+            bill_type: billType,
+            admin_login: ADMIN_LOGIN || ''
+          });
+
+          $('#bill-sum').value = '';
+          showToast($('#a-toast'), 'Чек успешно добавлен', true);
+          
+          await loadClientBillsAdmin(CURRENT_PHONE);
+          await loadClientProfileAdmin(CURRENT_PHONE);
+          await loadDashboard();
+        } catch (err) {
+          showToast($('#a-toast'), err.message || 'Ошибка добавления чека', false);
+        } finally {
+          toggleButtonLoader(btn, false);
+        }
+      });
+    }
+
+    // === ПОДАРКИ ===
+    async function loadGiftsAdmin() {
+      try {
+        const res = await api('gifts_list', {});
+        const gifts = res.gifts || [];
+        const box = $('#gifts-admin');
+        box.innerHTML = '';
+
+        if (!gifts.length) {
+          box.innerHTML = '<p class="section-desc">Каталог подарков пуст</p>';
+          return;
+        }
+
+        gifts.forEach(g => {
+          const left = Number(g.left || 0);
+          const card = el('div', { class: 'gift-card' });
+          
+          if (left <= 0) {
+            card.append(el('div', { class: 'gift-out', html: 'Нет в наличии' }));
+          }
+
+          const img = el('img', {
+            class: 'gift-image',
+            src: g.photo || 'https://via.placeholder.com/400x300?text=Подарок',
+            alt: g.name
+          });
+
+          const gotCount = g.user_got ? g.user_got.split(',').filter(v => v.trim().length > 0).length : 0;
+          const typeLabel = g.bonus_type === 'banquet' ? 'Баллы за банкеты' : 'Обычные баллы';
+
+          const content = el('div', { class: 'gift-content' }, [
+            el('div', { class: 'gift-title', html: g.name }),
+            el('div', { class: 'gift-price', html: `Цена: ${formatMoney(g.price)}` }),
+            el('div', { class: 'gift-left', html: `Остаток: ${left} шт.` }),
+            el('div', { class: 'section-desc', html: `Тип: ${typeLabel}` }),
+            el('div', { class: 'section-desc', html: `Выдано: ${gotCount} клиентам` })
+          ]);
+
+          card.append(img, content);
+          box.append(card);
+        });
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки подарков', false);
+      }
+    }
+
+    async function refreshAdminRedeemCards() {
+      const phoneRaw = $('#r-phone').value.trim();
+      const phone = normPhone(phoneRaw);
+      const listBox = $('#redeem-gifts-list');
+
+      listBox.innerHTML = '';
+
+      if (!phone) {
+        listBox.innerHTML = '<p class="section-desc">Введите телефон клиента</p>';
+        return;
+      }
+
+      try {
+        const [uRes, gRes] = await Promise.all([
+          api('users_me', { phone }),
+          api('gifts_list', {})
+        ]);
+
+        const user = uRes.user;
+        const gifts = gRes.gifts || [];
+        const userGifts = Array.isArray(user.gifts_got) ? user.gifts_got : [];
+
+        if (!gifts.length) {
+          listBox.innerHTML = '<p class="section-desc">Каталог подарков пуст</p>';
+          return;
+        }
+
+        const entries = gifts.map(g => {
+          const left = Number(g.left || 0);
+          const price = Number(g.price || 0);
+          const type = g.bonus_type === 'banquet' ? 'banquet' : 'normal';
+          const balance = type === 'banquet' ? user.balance_banquet : user.balance_normal;
+          const alreadyGot = userGifts.includes(g.name);
+          const canGive = left > 0 && balance >= price && !alreadyGot;
+
+          return { gift: g, left, price, type, balance, canGive, alreadyGot };
+        });
+
+        entries.sort((a, b) => Number(b.canGive) - Number(a.canGive));
+
+        entries.forEach(entry => {
+          const { gift, left, price, type, balance, canGive, alreadyGot } = entry;
+          const typeLabel = type === 'banquet' ? 'банкетные баллы' : 'обычные баллы';
+
+          const cardClasses = ['redeem-gift-card'];
+          if (canGive) cardClasses.push('available');
+          if (!canGive) cardClasses.push('locked');
+
+          const card = el('div', { class: cardClasses.join(' ') });
+          
+          const img = el('img', {
+            src: gift.photo || 'https://via.placeholder.com/200x150?text=Gift',
+            alt: gift.name
+          });
+
+          const main = el('div', { class: 'redeem-gift-main' });
+          main.append(
+            el('div', { class: 'redeem-gift-title', html: gift.name }),
+            el('div', { class: 'redeem-gift-price', html: `Цена: ${formatMoney(price)} (${typeLabel})` }),
+            el('div', { class: 'redeem-gift-balance', html: `Остаток: ${left} шт.` }),
+            el('div', { class: 'redeem-gift-balance', html: `Баланс: ${formatMoney(balance)}` })
+          );
+
+          if (alreadyGot) {
+            main.append(el('div', {
+              class: 'redeem-gift-note redeem-gift-note-bad',
+              html: 'Клиент уже получал этот подарок'
+            }));
+          } else if (canGive) {
+            main.append(el('div', {
+              class: 'redeem-gift-note redeem-gift-note-ok',
+              html: 'Можно выдать 🎁'
+            }));
+
+            const btn = el('button', { class: 'btn btn-primary btn-sm', style: 'margin-top: 8px;' }, [
+              el('i', { class: 'fas fa-gift' }),
+              document.createTextNode('Выдать подарок')
+            ]);
+
+            btn.addEventListener('click', async () => {
+              if (btn.disabled) return;
+
+              const originalHTML = btn.innerHTML;
+              btn.disabled = true;
+              btn.innerHTML = '<div class="loader"></div>';
+
+              try {
+                await api('redeem', {
+                  phone,
+                  giftName: gift.name,
+                  actor: ADMIN_LOGIN || 'admin'
+                });
+
+                showToast($('#a-toast'), 'Подарок успешно выдан ✅', true);
+                btn.innerHTML = '<i class="fas fa-check"></i> Выдано';
+                
+                await refreshAdminRedeemCards();
+                await loadDashboard();
+              } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                showToast($('#a-toast'), err.message || 'Ошибка выдачи подарка', false);
+              }
+            });
+
+            main.append(btn);
+          } else {
+            let reason = '';
+            if (left <= 0) reason = 'Подарок закончился';
+            else if (balance < price) reason = 'Недостаточно бонусов';
+            else reason = 'Нельзя выдать';
+
+            main.append(el('div', {
+              class: 'redeem-gift-note redeem-gift-note-bad',
+              html: reason
+            }));
+          }
+
+          card.append(img, main);
+          listBox.append(card);
+        });
+      } catch (err) {
+        listBox.innerHTML = '<p class="section-desc">Ошибка загрузки подарков</p>';
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки подарков для выдачи', false);
+      }
+    }
+
+    // === АНАЛИТИКА ===
+    function parseAnalyticsCSV(csv) {
+      const lines = csv.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length <= 1) return [];
+
+      const unq = s => {
+        s = s.trim();
+        if (s.startsWith('"') && s.endsWith('"')) {
+          s = s.slice(1, -1).replace(/""/g, '"');
+        }
+        return s;
+      };
+
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',');
+        if (parts.length < 3) continue;
+
+        const name = unq(parts[0] || '');
+        const phone = unq(parts[1] || '');
+        const sumTotal = Number(parts[2] || 0);
+        const sumNormal = Number(parts[3] || 0);
+        const sumBanquet = Number(parts[4] || 0);
+
+        let gifts = '';
+        let tier = '';
+        if (parts.length >= 6) {
+          if (parts.length === 6) {
+            gifts = unq(parts[5] || '');
+          } else {
+            tier = unq(parts[parts.length - 1] || '');
+            gifts = unq(parts.slice(5, parts.length - 1).join(','));
+          }
+        }
+
+        rows.push({ name, phone, sum_bill_total: sumTotal, sum_bill_normal: sumNormal, sum_bill_banquet: sumBanquet, gifts, tier });
+      }
+      return rows;
+    }
+
+    function parseRedeemCSV(csv) {
+      const lines = csv.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length <= 1) return [];
+
+      const unq = s => {
+        s = s.trim();
+        if (s.startsWith('"') && s.endsWith('"')) {
+          s = s.slice(1, -1).replace(/""/g, '"');
+        }
+        return s;
+      };
+
+      const header = lines[0].split(',');
+      const idx = {
+        date: header.indexOf('date'),
+        phone: header.indexOf('phone'),
+        name: header.indexOf('name'),
+        gift: header.indexOf('gift'),
+        price: header.indexOf('price'),
+        actor: header.indexOf('actor'),
+        bonus_type: header.indexOf('bonus_type')
+      };
+
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',');
+        if (!parts.length) continue;
+
+        const r = {
+          date: idx.date >= 0 ? unq(parts[idx.date] || '') : '',
+          phone: idx.phone >= 0 ? unq(parts[idx.phone] || '') : '',
+          name: idx.name >= 0 ? unq(parts[idx.name] || '') : '',
+          gift: idx.gift >= 0 ? unq(parts[idx.gift] || '') : '',
+          price: idx.price >= 0 ? Number(parts[idx.price] || 0) : 0,
+          actor: idx.actor >= 0 ? unq(parts[idx.actor] || '') : '',
+          bonus_type: idx.bonus_type >= 0 ? unq(parts[idx.bonus_type] || '') : ''
+        };
+        rows.push(r);
+      }
+      return rows;
+    }
+
+    async function loadAnalyticsPage() {
+      try {
+        const btn = $('#btn-analytics');
+        toggleButtonLoader(btn, true);
+
+        const [resAnalytics, resRedeem, resGifts] = await Promise.all([
+          api('export_csv', { kind: 'analytics' }),
+          api('export_csv', { kind: 'redeem_log' }),
+          api('gifts_list', {})
+        ]);
+
+        const rows = parseAnalyticsCSV(resAnalytics.csv);
+        const redeemRows = parseRedeemCSV(resRedeem.csv);
+        const giftsList = resGifts.gifts || [];
+
+        // KPI по клиентам
+        const totalClients = rows.length;
+        const totalSum = rows.reduce((acc, r) => acc + (Number(r.sum_bill_total) || 0), 0);
+        let withGifts = 0;
+        rows.forEach(r => {
+          if (r.gifts && r.gifts.trim().length > 0) withGifts++;
+        });
+
+        const kpiBox = $('#kpi');
+        kpiBox.innerHTML = '';
+
+        kpiBox.append(
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-users' })]),
+            el('div', { class: 'kpi-label', html: 'Клиенты' }),
+            el('div', { class: 'kpi-value', html: String(totalClients) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-coins' })]),
+            el('div', { class: 'kpi-label', html: 'Сумма чеков' }),
+            el('div', { class: 'kpi-value', html: formatMoney(totalSum) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-gift' })]),
+            el('div', { class: 'kpi-label', html: 'С подарками' }),
+            el('div', { class: 'kpi-value', html: String(withGifts) })
+          ])
+        );
+
+        // Таблица клиентов
+        const tableWrap = $('#analytics-table');
+        if (!rows.length) {
+          tableWrap.innerHTML = '<p class="section-desc">Нет данных аналитики</p>';
+        } else {
+          const table = el('table');
+          const thead = el('thead', {}, [
+            el('tr', {}, [
+              el('th', { html: 'Имя' }),
+              el('th', { html: 'Телефон' }),
+              el('th', { html: 'Сумма всего' }),
+              el('th', { html: 'Обычные' }),
+              el('th', { html: 'Банкеты' }),
+              el('th', { html: 'Статус' }),
+              el('th', { html: 'Подарки' })
+            ])
+          ]);
+
+          const tbody = el('tbody');
+          rows.forEach(r => {
+            tbody.append(
+              el('tr', {}, [
+                el('td', { html: r.name }),
+                el('td', { html: r.phone }),
+                el('td', { html: formatMoney(r.sum_bill_total) }),
+                el('td', { html: formatMoney(r.sum_bill_normal) }),
+                el('td', { html: formatMoney(r.sum_bill_banquet) }),
+                el('td', { html: r.tier || '—' }),
+                el('td', { html: r.gifts || '—' })
+              ])
+            );
+          });
+
+          table.append(thead, tbody);
+          tableWrap.innerHTML = '';
+          tableWrap.append(table);
+        }
+
+        // KPI по подаркам
+        const giftsKpiBox = $('#gifts-analytics-kpi');
+        giftsKpiBox.innerHTML = '';
+
+        const totalIssued = redeemRows.length;
+        const uniquePhones = new Set(redeemRows.map(r => r.phone));
+        const totalUniqueReceivers = uniquePhones.size;
+        const totalInStock = giftsList.reduce((acc, g) => acc + (Number(g.left || 0)), 0);
+
+        giftsKpiBox.append(
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-gift' })]),
+            el('div', { class: 'kpi-label', html: 'Выдано подарков' }),
+            el('div', { class: 'kpi-value', html: String(totalIssued) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-user-check' })]),
+            el('div', { class: 'kpi-label', html: 'Гостей получили' }),
+            el('div', { class: 'kpi-value', html: String(totalUniqueReceivers) })
+          ]),
+          el('div', { class: 'kpi-card' }, [
+            el('div', { class: 'kpi-icon' }, [el('i', { class: 'fas fa-box-open' })]),
+            el('div', { class: 'kpi-label', html: 'Остаток на складе' }),
+            el('div', { class: 'kpi-value', html: totalInStock + ' шт.' })
+          ])
+        );
+
+        // Лог выдачи подарков
+        const giftsLogWrap = $('#gifts-analytics-table');
+        giftsLogWrap.innerHTML = '';
+
+        if (!redeemRows.length) {
+          giftsLogWrap.innerHTML = '<p class="section-desc">Нет данных о выданных подарках</p>';
+        } else {
+          const table = el('table');
+          const theadRow = el('tr');
+          const thDate = el('th', { class: 'sortable-header', html: 'Дата <span>↓</span>' });
+          
+          theadRow.append(
+            thDate,
+            el('th', { html: 'Клиент' }),
+            el('th', { html: 'Телефон' }),
+            el('th', { html: 'Подарок' }),
+            el('th', { html: 'Цена, ₸' }),
+            el('th', { html: 'Тип' }),
+            el('th', { html: 'Администратор' })
+          );
+
+          const thead = el('thead', {}, [theadRow]);
+          const tbody = el('tbody');
+
+          const renderRows = (rowsArr) => {
+            tbody.innerHTML = '';
+            rowsArr.forEach(r => {
+              tbody.append(
+                el('tr', {}, [
+                  el('td', { html: r.date }),
+                  el('td', { html: r.name || '—' }),
+                  el('td', { html: r.phone || '—' }),
+                  el('td', { html: r.gift || '—' }),
+                  el('td', { html: formatMoney(r.price || 0) }),
+                  el('td', { html: r.bonus_type || 'normal' }),
+                  el('td', { html: r.actor || '—' })
+                ])
+              );
+            });
+          };
+
+          let asc = false;
+          const baseRows = [...redeemRows].sort((a, b) => new Date(b.date) - new Date(a.date));
+          renderRows(baseRows);
+
+          thDate.addEventListener('click', () => {
+            asc = !asc;
+            const sorted = [...redeemRows].sort((a, b) => {
+              const da = new Date(a.date);
+              const db = new Date(b.date);
+              return asc ? da - db : db - da;
+            });
+            thDate.innerHTML = asc ? 'Дата <span>↑</span>' : 'Дата <span>↓</span>';
+            renderRows(sorted);
+          });
+
+          table.append(thead, tbody);
+          giftsLogWrap.append(table);
+        }
+
+        // Остатки по подаркам
+        const invWrap = $('#gifts-inventory-table');
+        invWrap.innerHTML = '';
+
+        if (!giftsList.length) {
+          invWrap.innerHTML = '<p class="section-desc">Каталог подарков пуст</p>';
+        } else {
+          const agg = {};
+          giftsList.forEach(g => {
+            agg[g.name] = {
+              name: g.name,
+              price: Number(g.price || 0),
+              left: Number(g.left || 0),
+              bonus_type: g.bonus_type || 'normal',
+              issued: 0,
+              last_date: null
+            };
+          });
+
+          redeemRows.forEach(r => {
+            if (!r.gift) return;
+            if (!agg[r.gift]) {
+              agg[r.gift] = {
+                name: r.gift,
+                price: r.price || 0,
+                left: 0,
+                bonus_type: r.bonus_type || 'normal',
+                issued: 0,
+                last_date: null
+              };
+            }
+            agg[r.gift].issued += 1;
+            const d = new Date(r.date);
+            if (!agg[r.gift].last_date || d > new Date(agg[r.gift].last_date)) {
+              agg[r.gift].last_date = r.date;
+            }
+          });
+
+          const items = Object.values(agg).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+          const table = el('table');
+          const thead = el('thead', {}, [
+            el('tr', {}, [
+              el('th', { html: 'Подарок' }),
+              el('th', { html: 'Цена' }),
+              el('th', { html: 'Выдано' }),
+              el('th', { html: 'Остаток' }),
+              el('th', { html: 'Тип' }),
+              el('th', { html: 'Последняя выдача' })
+            ])
+          ]);
+
+          const tbody = el('tbody');
+          items.forEach(it => {
+            const typeLabel = it.bonus_type === 'banquet' ? 'банкетные' : 'обычные';
+            tbody.append(
+              el('tr', {}, [
+                el('td', { html: it.name }),
+                el('td', { html: formatMoney(it.price || 0) }),
+                el('td', { html: String(it.issued) }),
+                el('td', { html: String(it.left) }),
+                el('td', { html: typeLabel }),
+                el('td', { html: it.last_date || '—' })
+              ])
+            );
+          });
+
+          table.append(thead, tbody);
+          invWrap.append(table);
+        }
+
+        showToast($('#a-toast'), 'Аналитика загружена', true);
+      } catch (err) {
+        showToast($('#a-toast'), err.message || 'Ошибка загрузки аналитики', false);
+      } finally {
+        toggleButtonLoader($('#btn-analytics'), false);
+      }
+    }
+
+    function initAnalyticsButtons() {
+      $('#btn-analytics').addEventListener('click', async () => {
+        try {
+          await api('analytics_rebuild', {});
+          showToast($('#a-toast'), 'Аналитика пересчитана', true);
+          await loadAnalyticsPage();
+        } catch (err) {
+          showToast($('#a-toast'), err.message || 'Ошибка пересчёта аналитики', false);
+        }
+      });
+
+      // Экспорт данных
+      async function exportData(kind, filename) {
+        try {
+          const res = await api('export_csv', { kind });
+          const blob = new Blob([res.csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast($('#a-toast'), 'Экспорт завершён', true);
+        } catch (err) {
+          showToast($('#a-toast'), err.message || 'Ошибка экспорта', false);
+        }
+      }
+
+      $('#btn-export-users').addEventListener('click', () => exportData('users', 'sybaga_users.csv'));
+      $('#btn-export-bills').addEventListener('click', () => exportData('bills', 'sybaga_bills.csv'));
+      $('#btn-export-redeem').addEventListener('click', () => exportData('redeem_log', 'sybaga_redeem.csv'));
+
+      $('#btn-refresh-dashboard').addEventListener('click', loadDashboard);
+    }
+
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    function createParticles() {
+      const bg = $('#bg-particles');
+      const count = 15;
+      
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        
+        const size = Math.random() * 60 + 20;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 20 + 's';
+        p.style.opacity = Math.random() * 0.05 + 0.02;
+        
+        bg.appendChild(p);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      initAdminAuth();
+      initAdminNav();
+      initAnalyticsButtons();
+      initClientsAdmin();
+      restoreAdminSession();
+
+      // Обновление списка подарков при вводе телефона
+      let redeemTimer = null;
+      $('#r-phone').addEventListener('input', () => {
+        clearTimeout(redeemTimer);
+        redeemTimer = setTimeout(refreshAdminRedeemCards, 400);
+      });
+
+      // Анимация появления
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+
+      $$('.card, .admin-sidebar').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+
+      // Автоматический выход через 24 часа
+      let logoutTimer;
+      function startLogoutTimer() {
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(() => {
+          localStorage.removeItem(ADMIN_SESSION_KEY);
+          localStorage.removeItem(ADMIN_PAGE_KEY);
+          window.location.reload();
+        }, 24 * 60 * 60 * 1000);
+      }
+
+      window.onload = startLogoutTimer;
+      document.addEventListener('click', startLogoutTimer);
+      document.addEventListener('keypress', startLogoutTimer);
+      document.addEventListener('mousemove', startLogoutTimer);
+    });
+  </script>
+</body>
+</html>
